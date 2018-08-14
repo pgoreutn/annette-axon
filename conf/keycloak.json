@@ -1,0 +1,11 @@
+{
+  "realm": "Annette",
+  "auth-server-url": "http://localhost:8180/auth",
+  "ssl-required": "external",
+  "resource": "app",
+  "credentials": {
+    "secret": "e6afe346-0281-42c9-902c-5e0046294a4c"
+  },
+  "confidential-port": 0,
+  "policy-enforcer": {}
+}
