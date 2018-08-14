@@ -1,4 +1,4 @@
-# Contributing to Angular Ngrx Material Starter
+# Contributing to Annette Axon
 
 We would love for you to contribute to starter project and help make it even better than it is
 today! As a contributor, here are the guidelines we would like you to follow:
@@ -22,8 +22,7 @@ If not you might need to execute commands one by one instead of chaining them wi
 ## Commit Message Guidelines
 
 We have very precise rules over how our git commit messages can be formatted.  This leads to **more
-readable messages** that are easy to follow when looking through the **project history**.  But also,
-we use the git commit messages to **generate the [change log](https://github.com/tomastrajan/angular-ngrx-material-starter/blob/master/CHANGELOG.md)**.
+readable messages** that are easy to follow when looking through the **project history**.  
 
 ### Format
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
