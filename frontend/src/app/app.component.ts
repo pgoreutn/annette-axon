@@ -42,7 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
   version = env.versions.app;
   year = new Date().getFullYear();
   logo = require('../assets/logo.png');
-  languages = ['en', 'de', 'sk'];
+  languages = ['en', 'de', 'ru', 'sk'];
   navigation = [
     { link: 'about', label: 'axon.menu.about' },
     { link: 'features', label: 'axon.menu.features' },

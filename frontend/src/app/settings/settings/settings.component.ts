@@ -33,6 +33,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   languages = [
     { value: 'en', label: 'en' },
     { value: 'de', label: 'de' },
+    { value: 'ru', label: 'ru' },
     { value: 'sk', label: 'sk' }
   ];
 
