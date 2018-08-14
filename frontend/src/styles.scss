@@ -1,0 +1,60 @@
+@import 'styles-variables';
+
+@import '../node_modules/bootstrap/scss/bootstrap-reboot';
+@import '../node_modules/bootstrap/scss/bootstrap-grid';
+@import '../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fontawesome';
+@import '../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-solid';
+@import '../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-brands';
+
+@import 'styles-reset';
+
+@import '../node_modules/@angular/material/theming';
+
+@include mat-core();
+
+@import 'themes/default-theme.scss';
+@import 'themes/light-theme.scss';
+@import 'themes/black-theme.scss';
+@import 'themes/nature-theme.scss';
+
+@import 'styles-reset.scss-theme';
+@import 'app/app.component.scss-theme';
+@import 'app/shared/big-input/big-input.component.scss-theme';
+@import 'app/static/about/about.component.scss-theme';
+@import 'app/examples/todos/todos.component.scss-theme';
+@import 'app/examples/stock-market/stock-market.component.scss-theme';
+@import 'app/examples/theming/parent/parent.component.scss-theme';
+@import 'app/examples/theming/child/child.component.scss-theme';
+@import 'app/examples/examples/examples.component.scss-theme';
+
+@mixin custom-components-theme($theme) {
+  @include axon-styles-reset-theme($theme);
+  @include axon-app-component-theme($theme);
+  @include axon-about-component-theme($theme);
+  @include axon-big-input-component-theme($theme);
+  @include axon-todos-component-theme($theme);
+  @include axon-stock-market-component-theme($theme);
+  @include axon-parent-component-theme($theme);
+  @include axon-child-component-theme($theme);
+  @include axon-examples-component-theme($theme);
+}
+
+.default-theme {
+  @include angular-material-theme($axon-theme);
+  @include custom-components-theme($axon-theme);
+}
+
+.light-theme {
+  @include angular-material-theme($axon-light-theme);
+  @include custom-components-theme($axon-light-theme);
+}
+
+.black-theme {
+  @include angular-material-theme($axon-black-theme);
+  @include custom-components-theme($axon-black-theme);
+}
+
+.nature-theme {
+  @include angular-material-theme($axon-nature-theme);
+  @include custom-components-theme($axon-nature-theme);
+}
