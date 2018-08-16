@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { SettingsComponent } from './settings';
+import {AuthGuard} from '@app/core/auth/auth.guard'
 
 const routes: Routes = [
   {
@@ -12,11 +13,13 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
-    data: { title: 'axon.menu.settings' }
+    data: { title: 'axon.menu.settings' },
+    canActivate: [AuthGuard]
   },
   {
     path: 'examples',
-    loadChildren: 'app/examples/examples.module#ExamplesModule'
+    loadChildren: 'app/examples/examples.module#ExamplesModule',
+    canActivate: [AuthGuard]
   },
   {
     path: '**',
@@ -28,7 +31,7 @@ const routes: Routes = [
   // useHash supports github.io demo page, remove in your app
   imports: [
     RouterModule.forRoot(routes, {
-      useHash: true,
+      enableTracing: false,
       scrollPositionRestoration: 'enabled'
     })
   ],

@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import { AnimationsService } from './animations.service';
 
-describe('AnimationsService', () => {
+describe('AuthService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [AnimationsService]

@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { AuthGuardService } from '@app/core';
 
 import { ExamplesComponent } from './examples/examples.component';
 import { TodosComponent } from './todos/todos.component';
 import { StockMarketComponent } from './stock-market/stock-market.component';
 import { ParentComponent } from './theming/parent/parent.component';
 import { AuthenticatedComponent } from './authenticated/authenticated.component';
+import {AuthGuard} from '@app/core';
 
 const routes: Routes = [
   {
@@ -22,23 +22,26 @@ const routes: Routes = [
       {
         path: 'todos',
         component: TodosComponent,
-        data: { title: 'axon.examples.menu.todos' }
+        data: { title: 'axon.examples.menu.todos' },
+        canActivate: [AuthGuard]
       },
       {
         path: 'stock-market',
         component: StockMarketComponent,
-        data: { title: 'axon.examples.menu.stocks' }
+        data: { title: 'axon.examples.menu.stocks' },
+        canActivate: [AuthGuard]
       },
       {
         path: 'theming',
         component: ParentComponent,
-        data: { title: 'axon.examples.menu.theming' }
+        data: { title: 'axon.examples.menu.theming' },
+        canActivate: [AuthGuard]
       },
       {
         path: 'authenticated',
         component: AuthenticatedComponent,
-        canActivate: [AuthGuardService],
-        data: { title: 'axon.examples.menu.auth' }
+        data: { title: 'axon.examples.menu.auth' },
+        canActivate: [AuthGuard]
       }
     ]
   }

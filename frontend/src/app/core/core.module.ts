@@ -1,7 +1,7 @@
-import { NgModule, Optional, SkipSelf } from '@angular/core';
+import {APP_INITIALIZER, NgModule, Optional, SkipSelf} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { MetaReducer, StoreModule } from '@ngrx/store';
+import {MetaReducer, Store, StoreModule} from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { storeFreeze } from 'ngrx-store-freeze';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -17,6 +17,10 @@ import { AuthEffects } from './auth/auth.effects';
 import { AuthGuardService } from './auth/auth-guard.service';
 import { AnimationsService } from './animations/animations.service';
 import { TitleService } from './title/title.service';
+import {AuthGuard} from './auth/auth.guard'
+import {initializer} from './auth/auth-initializer'
+import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular'
+import {AuthService} from './auth/auth.service'
 
 export const metaReducers: MetaReducer<any>[] = [initStateFromLocalStorage];
 
@@ -49,16 +53,29 @@ if (!environment.production) {
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }),
+
+    // keycloak
+    KeycloakAngularModule,
   ],
   declarations: [],
   providers: [
+    AuthService,
     LocalStorageService,
-    AuthGuardService,
+    //AuthGuardService,
     AnimationsService,
-    TitleService
+    TitleService,
+    AuthGuard,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializer,
+      multi: true,
+      deps: [KeycloakService, AuthService]
+    }
   ],
-  exports: [TranslateModule]
+  exports: [
+      TranslateModule
+  ]
 })
 export class CoreModule {
   constructor(

@@ -35,7 +35,7 @@ describe('SettingsEffects', () => {
         },
         {
           provide: AnimationsService,
-          useValue: jasmine.createSpyObj('AnimationsService', [
+          useValue: jasmine.createSpyObj('AuthService', [
             'updateRouteAnimationType'
           ])
         }

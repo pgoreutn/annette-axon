@@ -8,12 +8,11 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import {
-  ActionAuthLogin,
-  ActionAuthLogout,
   AnimationsService,
   TitleService,
   selectorAuth,
-  routeAnimations
+  routeAnimations,
+  AuthService
 } from '@app/core';
 import { environment as env } from '@env/environment';
 
@@ -26,6 +25,7 @@ import {
   ActionSettingsChangeAnimationsPageDisabled
 } from './settings';
 
+
 @Component({
   selector: 'axon-root',
   templateUrl: './app.component.html',
@@ -36,6 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   @HostBinding('class') componentCssClass;
+
+  kcProfile: Keycloak.KeycloakProfile
 
   isProd = env.production;
   envName = env.envName;
@@ -62,8 +64,17 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private titleService: TitleService,
     private animationService: AnimationsService,
-    private translate: TranslateService
-  ) {}
+    private translate: TranslateService,
+    private authService: AuthService
+  ) {
+
+    this.store
+        .pipe(select(selectorAuth), takeUntil(this.unsubscribe$))
+        .subscribe(
+        auth => this.kcProfile = auth.profile
+    )
+
+  }
 
   private static trackPageView(event: NavigationEnd) {
     (<any>window).ga('set', 'page', event.urlAfterRedirects);
@@ -86,12 +97,12 @@ export class AppComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  onLoginClick() {
-    this.store.dispatch(new ActionAuthLogin());
+  onLogoutClick() {
+    this.authService.logout()
   }
 
-  onLogoutClick() {
-    this.store.dispatch(new ActionAuthLogout());
+  onProfileClick() {
+    this.authService.profile()
   }
 
   onLanguageSelect({ value: language }) {

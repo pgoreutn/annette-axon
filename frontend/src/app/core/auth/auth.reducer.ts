@@ -9,6 +9,7 @@ export enum AuthActionTypes {
 
 export class ActionAuthLogin implements Action {
   readonly type = AuthActionTypes.LOGIN;
+  constructor(readonly payload: Keycloak.KeycloakProfile) {}
 }
 
 export class ActionAuthLogout implements Action {
@@ -18,7 +19,8 @@ export class ActionAuthLogout implements Action {
 export type AuthActions = ActionAuthLogin | ActionAuthLogout;
 
 export const initialState: AuthState = {
-  isAuthenticated: false
+  isAuthenticated: false,
+  profile: null
 };
 
 export const selectorAuth = state => state.auth;
@@ -29,10 +31,10 @@ export function authReducer(
 ): AuthState {
   switch (action.type) {
     case AuthActionTypes.LOGIN:
-      return { ...state, isAuthenticated: true };
+      return { ...state, isAuthenticated: true, profile: action.payload };
 
     case AuthActionTypes.LOGOUT:
-      return { ...state, isAuthenticated: false };
+      return { ...state, isAuthenticated: false, profile: null };
 
     default:
       return state;
@@ -41,4 +43,5 @@ export function authReducer(
 
 export interface AuthState {
   isAuthenticated: boolean;
+  profile: Keycloak.KeycloakProfile
 }
