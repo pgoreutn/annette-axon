@@ -9,14 +9,14 @@ val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % Test
 
 lazy val root = (project in file("."))
   .settings(name := "annette-axon")
-  .aggregate(`axon-backend`)
+  .aggregate(`axon-backend`, `bpm-api`, `bpm-impl`)
   .settings(commonSettings: _*)
 
 
 lazy val `axon-backend` = (project in file("axon-backend"))
   .settings(commonSettings: _*)
   .enablePlugins(PlayScala, LagomPlay, SbtReactiveAppPlugin)
-  //.dependsOn(biddingApi, itemApi, userApi)
+  .dependsOn(`bpm-api`)
   .settings(
     libraryDependencies ++= Seq(
       lagomScaladslServer,
@@ -26,6 +26,26 @@ lazy val `axon-backend` = (project in file("axon-backend"))
       "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
     )
   )
+
+lazy val `bpm-api` = (project in file("bpm-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslApi
+    )
+  )
+
+lazy val `bpm-impl` = (project in file("bpm-impl"))
+  .enablePlugins(LagomScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslTestKit,
+      macwire,
+      scalaTest
+    )
+  )
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`bpm-api`)
 
 
 def commonSettings: Seq[Setting[_]] = Seq(

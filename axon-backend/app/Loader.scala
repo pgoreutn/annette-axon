@@ -1,3 +1,4 @@
+import biz.lobachev.bpm.api.BpmService
 import com.lightbend.lagom.scaladsl.api.{LagomConfigComponent, ServiceAcl, ServiceInfo}
 import com.lightbend.lagom.scaladsl.client.LagomServiceClientComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
@@ -35,6 +36,7 @@ abstract class WebGateway(context: Context) extends BuiltInComponentsFromContext
     wire[Routes]
   }
 
+  lazy val bpmService = serviceClient.implement[BpmService]
 
   lazy val main = wire[HomeController]
 }

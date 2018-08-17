@@ -1,5 +1,6 @@
 package controllers
 
+import biz.lobachev.bpm.api.BpmService
 import javax.inject._
 import play.api._
 import play.api.mvc._
@@ -15,6 +16,7 @@ import scala.io.Source
 @Singleton
 class HomeController @Inject()(ws: WSClient,
                                assets: Assets,
+                               bpmService: BpmService,
                                cc: ControllerComponents,
                                implicit val ec: ExecutionContext)
     extends AbstractController(cc) {
@@ -22,13 +24,7 @@ class HomeController @Inject()(ws: WSClient,
   final val KEYCLOAK_SERVER = "http://localhost:8180"
   final val REALM = "Annette"
 
-  /**
-    * Create an Action to render an HTML page.
-    *
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/`.
-    */
+
   def index(file: String = "") = assets.versioned("/public/dist/", "index.html")
 
   def token = Action.async { request: Request[AnyContent] =>
@@ -70,6 +66,10 @@ class HomeController @Inject()(ws: WSClient,
   def keycloak = Action { request: Request[AnyContent] =>
     val config = Source.fromResource("keycloak.json").mkString
     Ok(config)
+  }
+
+  def bpmHello(id: String) = Action.async {
+    bpmService.hello(id).invoke().map { res => Ok(res + "!!!") }
   }
 
 }
