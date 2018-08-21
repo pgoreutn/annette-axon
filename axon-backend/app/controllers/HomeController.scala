@@ -1,6 +1,5 @@
 package controllers
-
-import biz.lobachev.bpm.api.BpmService
+import axon.bpm.repository.api.BpmRepositoryService
 import javax.inject._
 import play.api._
 import play.api.mvc._
@@ -16,7 +15,7 @@ import scala.io.Source
 @Singleton
 class HomeController @Inject()(ws: WSClient,
                                assets: Assets,
-                               bpmService: BpmService,
+                               bpmService: BpmRepositoryService,
                                cc: ControllerComponents,
                                implicit val ec: ExecutionContext)
     extends AbstractController(cc) {
@@ -66,10 +65,6 @@ class HomeController @Inject()(ws: WSClient,
   def keycloak = Action { request: Request[AnyContent] =>
     val config = Source.fromResource("keycloak.json").mkString
     Ok(config)
-  }
-
-  def bpmHello(id: String) = Action.async {
-    bpmService.hello(id).invoke().map { res => Ok(res + "!!!") }
   }
 
 }
