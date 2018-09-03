@@ -1,5 +1,10 @@
 # Business platform Annette Axon
 
+
+> An **axon** or nerve fiber, is a long, slender projection of a nerve cell, or neuron, in vertebrates, that typically conducts electrical impulses known as action potentials, away from the nerve cell body. The function of the axon is to transmit information to different neurons, muscles, and glands.
+>
+> [*Wikipedia*](https://en.wikipedia.org/wiki/Axon)
+
 Annette Axon is the business process management system integrated with project management system. 
 Annette Axon helps companies to define, execute and control their non-project and project business processes. 
 The platform implements the following functionality:
