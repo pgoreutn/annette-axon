@@ -1,6 +1,7 @@
 package axon.bpm.repository.api
 
 import akka.{Done, NotUsed}
+import annette.shared.exceptions.AnnetteExceptionSerializer
 import com.lightbend.lagom.scaladsl.api.transport.Method
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import play.api.Environment

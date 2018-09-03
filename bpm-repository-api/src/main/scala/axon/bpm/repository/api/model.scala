@@ -8,6 +8,7 @@
   * запрещено без письменного разрешения правообладателя.
 ****************************************************************************************/
 package axon.bpm.repository.api
+
 import play.api.libs.json.{Format, Json}
 
 case class Schema(id: SchemaId, name: String, description: Option[String], notation: String, schema: String)

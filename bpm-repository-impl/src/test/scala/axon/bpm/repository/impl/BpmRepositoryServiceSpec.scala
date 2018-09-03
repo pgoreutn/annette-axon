@@ -1,9 +1,8 @@
 package axon.bpm.repository.impl
 
 import akka.Done
-import axon.bpm.repository.api.{BpmRepositoryService, Schema}
-import com.lightbend.lagom.scaladsl.api.transport.{BadRequest, NotFound, TransportException}
-import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.InvalidCommandException
+import annette.shared.exceptions.AnnetteException
+import axon.bpm.repository.api.{BpmRepositoryService, Schema, SchemaAlreadyExist}
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
@@ -47,8 +46,8 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       } yield {
         println(created2)
         created shouldBe Done
-        created2 shouldBe a[BadRequest] //("bpmRepository.schema.alreadyExist")
-        created2.asInstanceOf[BadRequest].exceptionMessage.detail shouldBe "bpmRepository.schema.alreadyExist"
+        created2 shouldBe a[AnnetteException] //("bpmRepository.schema.alreadyExist")
+        created2.asInstanceOf[AnnetteException].code shouldBe SchemaAlreadyExist.MessageCode
       }
 
     }

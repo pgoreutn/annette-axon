@@ -31,7 +31,7 @@ class SchemaEntity extends PersistentEntity {
         .onReadOnlyCommand[CreateSchema, Done] {
           case (CreateSchema(id, _, _, _, _), ctx, state) =>
             ctx.commandFailed(SchemaAlreadyExist(id))
-            //ctx.commandFailed(NotFound(id))
+          //ctx.commandFailed(NotFound(id))
         }
         .onCommand[UpdateSchema, Done] {
           case (UpdateSchema(id, name, description, schema), ctx, state) =>

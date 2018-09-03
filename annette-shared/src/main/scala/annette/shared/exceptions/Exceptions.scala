@@ -7,29 +7,19 @@
   * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
   * запрещено без письменного разрешения правообладателя.
 ****************************************************************************************/
-package axon.bpm.repository.api
+package annette.shared.exceptions
 
-import annette.shared.exceptions.{AnnetteException, AnnetteTransportException}
-import com.lightbend.lagom.scaladsl.api.transport.TransportErrorCode
+import com.lightbend.lagom.scaladsl.api.transport.{ExceptionMessage, TransportErrorCode, TransportException}
+import play.api.libs.json.Json
 
-object SchemaNotFound {
-  val ErrorCode = TransportErrorCode.NotFound
-  val MessageCode = "bpmRepository.schema.notFound"
+class AnnetteException(val code: String, val params: Map[String, String] = Map.empty) extends RuntimeException(code) {
+  def this(code: String, details: String) = {
+    this(code, Json.parse(Json.parse(details).as[String]).as[Map[String, String]])
+  }
 
-  def apply(id: String) = new AnnetteTransportException(
-    ErrorCode,
-    new AnnetteException(MessageCode, Map("id" -> id))
-  )
+  def toDetails = Json.toJson(Json.toJson(params).toString()).toString()
 
 }
 
-object SchemaAlreadyExist {
-  val ErrorCode = TransportErrorCode.BadRequest
-  val MessageCode = "bpmRepository.schema.alreadyExist"
-
-  def apply(id: String) = new AnnetteTransportException(
-    ErrorCode,
-    new AnnetteException(MessageCode, Map("id" -> id))
-  )
-
-}
+final class AnnetteTransportException(errorCode: TransportErrorCode, annetteException: AnnetteException)
+    extends TransportException(errorCode, new ExceptionMessage(annetteException.code, annetteException.toDetails), annetteException)
