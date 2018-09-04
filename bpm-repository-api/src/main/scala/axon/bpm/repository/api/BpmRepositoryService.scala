@@ -14,7 +14,7 @@ trait BpmRepositoryService extends Service {
   def updateSchema: ServiceCall[String, Done]
   def deleteSchema(id: SchemaId): ServiceCall[NotUsed, Done]
   def findSchemaById(id: String): ServiceCall[NotUsed, Schema]
-  def findSchemas(filter: String): ServiceCall[NotUsed, immutable.Seq[SchemaSummary]]
+  def findSchemas: ServiceCall[String, immutable.Seq[SchemaSummary]]
 
   final override def descriptor = {
     import Service._
@@ -25,7 +25,7 @@ trait BpmRepositoryService extends Service {
         restCall(Method.PUT, "/api/bpm/repository/schema", updateSchema),
         restCall(Method.DELETE, "/api/bpm/repository/schema/:id", deleteSchema _),
         restCall(Method.GET, "/api/bpm/repository/schema/:id", findSchemaById _),
-        restCall(Method.GET, "/api/bpm/repository/findSchema/:filter", findSchemas _)
+        restCall(Method.POST, "/api/bpm/repository/findSchema", findSchemas _)
       )
       .withExceptionSerializer(new AnnetteExceptionSerializer())
       .withAutoAcl(true)

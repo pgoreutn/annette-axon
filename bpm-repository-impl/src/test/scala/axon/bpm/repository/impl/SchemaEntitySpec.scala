@@ -21,7 +21,7 @@ class SchemaEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
   private def withTestDriver(block: PersistentEntityTestDriver[SchemaCommand, SchemaEvent, Option[Schema]] => Unit): Unit = {
     val driver = new PersistentEntityTestDriver(system, new SchemaEntity, "bpm-1")
     block(driver)
-   // driver.getAllIssues should have size 0
+    // driver.getAllIssues should have size 0
   }
 
   "schema entity" should {

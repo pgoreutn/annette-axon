@@ -33,3 +33,13 @@ object SchemaAlreadyExist {
   )
 
 }
+
+object XmlParseError {
+  val ErrorCode = TransportErrorCode.BadRequest
+  val MessageCode = "bpmRepository.schema.xmlParseError"
+
+  def apply() = new AnnetteTransportException(
+    ErrorCode,
+    new AnnetteException(MessageCode)
+  )
+}

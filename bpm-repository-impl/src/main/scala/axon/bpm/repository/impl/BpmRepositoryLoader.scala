@@ -30,13 +30,12 @@ abstract class BpmRepositoryApplication(context: LagomApplicationContext)
     with CassandraPersistenceComponents
     with AhcWSComponents {
 
-  // Bind the service that this server provides
   override lazy val lagomServer = serverFor[BpmRepositoryService](wire[BpmRepositoryServiceImpl])
-
-  // Register the JSON serializer registry
-  override lazy val jsonSerializerRegistry = BpmRepositorySerializerRegistry
+  lazy val schemaRepository = wire[SchemaRepository]
+  lazy val jsonSerializerRegistry = BpmRepositorySerializerRegistry
 
   persistentEntityRegistry.register(wire[SchemaEntity])
+  readSide.register(wire[SchemaEventProcessor])
 
 }
 

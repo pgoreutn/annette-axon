@@ -24,7 +24,7 @@ class AnnetteExceptionSerializer extends ExceptionSerializer {
 
   override def serialize(exception: Throwable, accept: Seq[MessageProtocol]): RawExceptionMessage = {
 
-    println("AnnetteExceptionSerializer: serialize")
+    //println("AnnetteExceptionSerializer: serialize")
 
     val (errorCode, message) = exception match {
 
@@ -52,7 +52,7 @@ class AnnetteExceptionSerializer extends ExceptionSerializer {
   }
 
   override def deserialize(message: RawExceptionMessage): Throwable = {
-    println("AnnetteExceptionSerializer: deserialize")
+    //println("AnnetteExceptionSerializer: deserialize")
 
     val messageJson = try {
       Json.parse(message.message.iterator.asInputStream)
