@@ -1,4 +1,5 @@
-package axon.bpm.repository.impl
+package axon.bpm.repository.impl.schema
+
 import axon.bpm.repository.api.SchemaSummary
 import com.datastax.driver.core.Row
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraSession

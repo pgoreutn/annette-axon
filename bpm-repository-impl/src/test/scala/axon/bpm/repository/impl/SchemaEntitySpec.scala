@@ -5,6 +5,7 @@ import akka.actor.ActorSystem
 import akka.testkit.TestKit
 import annette.shared.exceptions.AnnetteTransportException
 import axon.bpm.repository.api.Schema
+import axon.bpm.repository.impl.schema._
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.InvalidCommandException
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry

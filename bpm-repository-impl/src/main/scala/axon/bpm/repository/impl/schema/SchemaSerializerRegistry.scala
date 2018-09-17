@@ -1,4 +1,4 @@
-package axon.bpm.repository.impl
+package axon.bpm.repository.impl.schema
 import axon.bpm.repository.api.Schema
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
 

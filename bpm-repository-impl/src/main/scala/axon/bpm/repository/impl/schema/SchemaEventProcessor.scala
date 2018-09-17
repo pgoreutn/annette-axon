@@ -1,4 +1,5 @@
-package axon.bpm.repository.impl
+package axon.bpm.repository.impl.schema
+
 import akka.Done
 import com.datastax.driver.core.PreparedStatement
 import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor

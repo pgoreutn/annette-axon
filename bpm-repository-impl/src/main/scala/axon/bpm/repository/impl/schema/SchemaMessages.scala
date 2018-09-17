@@ -1,8 +1,9 @@
-package axon.bpm.repository.impl
+package axon.bpm.repository.impl.schema
+
 import akka.Done
 import axon.bpm.repository.api.{Schema, SchemaId}
-import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
+import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag}
 import play.api.libs.json.{Format, Json}
 
 sealed trait SchemaCommand

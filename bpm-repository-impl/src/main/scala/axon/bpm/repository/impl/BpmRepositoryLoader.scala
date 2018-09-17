@@ -1,6 +1,7 @@
 package axon.bpm.repository.impl
 
 import axon.bpm.repository.api.BpmRepositoryService
+import axon.bpm.repository.impl.schema.{SchemaEntity, SchemaEventProcessor, SchemaRepository, SchemaSerializerRegistry}
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents

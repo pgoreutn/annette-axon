@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.{Done, NotUsed}
 import axon.bpm.repository.api._
+import axon.bpm.repository.impl.schema._
 import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.api.transport.{BadRequest, NotFound}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
@@ -33,8 +34,7 @@ class BpmRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Actor
       .ask(UpdateSchema(id, name, Some(description), schema))
   }
 
-  override def deleteSchema(id: SchemaId): ServiceCall[NotUsed, Done] = ServiceCall { _ =>
-    refFor(id).ask(DeleteSchema(id))
+  override def deleteSchema(id: SchemaId): ServiceCall[NotUsed, Done] = ServiceCall { _ => refFor(id).ask(DeleteSchema(id))
   }
   override def findSchemaById(id: String): ServiceCall[NotUsed, Schema] = ServiceCall { _ =>
     refFor(id).ask(FindSchemaById(id)).map {

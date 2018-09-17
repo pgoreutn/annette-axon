@@ -7,14 +7,11 @@
   * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
   * запрещено без письменного разрешения правообладателя.
 ****************************************************************************************/
-package axon.bpm.repository.impl
+package axon.bpm.repository.impl.schema
+
 import akka.Done
-import axon.bpm.repository.api.{Schema, SchemaAlreadyExist, SchemaId, SchemaNotFound}
-import com.lightbend.lagom.scaladsl.api.transport._
-import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag, PersistentEntity}
-import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
-import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
-import play.api.libs.json.{Format, Json}
+import axon.bpm.repository.api.{Schema, SchemaAlreadyExist, SchemaNotFound}
+import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 
 class SchemaEntity extends PersistentEntity {
   override type Command = SchemaCommand
