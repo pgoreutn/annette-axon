@@ -28,16 +28,14 @@ lazy val `axon-backend` = (project in file("axon-backend"))
   )
 
 lazy val `annette-shared` = (project in file("annette-shared"))
-  .enablePlugins(LagomScala)
   .settings(
     libraryDependencies ++= Seq(
-      lagomScaladslPersistenceCassandra,
-      lagomScaladslTestKit,
-      macwire,
-      scalaTest
+      lagomScaladslApi,
+      lagomScaladslServer % Optional,
+      scalaTest,
+      Dependencies.jwt
     )
   )
-  .settings(lagomForkedTestSettings: _*)
 
 
 

@@ -23,5 +23,8 @@ object Dependencies {
     "commons-io" % "commons-io" % "2.5" % Test
   )
 
-  val core = persistence ++ tests :+ guice :+ ws
+  val jwt: sbt.ModuleID = "com.pauldijou" %% "jwt-play-json" % "0.18.0"
+
+
+  val core = persistence ++ tests :+ guice :+ ws :+ jwt
 }

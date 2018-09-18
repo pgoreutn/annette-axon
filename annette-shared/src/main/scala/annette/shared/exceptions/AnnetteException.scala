@@ -9,7 +9,6 @@
 ****************************************************************************************/
 package annette.shared.exceptions
 
-import com.lightbend.lagom.scaladsl.api.transport.{ExceptionMessage, TransportErrorCode, TransportException}
 import play.api.libs.json.Json
 
 class AnnetteException(val code: String, val params: Map[String, String] = Map.empty) extends RuntimeException(code) {
@@ -18,8 +17,7 @@ class AnnetteException(val code: String, val params: Map[String, String] = Map.e
   }
 
   def toDetails = Json.toJson(Json.toJson(params).toString()).toString()
+  def toMessage = Json.toJson(params + ("code" -> code))
 
 }
 
-final class AnnetteTransportException(errorCode: TransportErrorCode, annetteException: AnnetteException)
-    extends TransportException(errorCode, new ExceptionMessage(annetteException.code, annetteException.toDetails), annetteException)

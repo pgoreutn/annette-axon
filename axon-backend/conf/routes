@@ -5,8 +5,9 @@
 
 # An example controller showing a sample home page
 GET        /                        controllers.HomeController.index(file: String = "")
-GET        /web-api/token        controllers.HomeController.token
-GET        /web-api/config        controllers.HomeController.config
+#GET        /web-api/token        controllers.HomeController.token
+#GET        /web-api/config        controllers.HomeController.config
+GET        /web-api/heartbeat        controllers.HomeController.heartbeat
 GET        /web-api/keycloak        controllers.HomeController.keycloak
 
 
