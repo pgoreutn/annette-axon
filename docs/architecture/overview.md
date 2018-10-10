@@ -19,9 +19,9 @@ The Annette Axon system is implemented as single page web application and contai
 ## Application (frontend & backend)
 
 Application has the following user roles:
-* user - ordinal user that has access to tasks, processes and projects according his or her rights
-* analytic - user that has rights to configure BPM System, organizational structures, forms, Knowledge System, Project Systems etc.
-* admin - user that has administrative rights such as manage user, user roles and permissions, manage execution of business processes  
+* axon.user - ordinal user that has access to tasks, processes and projects according his or her rights
+* axon.analytic - user that has rights to configure BPM System, organizational structures, forms, Knowledge System, Project Systems etc.
+* axon.admin - user that has administrative rights such as manage user, user roles and permissions, manage execution of business processes  
 
 All these users working in the same application window with menu depends of the user role. Application window has two components:
 * toolbar - contains application logo & name, application menu, language selector, user menu
@@ -65,6 +65,19 @@ User menu represents as dropdown control with user's avatar, first and last name
 ## Organizational Structure service
 
 ## BPM service
+
+BPM Service contains two microservices:
+* BPM Repository - stores process schemas and business processes
+* BPM Engine - contains engine for business process execution
+
+Process schema contains a schema definition in particular notation (BPMN/DMN/CMMN). These schemas deployed to the BPM Engine and can be executed.
+
+Business process contains definition of the particular business process:
+* Business process id
+* Name
+* Description
+* Reference to schema id. Business process are started with reference of particular schema.
+* Data structure with initial values. It is used to initialize process variables before start process. Data structures are defined in Knowledge Service (Data types repository) 
 
 ## Project service
 
