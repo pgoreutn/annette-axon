@@ -20,4 +20,3 @@ class AnnetteException(val code: String, val params: Map[String, String] = Map.e
   def toMessage = Json.toJson(params + ("code" -> code))
 
 }
-

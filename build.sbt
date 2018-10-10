@@ -16,6 +16,7 @@ lazy val root = (project in file("."))
 lazy val `axon-backend` = (project in file("axon-backend"))
   .settings(commonSettings: _*)
   .enablePlugins(PlayScala, LagomPlay, SbtReactiveAppPlugin)
+  //.disablePlugins(PlayFilters)
   .dependsOn(`bpm-repository-api`)
   .settings(
     libraryDependencies ++= Seq(

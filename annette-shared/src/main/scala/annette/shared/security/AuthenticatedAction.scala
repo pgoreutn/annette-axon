@@ -15,8 +15,7 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
-case class AuthenticatedRequest[A](sessionData: SessionData, request: Request[A]) extends WrappedRequest[A](request)
+case class AuthenticatedRequest[A](principal: SessionData, request: Request[A]) extends WrappedRequest[A](request)
 
 @Singleton
 class AuthenticatedAction @Inject()(requestValidator: RequestValidator, val parser: BodyParsers.Default, implicit val executionContext: ExecutionContext)
