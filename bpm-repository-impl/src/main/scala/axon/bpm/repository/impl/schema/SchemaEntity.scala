@@ -10,7 +10,7 @@
 package axon.bpm.repository.impl.schema
 
 import akka.Done
-import axon.bpm.repository.api.{Schema, SchemaAlreadyExist, SchemaNotFound}
+import axon.bpm.repository.api.{NotationChangeProhibited, Schema, SchemaAlreadyExist, SchemaNotFound}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 
 class SchemaEntity extends PersistentEntity {
@@ -25,14 +25,15 @@ class SchemaEntity extends PersistentEntity {
         .onReadOnlyCommand[FindSchemaById, Option[Schema]] {
           case (FindSchemaById(id), ctx, state) => ctx.reply(state)
         }
-        .onReadOnlyCommand[CreateSchema, Done] {
+        .onReadOnlyCommand[CreateSchema, Schema] {
           case (CreateSchema(id, _, _, _, _), ctx, state) =>
             ctx.commandFailed(SchemaAlreadyExist(id))
           //ctx.commandFailed(NotFound(id))
         }
-        .onCommand[UpdateSchema, Done] {
-          case (UpdateSchema(id, name, description, schema), ctx, state) =>
-            ctx.thenPersist(SchemaUpdated(id, name, description, schema))(_ => ctx.reply(Done))
+        .onCommand[UpdateSchema, Schema] {
+          case (UpdateSchema(id, name, description, notation, schema), ctx, state) =>
+            // TODO: validate notation
+            ctx.thenPersist(SchemaUpdated(id, name, description, schema))(_ => ctx.reply(Schema(id, name, description, state.get.notation, schema)))
         }
         .onCommand[DeleteSchema, Done] {
           case (DeleteSchema(id), ctx, state) =>
@@ -47,13 +48,12 @@ class SchemaEntity extends PersistentEntity {
 
     case None =>
       Actions()
-        .onCommand[CreateSchema, Done] {
+        .onCommand[CreateSchema, Schema] {
           case (CreateSchema(id, name, description, notation, schema), ctx, state) =>
-            ctx.thenPersist(SchemaCreated(id, name, description, notation, schema))(_ => ctx.reply(Done))
+            ctx.thenPersist(SchemaCreated(id, name, description, notation, schema))(_ => ctx.reply(Schema(id, name, description, notation, schema)))
         }
-        .onReadOnlyCommand[UpdateSchema, Done] {
-          case (UpdateSchema(id, _, _, _), ctx, state) => ctx.commandFailed(SchemaNotFound(id))
-
+        .onReadOnlyCommand[UpdateSchema, Schema] {
+          case (UpdateSchema(id, _, _, _, _), ctx, state) => ctx.commandFailed(SchemaNotFound(id))
         }
         .onReadOnlyCommand[DeleteSchema, Done] {
           case (DeleteSchema(id), ctx, state) => ctx.commandFailed(SchemaNotFound(id))

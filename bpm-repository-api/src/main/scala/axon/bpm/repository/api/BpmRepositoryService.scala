@@ -10,8 +10,8 @@ import scala.collection._
 
 trait BpmRepositoryService extends Service {
 
-  def createSchema(notation: String): ServiceCall[String, Done]
-  def updateSchema: ServiceCall[String, Done]
+  def createSchema: ServiceCall[String, Schema]
+  def updateSchema: ServiceCall[String, Schema]
   def deleteSchema(id: SchemaId): ServiceCall[NotUsed, Done]
   def findSchemaById(id: String): ServiceCall[NotUsed, Schema]
   def findSchemas: ServiceCall[String, immutable.Seq[SchemaSummary]]
@@ -21,7 +21,7 @@ trait BpmRepositoryService extends Service {
     // @formatter:off
     named("bpm-repository")
       .withCalls(
-        restCall(Method.POST, "/api/bpm/repository/schema/:notation", createSchema _),
+        restCall(Method.POST, "/api/bpm/repository/schema", createSchema),
         restCall(Method.PUT, "/api/bpm/repository/schema", updateSchema),
         restCall(Method.DELETE, "/api/bpm/repository/schema/:id", deleteSchema _),
         restCall(Method.GET, "/api/bpm/repository/schema/:id", findSchemaById _),

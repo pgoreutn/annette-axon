@@ -1,5 +1,6 @@
 import annette.shared.security.{AuthenticatedAction, RequestValidator}
 import axon.bpm.repository.api.BpmRepositoryService
+import axon.rest.bpm.config.SchemaController
 import com.lightbend.lagom.scaladsl.api.{LagomConfigComponent, ServiceAcl, ServiceInfo}
 import com.lightbend.lagom.scaladsl.client.LagomServiceClientComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
@@ -19,10 +20,12 @@ import scala.concurrent.ExecutionContext
 
 abstract class WebGateway(context: Context) extends BuiltInComponentsFromContext(context)
   with AssetsComponents
-  with HttpFiltersComponents
+  //with HttpFiltersComponents
   with AhcWSComponents
   with LagomConfigComponent
   with LagomServiceClientComponents {
+
+  def httpFilters: Seq[EssentialFilter] = Seq()
 
   override lazy val serviceInfo: ServiceInfo = ServiceInfo(
     "axon-backend",
@@ -40,6 +43,9 @@ abstract class WebGateway(context: Context) extends BuiltInComponentsFromContext
   lazy val bpmService = serviceClient.implement[BpmRepositoryService]
 
   lazy val main = wire[HomeController]
+
+  lazy val schemaController = wire[SchemaController]
+
   lazy val authValidator = wire[RequestValidator]
   lazy val auth = wire[AuthenticatedAction]
   lazy val parser = wire[BodyParsers.Default]

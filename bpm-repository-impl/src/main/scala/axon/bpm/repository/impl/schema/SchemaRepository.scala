@@ -10,6 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 private[impl] class SchemaRepository(session: CassandraSession)(implicit ec: ExecutionContext) {
 
   def findSchemas(filter: String): Future[immutable.Seq[SchemaSummary]] = {
+    val filterLC = filter.toLowerCase
     // Don't use in production
     for {
       seq <- selectSchemas
@@ -20,8 +21,8 @@ private[impl] class SchemaRepository(session: CassandraSession)(implicit ec: Exe
 
         seq
           .filter { summary =>
-            summary.id.contains(filter) || summary.name.contains(filter) ||
-              summary.description.getOrElse("").contains(filter)
+            summary.id.toLowerCase.contains(filterLC) || summary.name.toLowerCase.contains(filterLC) ||
+              summary.description.getOrElse("").toLowerCase.contains(filterLC)
           }
           .to[collection.immutable.Seq]
       }

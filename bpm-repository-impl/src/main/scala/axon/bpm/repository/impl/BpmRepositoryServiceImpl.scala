@@ -22,16 +22,16 @@ class BpmRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Actor
     mat: Materializer)
     extends BpmRepositoryService {
 
-  override def createSchema(notation: String): ServiceCall[String, Done] = ServiceCall { schema =>
-    val (id, name, description) = parseXml(schema)
-    refFor(id)
-      .ask(CreateSchema(id, name, Some(description), notation, schema))
+  override def createSchema: ServiceCall[String, Schema] = ServiceCall { xml =>
+    val schema = parseXml(xml)
+    refFor(schema.id)
+      .ask(CreateSchema(schema.id, schema.name, schema.description, schema.notation, xml))
   }
 
-  override def updateSchema: ServiceCall[String, Done] = ServiceCall { schema =>
-    val (id, name, description) = parseXml(schema)
-    refFor(id)
-      .ask(UpdateSchema(id, name, Some(description), schema))
+  override def updateSchema: ServiceCall[String, Schema] = ServiceCall { xml =>
+    val schema = parseXml(xml)
+    refFor(schema.id)
+      .ask(UpdateSchema(schema.id, schema.name, schema.description, schema.notation, xml))
   }
 
   override def deleteSchema(id: SchemaId): ServiceCall[NotUsed, Done] = ServiceCall { _ => refFor(id).ask(DeleteSchema(id))
@@ -49,14 +49,20 @@ class BpmRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Actor
 
   private def refFor(id: SchemaId) = registry.refFor[SchemaEntity](id)
 
-  private def parseXml(schema: String): (String, String, String) = {
-    Try {
-      val xml = XML.loadString(schema)
+  private def parseXml(schema: String): Schema = {
+    val xml = Try(XML.loadString(schema)).getOrElse(throw XmlParseError())
+    println(xml)
+    val r = Try {
       val id = (xml \\ "process" \ "@id").text
+      if (id.trim.isEmpty) throw XmlParseError()
       val name = (xml \\ "process" \ "@name").text
       val description = (xml \\ "process" \ "documentation").text
-      (id, name, description)
+      val descriptionOpt = if (description.isEmpty) None else Some(description)
+      val notation = "BPMN"
+      Schema(id, name, descriptionOpt, notation, schema)
     }.getOrElse(throw XmlParseError())
+    println(r)
+    r
   }
 
 }

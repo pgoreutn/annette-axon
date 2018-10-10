@@ -30,14 +30,14 @@ class SchemaEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
     "create schema" in withTestDriver { driver =>
       val cmd = CreateSchema("id", "name", Some("description"), "BPMN", "schema")
       val outcome = driver.run(cmd)
-      outcome.replies should contain only Done
+      outcome.replies should contain only Schema("id", "name", Some("description"), "BPMN", "schema")
       outcome.events should contain only SchemaCreated(cmd.id, cmd.name, cmd.description, cmd.notation, cmd.schema)
     }
 
     "create schema with existing id" in withTestDriver { driver =>
       val cmd = CreateSchema("id", "name", Some("description"), "BPMN", "schema")
       val outcome = driver.run(cmd)
-      outcome.replies should contain only Done
+      outcome.replies should contain only Schema("id", "name", Some("description"), "BPMN", "schema")
       outcome.events should contain only SchemaCreated(cmd.id, cmd.name, cmd.description, cmd.notation, cmd.schema)
       val outcome2 = driver.run(cmd)
       outcome2.events shouldBe empty
@@ -47,17 +47,17 @@ class SchemaEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
     "update schema" in withTestDriver { driver =>
       val cmd = CreateSchema("id", "name", Some("description"), "BPMN", "schema")
-      val cmd2 = UpdateSchema("id", "name1", Some("description1"), "schema")
+      val cmd2 = UpdateSchema("id", "name1", Some("description1"), "BPMN", "schema")
       val outcome = driver.run(cmd)
-      outcome.replies should contain only Done
+      outcome.replies should contain only Schema("id", "name", Some("description"), "BPMN", "schema")
       outcome.events should contain only SchemaCreated(cmd.id, cmd.name, cmd.description, cmd.notation, cmd.schema)
       val outcome2 = driver.run(cmd2)
-      outcome2.replies should contain only Done
+      outcome2.replies should contain only Schema("id", "name1", Some("description1"), "BPMN", "schema")
       outcome2.events should contain only SchemaUpdated(cmd2.id, cmd2.name, cmd2.description, cmd2.schema)
     }
 
     "update schema with non-existing id" in withTestDriver { driver =>
-      val cmd2 = UpdateSchema("id", "name1", Some("description1"), "schema")
+      val cmd2 = UpdateSchema("id", "name1", Some("description1"), "BPMN", "schema")
       val outcome2 = driver.run(cmd2)
       outcome2.events shouldBe empty
       outcome2.replies should have size 1
@@ -67,7 +67,7 @@ class SchemaEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
     "delete schema" in withTestDriver { driver =>
       val cmd = CreateSchema("id", "name", Some("description"), "BPMN", "schema")
       val outcome = driver.run(cmd)
-      outcome.replies should contain only Done
+      outcome.replies should contain only Schema("id", "name", Some("description"), "BPMN", "schema")
       outcome.events should contain only SchemaCreated(cmd.id, cmd.name, cmd.description, cmd.notation, cmd.schema)
       val outcome2 = driver.run(DeleteSchema(cmd.id))
       outcome2.replies should contain only Done
@@ -80,7 +80,7 @@ class SchemaEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
       val cmd = CreateSchema("id", "name", Some("description"), "BPMN", "schema")
       val cmd2 = FindSchemaById("id")
       val outcome = driver.run(cmd)
-      outcome.replies should contain only Done
+      outcome.replies should contain only Schema("id", "name", Some("description"), "BPMN", "schema")
       outcome.events should contain only SchemaCreated(cmd.id, cmd.name, cmd.description, cmd.notation, cmd.schema)
       val outcome2 = driver.run(cmd2)
       outcome2.replies should contain only Some(Schema(cmd.id, cmd.name, cmd.description, cmd.notation, cmd.schema))

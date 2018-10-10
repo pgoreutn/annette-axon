@@ -38,25 +38,24 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     "create schema & find it by id" in {
       val xmlSchema = TestData.xmlSchema()
       for {
-        created <- client.createSchema("BPMN").invoke(xmlSchema)
+        created <- client.createSchema.invoke(xmlSchema)
         found <- client.findSchemaById(TestData.id).invoke()
       } yield {
-        created shouldBe Done
+        created shouldBe Schema(TestData.id, TestData.name, Some(TestData.description), "BPMN", xmlSchema)
         found shouldBe Schema(TestData.id, TestData.name, Some(TestData.description), "BPMN", xmlSchema)
       }
     }
 
     "create schema with existing id" in {
       for {
-        created <- client.createSchema("BPMN").invoke(TestData.xmlSchema("id3"))
-        created2 <- client
-          .createSchema("BPMN")
+        created <- client.createSchema.invoke(TestData.xmlSchema("id3"))
+        created2 <- client.createSchema
           .invoke(TestData.xmlSchema("id3"))
           .recover {
             case th: Throwable => th
           }
       } yield {
-        created shouldBe Done
+        created shouldBe a[Schema]
         created2 shouldBe a[AnnetteException]
         created2.asInstanceOf[AnnetteException].code shouldBe SchemaAlreadyExist.MessageCode
       }
@@ -66,14 +65,14 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     "update schema" in {
       val sch = TestData.xmlSchema("id4", name = "name1", description = "description1")
       for {
-        created <- client.createSchema("BPMN").invoke(TestData.xmlSchema("id4"))
+        created <- client.createSchema.invoke(TestData.xmlSchema("id4"))
         updated <- client.updateSchema
           .invoke(sch)
           .recover { case th: Throwable => th }
         schema <- client.findSchemaById("id4").invoke()
       } yield {
-        created shouldBe Done
-        updated shouldBe Done
+        created shouldBe a[Schema]
+        updated shouldBe a[Schema]
         schema.schema shouldBe sch
         schema.name shouldBe "name1"
         schema.description shouldBe Some("description1")
@@ -98,7 +97,7 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       val id = s"id${Random.nextInt()}"
       val sch = TestData.xmlSchema(id)
       for {
-        created <- client.createSchema("BPMN").invoke(sch)
+        created <- client.createSchema.invoke(sch)
         found1 <- client
           .findSchemaById(id)
           .invoke()
@@ -112,7 +111,7 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
               th
           }
       } yield {
-        created shouldBe Done
+        created shouldBe a[Schema]
         found1 shouldBe Schema(id, TestData.name, Some(TestData.description), "BPMN", sch)
         deleted shouldBe Done
         found2 shouldBe a[AnnetteException]
@@ -166,7 +165,7 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       )
       val schemas = for (i <- 0 until ids.length) yield TestData.xmlSchema(ids(i), names(i), descriptions(i))
 
-      val createFuture = Future.traverse(schemas)(schema => client.createSchema("BPMN").invoke(schema))
+      val createFuture = Future.traverse(schemas)(schema => client.createSchema.invoke(schema))
 
       (for {
         created <- createFuture.recover { case th: Throwable => th }

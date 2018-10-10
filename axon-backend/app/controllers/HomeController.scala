@@ -14,9 +14,8 @@ import scala.io.Source
   * application's home page.
   */
 @Singleton
-class HomeController @Inject()(ws: WSClient,
+class HomeController @Inject()(
                                assets: Assets,
-                               bpmService: BpmRepositoryService,
                                authenticated: AuthenticatedAction,
                                cc: ControllerComponents,
                                implicit val ec: ExecutionContext)

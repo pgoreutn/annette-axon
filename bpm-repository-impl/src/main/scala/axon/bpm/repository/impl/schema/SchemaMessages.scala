@@ -10,8 +10,10 @@ sealed trait SchemaCommand
 
 case class CreateSchema(id: SchemaId, name: String, description: Option[String], notation: String, schema: String)
     extends SchemaCommand
-    with ReplyType[Done]
-case class UpdateSchema(id: SchemaId, name: String, description: Option[String], schema: String) extends SchemaCommand with ReplyType[Done]
+    with ReplyType[Schema]
+case class UpdateSchema(id: SchemaId, name: String, description: Option[String], notation: String, schema: String)
+    extends SchemaCommand
+    with ReplyType[Schema]
 case class DeleteSchema(id: SchemaId) extends SchemaCommand with ReplyType[Done]
 case class FindSchemaById(id: SchemaId) extends SchemaCommand with ReplyType[Option[Schema]]
 

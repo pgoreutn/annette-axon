@@ -43,3 +43,24 @@ object XmlParseError {
     new AnnetteException(MessageCode)
   )
 }
+
+object InvalidNotation {
+  val ErrorCode = TransportErrorCode.BadRequest
+  val MessageCode = "bpmRepository.schema.invalidNotation"
+
+  def apply() = new AnnetteTransportException(
+    ErrorCode,
+    new AnnetteException(MessageCode)
+  )
+
+}
+object NotationChangeProhibited {
+  val ErrorCode = TransportErrorCode.BadRequest
+  val MessageCode = "bpmRepository.schema.notationChangeProhibited"
+
+  def apply() = new AnnetteTransportException(
+    ErrorCode,
+    new AnnetteException(MessageCode)
+  )
+
+}
