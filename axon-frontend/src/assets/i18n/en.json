@@ -5,7 +5,14 @@
   "axon.menu.processes": "Processes",
   "axon.menu.org-structure": "Org. Structure",
   "axon.menu.projects": "Projects",
+
   "axon.menu.config": "Config",
+  "axon.menu.config.bpm": "BPM",
+  "axon.menu.config.org-structure": "Org. Structure",
+  "axon.menu.config.forms": "Forms",
+  "axon.menu.config.knowledge": "Knowledge",
+  "axon.menu.config.projects": "Projects",
+
   "axon.menu.admin": "Admin",
 
   "axon.menu.profile": "Profile",

@@ -58,3 +58,35 @@
   @include angular-material-theme($axon-nature-theme);
   @include custom-components-theme($axon-nature-theme);
 }
+
+
+
+bootstrap-growl{
+  position:absolute;
+  right:8px;
+  top:8px;
+  z-index:10;
+}
+
+
+.bpp-properties-panel {
+  min-height: 100%;
+}
+
+
+.button-row button,
+.button-row a {
+  margin-left: 8px;
+}
+
+.button-row {
+  margin-top: 10px;
+  float: right;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+.mb-10 {
+  margin-bottom: 10px;
+}

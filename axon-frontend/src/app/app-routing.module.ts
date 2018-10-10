@@ -12,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: 'bpm',
-    loadChildren: 'app/bpm/bpm.module#BpmModule',
+    loadChildren: 'app/bpm/main/bpm.module#BpmModule',
     canActivate: [AuthGuard]
   },
   {
@@ -26,10 +26,15 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'bpm-config',
+    loadChildren: 'app/bpm/config/bpm-config.module#BpmConfigModule',
+    canActivate: [AuthGuard]
+  },
+  /*{
     path: 'config',
     loadChildren: 'app/config/config.module#ConfigModule',
     canActivate: [AuthGuard]
-  },
+  },*/
   {
     path: 'admin',
     loadChildren: 'app/admin/admin.module#AdminModule',

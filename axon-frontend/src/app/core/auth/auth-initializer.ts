@@ -1,7 +1,4 @@
-import {environment} from '../../../environments/environment'
 import {KeycloakService} from 'keycloak-angular'
-import {Store} from '@ngrx/store'
-import {ActionAuthLogin, ActionAuthLogout} from '@app/core'
 import {AuthService} from '@app/core/auth/auth.service'
 
 // TODO: move to separate file

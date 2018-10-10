@@ -1,0 +1,16 @@
+
+/*mat-card {
+    padding: 12px;
+}*/
+mat-card-actions {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+mat-card-header > .row {
+    width: 100%;
+}
+
+form, mat-form-field {
+    width: 100%;
+}

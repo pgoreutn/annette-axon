@@ -1,0 +1,14 @@
+{
+  "aaa": "AAA",
+  "axon.bpm-config.title": "BPM Configuration",
+  "axon.bpm-config.schemas": "Schemas",
+  "axon.bpm-config.processes": "Processes",
+
+
+  "axon.bpm-config.schema.createTitle": "Create schema",
+  "axon.bpm-config.schema.viewTitle": "View schema",
+  "axon.bpm-config.schema.updateTitle": "Update schema",
+  "axon.bpm-config.schema.schemaTab": "Schema",
+  "axon.bpm-config.schema.xmlTab": "XML"
+
+}

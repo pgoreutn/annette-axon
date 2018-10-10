@@ -5,13 +5,13 @@
   $accent: map-get($theme, accent);
   $foreground: map-get($theme, foreground);
 
-  a {
+  /*a {
     color: mat-color($foreground, text);
 
     &:hover {
       color: mat-color($accent);
     }
-  }
+  }*/
 
   code {
     color: mat-color($accent, lighter-contrast);

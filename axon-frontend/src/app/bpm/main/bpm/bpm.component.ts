@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {Subject} from 'rxjs'
 import {select, Store} from '@ngrx/store'
 import {ActivationEnd, Router} from '@angular/router'
-import {TitleService} from '@app/core'
+import {TitleService} from '../../../core/index'
 import {TranslateService} from '@ngx-translate/core'
-import {selectorSettings, SettingsState} from '@app/settings'
+import {selectorSettings, SettingsState} from '../../../settings/index'
 import {filter, map, takeUntil} from 'rxjs/operators'
 
 @Component({

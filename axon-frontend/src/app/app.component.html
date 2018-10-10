@@ -26,15 +26,29 @@
           <img [src]="logo"/></span>
       <span routerLink=""
             class="branding spacer center d-none d-sm-inline d-md-none"><img
-        [src]="logo"/> {{ 'axon.title.short' | translate }}</span>
+          [src]="logo"/> {{ 'axon.title.short' | translate }}</span>
       <span routerLink="" class="branding spacer d-none d-md-inline"><img
-        [src]="logo"/> {{ 'axon.title' | translate }}</span>
+          [src]="logo"/> {{ 'axon.title' | translate }}</span>
 
-      <span class="d-none d-md-inline">
-          <button mat-button class="nav-button" *ngFor="let item of navigation"
+      <span class="d-none d-md-inline" *ngFor="let item of navigation">
+
+          <button mat-button class="nav-button" *ngIf="!item.children"
                   [routerLink]="[item.link]" routerLinkActive="active">
             {{item.label | translate}}
           </button>
+
+          <button *ngIf="item.children"
+                 mat-button
+                 [matMenuTriggerFor]="toolbarConfigMenu">
+            {{item.label | translate}}
+          </button>
+
+          <mat-menu #toolbarConfigMenu="matMenu" >
+            <button mat-menu-item *ngFor="let child of item.children"
+                    [routerLink]="[child.link]" routerLinkActive="active">
+              <span>{{child.label | translate}}</span>
+            </button>
+          </mat-menu>
       </span>
 
       <span>
@@ -68,9 +82,6 @@
       </mat-menu>
 
 
-
-
-
     </mat-toolbar>
   </div>
 
@@ -97,3 +108,5 @@
   </div>
 
 </mat-sidenav-container>
+
+<bootstrap-growl [alertCount]="3" [autoClose]="10000"></bootstrap-growl>

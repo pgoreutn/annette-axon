@@ -14,7 +14,6 @@ import { initStateFromLocalStorage } from './meta-reducers/init-state-from-local
 import { LocalStorageService } from './local-storage/local-storage.service';
 import { authReducer } from './auth/auth.reducer';
 import { AuthEffects } from './auth/auth.effects';
-import { AuthGuardService } from './auth/auth-guard.service';
 import { AnimationsService } from './animations/animations.service';
 import { TitleService } from './title/title.service';
 import {AuthGuard} from './auth/auth.guard'
@@ -56,7 +55,7 @@ if (!environment.production) {
     }),
 
     // keycloak
-    KeycloakAngularModule,
+    KeycloakAngularModule
   ],
   declarations: [],
   providers: [

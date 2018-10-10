@@ -50,11 +50,20 @@ export class AppComponent implements OnInit, OnDestroy {
     { link: 'bpm/processes', label: 'axon.menu.processes' },
     { link: 'org-structure', label: 'axon.menu.org-structure' },
     { link: 'projects', label: 'axon.menu.projects' },
-    { link: 'config', label: 'axon.menu.config' },
-    { link: 'admin', label: 'axon.menu.admin' },
-    { link: 'about', label: 'axon.menu.about' },
+    {
+      label: 'axon.menu.config',
+      children: [
+        {link: 'bpm-config/', label: 'axon.menu.config.bpm'},
+        {link: 'config/', label: 'axon.menu.config.org-structure'},
+        {link: 'config/', label: 'axon.menu.config.forms'},
+        {link: 'config/', label: 'axon.menu.config.knowledge'},
+        {link: 'config/', label: 'axon.menu.config.projects'},
+      ]
+    },
+    { link: 'admin', label: 'axon.menu.admin' }
+    /*{ link: 'about', label: 'axon.menu.about' },
     { link: 'features', label: 'axon.menu.features' },
-    { link: 'examples', label: 'axon.menu.examples' }
+    { link: 'examples', label: 'axon.menu.examples' }*/
   ];
   navigationSideMenu = [
     ...this.navigation,

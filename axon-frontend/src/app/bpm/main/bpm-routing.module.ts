@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 
-import {AuthGuard} from '@app/core';
+import {AuthGuard} from '../../core/index';
 import {BpmComponent} from './bpm/bpm.component'
 import {TasksComponent} from './tasks/tasks.component'
 import {ProcessesComponent} from './processes/processes.component'

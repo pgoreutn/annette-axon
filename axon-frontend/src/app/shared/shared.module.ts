@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -23,14 +23,17 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { BigInputComponent } from './big-input/big-input.component';
 import { BigInputActionComponent } from './big-input/big-input-action.component';
+import {MatAutocompleteModule, MatTableModule} from '@angular/material'
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+      ReactiveFormsModule,
 
     TranslateModule,
 
+    MatAutocompleteModule,
     MatButtonModule,
     MatToolbarModule,
     MatSelectModule,
@@ -46,15 +49,19 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     MatIconModule,
     MatTooltipModule,
     MatSnackBarModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTableModule,
+
   ],
   declarations: [BigInputComponent, BigInputActionComponent],
   exports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
 
     TranslateModule,
 
+    MatAutocompleteModule,
     MatButtonModule,
     MatMenuModule,
     MatTabsModule,
@@ -71,9 +78,11 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     MatTooltipModule,
     MatSnackBarModule,
     MatSlideToggleModule,
+    MatTableModule,
 
     BigInputComponent,
-    BigInputActionComponent
+    BigInputActionComponent,
+
   ]
 })
 export class SharedModule {}
