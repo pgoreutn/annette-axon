@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {Subject} from 'rxjs'
 import {select, Store} from '@ngrx/store'
 import {ActivationEnd, Router} from '@angular/router'
@@ -6,13 +6,14 @@ import {TitleService} from '../../../core/index'
 import {TranslateService} from '@ngx-translate/core'
 import {selectorSettings, SettingsState} from '../../../settings/index'
 import {filter, map, takeUntil} from 'rxjs/operators'
+import {DEFAULT_LANGUAGE} from '@app/shared/languages'
 
 @Component({
   selector: 'axon-bpm',
   templateUrl: './bpm.component.html',
   styleUrls: ['./bpm.component.css']
 })
-export class BpmComponent implements OnInit {
+export class BpmComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
 
@@ -24,7 +25,7 @@ export class BpmComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.translate.setDefaultLang('en');
+    this.translate.setDefaultLang(DEFAULT_LANGUAGE);
     this.subscribeToSettings();
     this.subscribeToRouterEvents();
   }

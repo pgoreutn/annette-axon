@@ -47,7 +47,7 @@ export class BpmConfigModule {
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(
       http,
-      `${environment.i18nPrefix}/assets/i18n/bpm-config/`,
+      `${environment.i18nPrefix}/assets/i18n/bpm/`,
       '.json'
   );
 }

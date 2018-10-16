@@ -1,18 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import {select, Store} from '@ngrx/store'
-import {ActivationEnd, Router} from '@angular/router'
-import {TitleService} from '../../../core/index'
-import {TranslateService} from '@ngx-translate/core'
-import {selectorSettings, SettingsState} from '../../../settings/index'
-import {filter, map, takeUntil} from 'rxjs/operators'
-import {Subject} from 'rxjs'
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import {select, Store} from '@ngrx/store';
+import {ActivationEnd, Router} from '@angular/router';
+import {TitleService} from '@app/core/index';
+import {TranslateService} from '@ngx-translate/core';
+import {selectorSettings, SettingsState} from '@app/settings/index';
+import {filter, map, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {DEFAULT_LANGUAGE} from '@app/shared/languages';
 
 @Component({
   selector: 'axon-bpm-config',
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.css']
 })
-export class ConfigComponent implements OnInit {
+export class ConfigComponent implements OnInit, OnDestroy {
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -24,7 +25,7 @@ export class ConfigComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.translate.setDefaultLang('en');
+    this.translate.setDefaultLang(DEFAULT_LANGUAGE);
     this.subscribeToSettings();
     this.subscribeToRouterEvents();
   }

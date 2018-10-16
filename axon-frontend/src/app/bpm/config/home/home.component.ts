@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ROUTE_ANIMATIONS_ELEMENTS} from '../../../core/index'
+import {ROUTE_ANIMATIONS_ELEMENTS} from '@app/core/index';
 
 @Component({
   selector: 'axon-bpm-config-home',

@@ -11,6 +11,13 @@ mat-card-header > .row {
     width: 100%;
 }
 
-form, mat-form-field {
+form, mat-form-field, table {
     width: 100%;
+}
+
+.mat-menu-item mat-icon.fas {
+    position: relative;
+    top: 2px;
+    left: 5px;
+    font-size: 16px;
 }

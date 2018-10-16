@@ -21,9 +21,26 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { BigInputComponent } from './big-input/big-input.component';
-import { BigInputActionComponent } from './big-input/big-input-action.component';
-import {MatAutocompleteModule, MatTableModule} from '@angular/material'
+import {
+  MatAutocompleteModule,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatSortModule,
+  MatTableModule
+} from '@angular/material'
+import {FlexLayoutModule} from '@angular/flex-layout'
+import {BidiModule} from '@angular/cdk/bidi'
+
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+  suppressScrollX: true,
+  wheelSpeed: 2,
+  wheelPropagation: true,
+  minScrollbarLength: 20
+};
 
 @NgModule({
   imports: [
@@ -47,13 +64,22 @@ import {MatAutocompleteModule, MatTableModule} from '@angular/material'
     MatListModule,
     MatMenuModule,
     MatIconModule,
+    MatProgressBarModule,
     MatTooltipModule,
     MatSnackBarModule,
     MatSlideToggleModule,
     MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    FlexLayoutModule,
+
+
+    BidiModule,
+
+    PerfectScrollbarModule
 
   ],
-  declarations: [BigInputComponent, BigInputActionComponent],
+  declarations: [],
   exports: [
     CommonModule,
     FormsModule,
@@ -75,14 +101,25 @@ import {MatAutocompleteModule, MatTableModule} from '@angular/material'
     MatSelectModule,
     MatToolbarModule,
     MatIconModule,
+    MatProgressBarModule,
     MatTooltipModule,
     MatSnackBarModule,
     MatSlideToggleModule,
     MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    FlexLayoutModule,
 
-    BigInputComponent,
-    BigInputActionComponent,
+    BidiModule,
 
-  ]
+    PerfectScrollbarModule
+
+  ],
+  providers: [
+    {
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+    }
+  ],
 })
 export class SharedModule {}

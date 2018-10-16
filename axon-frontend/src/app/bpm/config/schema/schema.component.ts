@@ -54,7 +54,7 @@ export class SchemaComponent implements OnInit {
       private store: Store<any>
   ) {
     this.activatedRoute.params.subscribe(params => {
-      console.log(params)
+      //console.log(params)
       this.update(params['action'], params['id'])
     });
   }
@@ -99,11 +99,11 @@ export class SchemaComponent implements OnInit {
     this.id = id
     if (id != "new") {
       this.showSchema = false
-      console.log('loading schema...')
+      //console.log('loading schema...')
       this.schemaBackend.findById(id)
           .subscribe(
               schema => {
-                console.log(schema)
+                //console.log(schema)
                 this.schema = schema
                 this.showSchema = true
               },

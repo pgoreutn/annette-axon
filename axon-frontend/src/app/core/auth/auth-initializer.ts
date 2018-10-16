@@ -7,7 +7,7 @@ export function initializer(keycloak: KeycloakService, authService: AuthService)
     return new Promise(async (resolve, reject) => {
       try {
         await keycloak.init({
-          config: "/web-api/keycloak",
+          config: '/web-api/keycloak',
           initOptions: {
             onLoad: 'login-required',
             checkLoginIframe: false
