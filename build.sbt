@@ -9,7 +9,7 @@ val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % Test
 
 lazy val root = (project in file("."))
   .settings(name := "annette-axon")
-  .aggregate(`axon-backend`, `annette-shared`, `bpm-repository-api`, `bpm-repository-impl`)
+  .aggregate(`axon-backend`, `annette-shared`, `bpm-repository-api`, `bpm-repository-impl`, `authorization-api`, `authorization-impl`)
   .settings(commonSettings: _*)
 
 
@@ -37,6 +37,29 @@ lazy val `annette-shared` = (project in file("annette-shared"))
       Dependencies.jwt
     )
   )
+
+
+lazy val `authorization-api` = (project in file("authorization-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslApi
+    )
+  )
+  .dependsOn(`annette-shared`)
+
+lazy val `authorization-impl` = (project in file("authorization-impl"))
+  .enablePlugins(LagomScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslTestKit,
+      macwire,
+      scalaTest
+    )
+  )
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`authorization-api`)
+
 
 
 
