@@ -25,7 +25,6 @@ import {
   ActionSettingsChangeAnimationsPageDisabled
 } from './settings';
 
-
 @Component({
   selector: 'axon-root',
   templateUrl: './app.component.html',
@@ -37,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') componentCssClass;
 
-  kcProfile: Keycloak.KeycloakProfile
+  kcProfile: Keycloak.KeycloakProfile;
 
   isProd = env.production;
   envName = env.envName;
@@ -53,11 +52,11 @@ export class AppComponent implements OnInit, OnDestroy {
     {
       label: 'axon.menu.config',
       children: [
-        {link: 'bpm-config/', label: 'axon.menu.config.bpm'},
-        {link: 'config/', label: 'axon.menu.config.org-structure'},
-        {link: 'config/', label: 'axon.menu.config.forms'},
-        {link: 'config/', label: 'axon.menu.config.knowledge'},
-        {link: 'config/', label: 'axon.menu.config.projects'},
+        { link: 'bpm-config/', label: 'axon.menu.config.bpm' },
+        { link: 'config/', label: 'axon.menu.config.org-structure' },
+        { link: 'config/', label: 'axon.menu.config.forms' },
+        { link: 'config/', label: 'axon.menu.config.knowledge' },
+        { link: 'config/', label: 'axon.menu.config.projects' }
       ]
     },
     { link: 'admin', label: 'axon.menu.admin' }
@@ -85,7 +84,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private static trackPageView(event: NavigationEnd) {
     // TODO: add Google analytics
-  /*  (<any>window).ga('set', 'page', event.urlAfterRedirects);
+    /*  (<any>window).ga('set', 'page', event.urlAfterRedirects);
     (<any>window).ga('send', 'pageview');*/
   }
 
@@ -106,11 +105,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLogoutClick() {
-    this.authService.logout()
+    this.authService.logout();
   }
 
   onProfileClick() {
-    this.authService.profile()
+    this.authService.profile();
   }
 
   onLanguageSelect({ value: language }) {
@@ -122,9 +121,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store
       .pipe(select(selectorAuth), takeUntil(this.unsubscribe$))
       .subscribe(auth => {
-        console.log(auth)
-        this.isAuthenticated = auth.isAuthenticated
-        this.kcProfile = auth.profile
+        console.log(auth);
+        this.isAuthenticated = auth.isAuthenticated;
+        this.kcProfile = auth.profile;
       });
   }
 

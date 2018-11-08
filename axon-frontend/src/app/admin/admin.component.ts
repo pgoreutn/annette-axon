@@ -1,18 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import {Subject} from 'rxjs'
-import {select, Store} from '@ngrx/store'
-import {ActivationEnd, Router} from '@angular/router'
-import {TitleService} from '@app/core'
-import {TranslateService} from '@ngx-translate/core'
-import {selectorSettings, SettingsState} from '@app/settings'
-import {filter, map, takeUntil} from 'rxjs/operators'
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subject} from 'rxjs';
+import {select, Store} from '@ngrx/store';
+import {ActivationEnd, Router} from '@angular/router';
+import {TitleService} from '@app/core';
+import {TranslateService} from '@ngx-translate/core';
+import {selectorSettings, SettingsState} from '@app/settings';
+import {filter, map, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'axon-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
 

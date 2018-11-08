@@ -1,16 +1,16 @@
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Schema } from './schema.model';
 import { SchemaActions, SchemaActionTypes } from './schema.actions';
-import {SchemaSummary} from '@app/bpm/shared/services/model'
-import {createFeatureSelector} from '@ngrx/store'
+import {SchemaSummary} from '@app/bpm/shared/services/model';
+import {createFeatureSelector} from '@ngrx/store';
 
 export interface State extends EntityState<SchemaSummary> {
   // additional entities state properties
-  filter: string
-  loading: boolean
-  loadingFailure: any
-  saving: boolean
-  savingFailure: any
+  filter: string;
+  loading: boolean;
+  loadingFailure: any;
+  saving: boolean;
+  savingFailure: any;
 }
 
 export function sortByName(a: SchemaSummary, b: SchemaSummary): number {
@@ -36,7 +36,7 @@ export function reducer(
 ): State {
   switch (action.type) {
     case SchemaActionTypes.CreateSchema: {
-      return {...state, saving: true, savingFailure: null}
+      return {...state, saving: true, savingFailure: null};
     }
 
     case SchemaActionTypes.CreateSchemaSuccess: {
@@ -44,11 +44,11 @@ export function reducer(
     }
 
     case SchemaActionTypes.CreateSchemaFailure: {
-      return {...state, saving: false, savingFailure: action.payload.failure}
+      return {...state, saving: false, savingFailure: action.payload.failure};
     }
 
     case SchemaActionTypes.UpdateSchema: {
-      return {...state, saving: true, savingFailure: null}
+      return {...state, saving: true, savingFailure: null};
     }
 
     case SchemaActionTypes.UpdateSchemaSuccess: {
@@ -56,7 +56,7 @@ export function reducer(
     }
 
     case SchemaActionTypes.DeleteSchema: {
-      return {...state, saving: true, savingFailure: null}
+      return {...state, saving: true, savingFailure: null};
     }
 
     case SchemaActionTypes.DeleteSchemaSuccess: {
@@ -64,17 +64,17 @@ export function reducer(
     }
 
     case SchemaActionTypes.FindSchemas: {
-      return {...state, loading: true, filter: action.payload.filter}
+      return {...state, loading: true, filter: action.payload.filter};
     }
 
     case SchemaActionTypes.FindSchemasSuccess: {
-      let state1 = adapter.addAll(action.payload.schemas, state);
-      return {...state1, loading: false}
+      const state1 = adapter.addAll(action.payload.schemas, state);
+      return {...state1, loading: false};
     }
 
     case SchemaActionTypes.FindSchemasFailure: {
-      let state1 = adapter.removeAll(state);
-      return {...state1, loadingFailure: action.payload.failure, loading: false}
+      const state1 = adapter.removeAll(state);
+      return {...state1, loadingFailure: action.payload.failure, loading: false};
     }
 
 
@@ -94,4 +94,4 @@ export const {
   selectTotal,
 } = adapter.getSelectors(selectSchemaState);
 
-export const selectFilter = state => state.schema.filter
+export const selectFilter = state => state.schema.filter;

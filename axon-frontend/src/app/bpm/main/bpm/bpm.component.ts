@@ -1,18 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import {Subject} from 'rxjs'
-import {select, Store} from '@ngrx/store'
-import {ActivationEnd, Router} from '@angular/router'
-import {TitleService} from '../../../core/index'
-import {TranslateService} from '@ngx-translate/core'
-import {selectorSettings, SettingsState} from '../../../settings/index'
-import {filter, map, takeUntil} from 'rxjs/operators'
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subject} from 'rxjs';
+import {select, Store} from '@ngrx/store';
+import {ActivationEnd, Router} from '@angular/router';
+import {TitleService} from '../../../core/index';
+import {TranslateService} from '@ngx-translate/core';
+import {selectorSettings, SettingsState} from '../../../settings/index';
+import {filter, map, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'axon-bpm',
   templateUrl: './bpm.component.html',
   styleUrls: ['./bpm.component.css']
 })
-export class BpmComponent implements OnInit {
+export class BpmComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
 

@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import {SchemaBackendService} from '../../shared/services/schema-backend.service'
-import {SchemaSummary} from '../../shared/services/model'
-import {MatTableDataSource} from '@angular/material'
-import {SelectionModel} from '@angular/cdk/collections'
-import {FormControl} from '@angular/forms'
-import {debounceTime} from 'rxjs/operators'
-import {select, Store} from '@ngrx/store'
-import {Observable} from 'rxjs'
-import * as fromSchema from '../../shared/services/schema.reducer'
-import {DeleteSchema, FindSchemas} from '@app/bpm/shared/services/schema.actions'
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {SchemaBackendService} from '../../shared/services/schema-backend.service';
+import {SchemaSummary} from '../../shared/services/model';
+import {MatTableDataSource} from '@angular/material';
+import {SelectionModel} from '@angular/cdk/collections';
+import {FormControl} from '@angular/forms';
+import {debounceTime} from 'rxjs/operators';
+import {select, Store} from '@ngrx/store';
+import {Observable} from 'rxjs';
+import * as fromSchema from '../../shared/services/schema.reducer';
+import {DeleteSchema, FindSchemas} from '@app/bpm/shared/services/schema.actions';
 
 
 @Component({
@@ -16,7 +16,7 @@ import {DeleteSchema, FindSchemas} from '@app/bpm/shared/services/schema.actions
   templateUrl: './schemas.component.html',
   styleUrls: ['./schemas.component.css']
 })
-export class SchemasComponent implements OnInit {
+export class SchemasComponent implements OnInit, OnDestroy {
 
   options = [
       'A',
@@ -27,14 +27,14 @@ export class SchemasComponent implements OnInit {
       'Option B',
       'Option C',
       'Option D',
-  ]
+  ];
 
-  filter
+  filter;
   filterControl = new FormControl();
-  private filterCtrlSub: any
+  private filterCtrlSub: any;
 
   displayedColumns: string[] = ['select', 'id', 'name', 'description', 'notation'];
-  schemas =  new MatTableDataSource<SchemaSummary>([])
+  schemas =  new MatTableDataSource<SchemaSummary>([]);
   selection = new SelectionModel<SchemaSummary>(true, []);
 
 
@@ -42,29 +42,29 @@ export class SchemasComponent implements OnInit {
               private store: Store<any>) { }
 
   ngOnInit() {
-    //this.store.dispatch(new FindSchemas({ filter: "" }));
+    // this.store.dispatch(new FindSchemas({ filter: "" }));
     this.store.pipe(select(fromSchema.selectFilter))
         .subscribe(
             res => {
-              console.log(`Filter pipe: ${res}`)
-              this.filter = res
+              console.log(`Filter pipe: ${res}`);
+              this.filter = res;
             }
-        )
+        );
     this.store
         .pipe(select(fromSchema.selectAll))
         .subscribe(
             res => {
-              console.log('Schemas pipe:')
-              console.log(res)
-              this.schemas = new MatTableDataSource<SchemaSummary>(res)
-              let ids = res.map(s => s.id)
-              this.selection.selected.filter(s => !ids.includes(s.id)).forEach(r => this.selection.toggle(r))
+              console.log('Schemas pipe:');
+              console.log(res);
+              this.schemas = new MatTableDataSource<SchemaSummary>(res);
+              const ids = res.map(s => s.id);
+              this.selection.selected.filter(s => !ids.includes(s.id)).forEach(r => this.selection.toggle(r));
             }
-        )
+        );
 
     this.filterCtrlSub = this.filterControl.valueChanges
         .pipe(debounceTime(500))
-        .subscribe(newFilter => this.find(newFilter))
+        .subscribe(newFilter => this.find(newFilter));
   }
 
   ngOnDestroy() {
@@ -86,15 +86,15 @@ export class SchemasComponent implements OnInit {
   }
 
   private find(newFilter: string) {
-    console.log(`new filter: ${newFilter}`)
+    console.log(`new filter: ${newFilter}`);
     this.store.dispatch(new FindSchemas({ filter: newFilter }));
   }
 
   firstSelected() {
     if (this.selection.selected && this.selection.selected[0] && this.selection.selected[0].id) {
-      return this.selection.selected[0].id
+      return this.selection.selected[0].id;
     } else {
-      return "none"
+      return 'none';
     }
   }
 
@@ -104,10 +104,10 @@ export class SchemasComponent implements OnInit {
   }
 
   clearFilter() {
-    this.find("")
+    this.find('');
   }
 
   refresh() {
-    this.find(this.filter)
+    this.find(this.filter);
   }
 }

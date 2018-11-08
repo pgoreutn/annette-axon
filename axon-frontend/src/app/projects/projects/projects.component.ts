@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subject} from 'rxjs'
 import {select, Store} from '@ngrx/store'
 import {ActivationEnd, Router} from '@angular/router'
@@ -12,7 +12,7 @@ import {filter, map, takeUntil} from 'rxjs/operators'
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.css']
 })
-export class ProjectsComponent implements OnInit {
+export class ProjectsComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
 
