@@ -204,24 +204,246 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       }).flatMap(identity)
     }
 
-  }
+    "checkAllPermissions" in {
+      val P = Vector(
+        Permission("Permission-A", "a", "b", "c"),
+        Permission("Permission-A", "a", "b", ""),
+        Permission("Permission-A", "a", "", ""),
+        Permission("Permission-B", "a", "b", "c"),
+        Permission("Permission-B", "a", "", ""),
+        Permission("Permission-B", "", "b", "c")
+      )
+      val role1 = Role("roleA-1", "name", None, Set(P(0), P(1)))
+      val role2 = Role("roleA-2", "name", None, Set(P(2), P(3)))
+      val role3 = Role("roleA-3", "name", None, Set(P(4), P(5)))
 
-  /*def awaitSuccess[T](maxDuration: FiniteDuration = 10.seconds, checkEvery: FiniteDuration = 100.milliseconds)(block: => Future[T]): Future[T] = {
-    val checkUntil = System.currentTimeMillis() + maxDuration.toMillis
+      (for {
+        created1 <- client.createRole.invoke(role1)
+        created2 <- client.createRole.invoke(role2)
+        created3 <- client.createRole.invoke(role3)
+      } yield {
+        awaitSuccess() {
 
-    def doCheck(): Future[T] = {
-      block.recoverWith {
-        case recheck if checkUntil > System.currentTimeMillis() =>
-          val timeout = Promise[T]()
-          server.application.actorSystem.scheduler.scheduleOnce(checkEvery) {
-            timeout.completeWith(doCheck())
-          }(server.executionContext)
-          timeout.future
-      }
+          for {
+            check1 <- client.checkAllPermissions.invoke(
+              CheckPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set(P(0), P(1), P(2), P(3), P(4), P(5))
+              )
+            )
+            check2 <- client.checkAllPermissions.invoke(
+              CheckPermissions(
+                Set(role1.id, role2.id),
+                Set(P(0), P(1), P(2), P(3), P(4), P(5))
+              )
+            )
+            check3 <- client.checkAllPermissions.invoke(
+              CheckPermissions(
+                Set(),
+                Set(P(0), P(1), P(2), P(3), P(4), P(5))
+              )
+            )
+            check4 <- client.checkAllPermissions.invoke(
+              CheckPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set()
+              )
+            )
+            check5 <- client.checkAllPermissions.invoke(
+              CheckPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set(P(0), Permission("not-existent"))
+              )
+            )
+          } yield {
+
+            created1 shouldBe role1
+            created2 shouldBe role2
+            created3 shouldBe role3
+            check1 shouldBe true
+            check2 shouldBe false
+            check3 shouldBe false
+            check4 shouldBe false // ???
+            check5 shouldBe false
+
+          }
+        }
+      }).flatMap(identity)
     }
 
-    doCheck()
-  }*/
+    "checkAnyPermissions" in {
+      val P = Vector(
+        Permission("Permission-C", "a", "b", "c"),
+        Permission("Permission-C", "a", "b", ""),
+        Permission("Permission-C", "a", "", ""),
+        Permission("Permission-D", "a", "b", "c"),
+        Permission("Permission-D", "a", "", ""),
+        Permission("Permission-D", "", "b", "c")
+      )
+      val role1 = Role("roleB-1", "name", None, Set(P(0), P(1)))
+      val role2 = Role("roleB-2", "name", None, Set(P(2), P(3)))
+      val role3 = Role("roleB-3", "name", None, Set(P(4), P(5)))
+
+      (for {
+        created1 <- client.createRole.invoke(role1)
+        created2 <- client.createRole.invoke(role2)
+        created3 <- client.createRole.invoke(role3)
+      } yield {
+        awaitSuccess() {
+
+          for {
+            check1 <- client.checkAnyPermissions.invoke(
+              CheckPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set(P(0), Permission("not-existent"), Permission("not-existent2"))
+              )
+            )
+            check2 <- client.checkAnyPermissions.invoke(
+              CheckPermissions(
+                Set(role1.id, role2.id),
+                Set(P(5), Permission("not-existent"), Permission("not-existent2"))
+              )
+            )
+            check3 <- client.checkAnyPermissions.invoke(
+              CheckPermissions(
+                Set(),
+                Set(P(0), P(1), P(2), P(3), P(4), P(5))
+              )
+            )
+            check4 <- client.checkAnyPermissions.invoke(
+              CheckPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set()
+              )
+            )
+            check5 <- client.checkAnyPermissions.invoke(
+              CheckPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set(Permission("not-existent"), Permission("not-existent2"), Permission("not-existent2"))
+              )
+            )
+          } yield {
+
+            created1 shouldBe role1
+            created2 shouldBe role2
+            created3 shouldBe role3
+            check1 shouldBe true
+            check2 shouldBe false
+            check3 shouldBe false
+            check4 shouldBe false // ???
+            check5 shouldBe false
+
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "findPermissions" in {
+      val P = Vector(
+        Permission("Permission-E", "a", "b", "c"),
+        Permission("Permission-E", "a", "b", ""),
+        Permission("Permission-E", "a", "", ""),
+        Permission("Permission-F", "a", "b", "c"),
+        Permission("Permission-F", "a", "", ""),
+        Permission("Permission-F", "", "b", "c")
+      )
+      val role1 = Role("roleC-1", "name", None, Set(P(0), P(1)))
+      val role2 = Role("roleC-2", "name", None, Set(P(2), P(3)))
+      val role3 = Role("roleC-3", "name", None, Set(P(4), P(5)))
+
+      (for {
+        created1 <- client.createRole.invoke(role1)
+        created2 <- client.createRole.invoke(role2)
+        created3 <- client.createRole.invoke(role3)
+      } yield {
+        awaitSuccess() {
+
+          for {
+            check1 <- client.findPermissions.invoke(
+              FindPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set(P(0).id)
+              )
+            )
+            check2 <- client.findPermissions.invoke(
+              FindPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set(P(0).id, P(5).id)
+              )
+            )
+            check3 <- client.findPermissions.invoke(
+              FindPermissions(
+                Set(role2.id, role3.id),
+                Set(P(0).id)
+              )
+            )
+            check4 <- client.findPermissions.invoke(
+              FindPermissions(
+                Set(role2.id, role3.id),
+                Set(P(0).id, P(5).id)
+              )
+            )
+            check5 <- client.findPermissions.invoke(
+              FindPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set("non-existent1", P(5).id)
+              )
+            )
+            check6 <- client.findPermissions.invoke(
+              FindPermissions(
+                Set(),
+                Set("non-existent1", P(5).id)
+              )
+            )
+            check7 <- client.findPermissions.invoke(
+              FindPermissions(
+                Set(role1.id, role2.id, role3.id),
+                Set()
+              )
+            )
+
+          } yield {
+
+            created1 shouldBe role1
+            created2 shouldBe role2
+            created3 shouldBe role3
+
+            check1.size shouldBe 3
+            check1 should contain(P(0))
+            check1 should contain(P(1))
+            check1 should contain(P(2))
+
+            check2.size shouldBe 6
+            check2 should contain(P(0))
+            check2 should contain(P(1))
+            check2 should contain(P(2))
+            check2 should contain(P(3))
+            check2 should contain(P(4))
+            check2 should contain(P(5))
+
+            check3.size shouldBe 1
+            check3 should contain(P(2))
+
+            check4.size shouldBe 4
+            check4 should contain(P(2))
+            check4 should contain(P(3))
+            check4 should contain(P(4))
+            check4 should contain(P(5))
+
+            check5.size shouldBe 3
+            check5 should contain(P(3))
+            check5 should contain(P(4))
+            check5 should contain(P(5))
+
+            check6.size shouldBe 0
+
+            check7.size shouldBe 0
+
+          }
+        }
+      }).flatMap(identity)
+    }
+  }
 
   def awaitSuccess[T](maxDuration: FiniteDuration = 10.seconds, checkEvery: FiniteDuration = 100.milliseconds)(block: => Future[T]): Future[T] = {
     val checkUntil = System.currentTimeMillis() + maxDuration.toMillis

@@ -8,7 +8,7 @@ import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
 
 import scala.collection._
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Implementation of the BpmService.
@@ -44,7 +44,29 @@ class AuthorizationServiceImpl(registry: PersistentEntityRegistry, system: Actor
     roleRepository.findRoles(filter.trim)
   }
 
-  override def checkAllPermissions: ServiceCall[CheckPermissions, Boolean] = ???
-  override def checkAnyPermissions: ServiceCall[CheckPermissions, Boolean] = ???
-  override def findPermissions: ServiceCall[FindPermissions, immutable.Set[Permission]] = ???
+  override def checkAllPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall {
+    case CheckPermissions(roles, permissions) =>
+      if (roles.isEmpty || permissions.isEmpty) {
+        Future.successful(false)
+      } else {
+        roleRepository.checkAllPermissions(roles, permissions)
+      }
+
+  }
+  override def checkAnyPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall {
+    case CheckPermissions(roles, permissions) =>
+      if (roles.isEmpty || permissions.isEmpty) {
+        Future.successful(false)
+      } else {
+        roleRepository.checkAnyPermissions(roles, permissions)
+      }
+  }
+  override def findPermissions: ServiceCall[FindPermissions, immutable.Set[Permission]] = ServiceCall {
+    case FindPermissions(roles, permissionIds) =>
+      if (roles.isEmpty || permissionIds.isEmpty) {
+        Future.successful(immutable.Set.empty)
+      } else {
+        roleRepository.findPermissions(roles, permissionIds)
+      }
+  }
 }
