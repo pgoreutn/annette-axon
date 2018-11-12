@@ -10,28 +10,33 @@
 package annette.authorization.impl
 
 import akka.Done
-import annette.authorization.api.{Role, RoleAlreadyExist, RoleNotFound}
+import annette.authorization.api._
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 
 class RoleEntity extends PersistentEntity {
   override type Command = RoleCommand
   override type Event = RoleEvent
-  override type State = Option[Role]
+  override type State = Option[BaseRole]
   override def initialState = None
 
   override def behavior: Behavior = {
     case Some(_) =>
       Actions()
-        .onReadOnlyCommand[FindRoleById, Option[Role]] {
+        .onReadOnlyCommand[FindRoleById, Option[BaseRole]] {
           case (FindRoleById(id), ctx, state) => ctx.reply(state)
         }
-        .onReadOnlyCommand[CreateRole, Role] {
-          case (CreateRole(Role(id, _, _, _)), ctx, state) =>
-            ctx.commandFailed(RoleAlreadyExist(id))
+        .onReadOnlyCommand[CreateRole, BaseRole] {
+          case (CreateRole(role), ctx, state) =>
+            ctx.commandFailed(RoleAlreadyExist(role.id))
+
         }
-        .onCommand[UpdateRole, Role] {
-          case (UpdateRole(role), ctx, state) =>
-            ctx.thenPersist(RolePermissionDeleted(role.id))(_ => ())
+        .onReadOnlyCommand[UpdateRole, BaseRole] {
+          case (UpdateRole(role), ctx, state) if role.isComposite != state.get.isComposite =>
+            ctx.commandFailed(RoleTypeCannotBeChanged(role.id))
+        }
+        .onCommand[UpdateRole, BaseRole] {
+          case (UpdateRole(role), ctx, state) if role.isComposite == state.get.isComposite =>
+            ctx.thenPersist(RoleItemsDeleted(role.id))(_ => ())
             ctx.thenPersist(RoleUpdated(role))(_ => ctx.reply(role))
         }
         .onCommand[DeleteRole, Done] {
@@ -47,18 +52,18 @@ class RoleEntity extends PersistentEntity {
 
     case None =>
       Actions()
-        .onCommand[CreateRole, Role] {
+        .onCommand[CreateRole, BaseRole] {
           case (CreateRole(role), ctx, state) =>
-            ctx.thenPersist(RolePermissionDeleted(role.id))(_ => ())
+            ctx.thenPersist(RoleItemsDeleted(role.id))(_ => ())
             ctx.thenPersist(RoleCreated(role))(_ => ctx.reply(role))
         }
-        .onReadOnlyCommand[UpdateRole, Role] {
-          case (UpdateRole(Role(id, _, _, _)), ctx, state) => ctx.commandFailed(RoleNotFound(id))
+        .onReadOnlyCommand[UpdateRole, BaseRole] {
+          case (UpdateRole(role), ctx, state) => ctx.commandFailed(RoleNotFound(role.id))
         }
         .onReadOnlyCommand[DeleteRole, Done] {
           case (DeleteRole(id), ctx, state) => ctx.commandFailed(RoleNotFound(id))
         }
-        .onReadOnlyCommand[FindRoleById, Option[Role]] {
+        .onReadOnlyCommand[FindRoleById, Option[BaseRole]] {
           case (FindRoleById(_), ctx, state) => ctx.reply(None)
         }
         .onEvent {

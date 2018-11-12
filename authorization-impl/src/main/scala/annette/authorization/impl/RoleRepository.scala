@@ -8,6 +8,8 @@ import scala.collection.immutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.collection.JavaConversions._
 
+private case class Subrole(role: RoleId, subrole: RoleId)
+
 private[impl] class RoleRepository(session: CassandraSession)(implicit ec: ExecutionContext) {
 
   private lazy val checkPermissionStatementFuture =
@@ -21,6 +23,21 @@ private[impl] class RoleRepository(session: CassandraSession)(implicit ec: Execu
           from role_permissions
           where role_id in :roles and permission_id = :pid
       """)
+  private lazy val findSubrolesStatementFuture = session.prepare("""
+        select role_id, subrole_id
+          from role_subroles
+          where role_id in :roles
+      """)
+
+  private def getAllRoles(roles: immutable.Set[RoleId]): Future[immutable.Set[RoleId]] = {
+    for {
+      findSubrolesStatement <- findSubrolesStatementFuture
+      stmt = findSubrolesStatement
+        .bind()
+        .setList("roles", roles.toList)
+      subroles <- session.selectAll(stmt).map(_.map(convertSubroles).toSet)
+    } yield roles -- subroles.map(_.role) ++ subroles.map(_.subrole)
+  }
 
   private def checkPermission(roles: immutable.Set[RoleId], permission: Permission) = {
     for {
@@ -102,7 +119,8 @@ private[impl] class RoleRepository(session: CassandraSession)(implicit ec: Execu
       role.getString("name"), {
         val s = role.getString("description")
         if (s.nonEmpty) Some(s) else None
-      }
+      },
+      role.getBool("is_composite")
     )
   }
 
@@ -112,6 +130,13 @@ private[impl] class RoleRepository(session: CassandraSession)(implicit ec: Execu
       role.getString("arg1"),
       role.getString("arg2"),
       role.getString("arg3")
+    )
+  }
+
+  private def convertSubroles(role: Row): Subrole = {
+    Subrole(
+      role.getString("role_id"),
+      role.getString("sub_id")
     )
   }
 }

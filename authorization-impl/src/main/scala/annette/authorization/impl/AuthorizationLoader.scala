@@ -43,7 +43,7 @@ abstract class AuthorizationApplication(context: LagomApplicationContext)
 object AuthorizationSerializerRegistry extends JsonSerializerRegistry {
   override def serializers: immutable.Seq[JsonSerializer[_]] = List(
     JsonSerializer[Permission],
-    JsonSerializer[Role],
+    JsonSerializer[BaseRole],
     JsonSerializer[CheckPermissions],
     JsonSerializer[FindPermissions],
     JsonSerializer[CreateRole],
@@ -52,6 +52,6 @@ object AuthorizationSerializerRegistry extends JsonSerializerRegistry {
     JsonSerializer[RoleCreated],
     JsonSerializer[RoleUpdated],
     JsonSerializer[RoleDeleted],
-    JsonSerializer[RolePermissionDeleted]
+    JsonSerializer[RoleItemsDeleted]
   )
 }

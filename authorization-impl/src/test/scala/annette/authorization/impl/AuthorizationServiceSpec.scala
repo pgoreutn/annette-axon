@@ -36,7 +36,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
   "authorization service" should {
 
     "create role & find it by id" in {
-      val role = Role("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       for {
         created <- client.createRole.invoke(role)
         found <- client.findRoleById(role.id).invoke()
@@ -47,7 +47,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     }
 
     "create role with existing id" in {
-      val role = Role("id2", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id2", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       for {
         created <- client.createRole.invoke(role)
         created2 <- client.createRole
@@ -64,8 +64,8 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     }
 
     "update role" in {
-      val role = Role("id3", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
-      val role2 = Role("id3", "name1", Some("description1"), Set(Permission("p1"), Permission("p4"), Permission("p5")))
+      val role = SimpleRole("id3", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role2 = SimpleRole("id3", "name1", Some("description1"), Set(Permission("p1"), Permission("p4"), Permission("p5")))
       for {
         created <- client.createRole.invoke(role)
         updated <- client.updateRole
@@ -81,7 +81,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     }
 
     "update role with non-existing id" in {
-      val role = Role("id4", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id4", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       for {
         updated <- client.updateRole
           .invoke(role)
@@ -95,7 +95,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
 
     "delete role" in {
       val id = s"id${Random.nextInt()}"
-      val role = Role(id, "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole(id, "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       for {
         created <- client.createRole.invoke(role)
         found1 <- client
@@ -135,7 +135,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     }
 
     "find role by non-existing id" in {
-      val role = Role("id5", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id5", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       for {
         found <- client
           .findRoleById(Random.nextInt().toString)
@@ -164,7 +164,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         s"description-${Random.nextInt()}"
       )
       val roles = for (i <- 0 until ids.length)
-        yield Role(ids(i), names(i), Some(descriptions(i)), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+        yield SimpleRole(ids(i), names(i), Some(descriptions(i)), Set(Permission("p1"), Permission("p2"), Permission("p3")))
 
       val createFuture = Future.traverse(roles)(role => client.createRole.invoke(role))
 
@@ -213,9 +213,9 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         Permission("Permission-B", "a", "", ""),
         Permission("Permission-B", "", "b", "c")
       )
-      val role1 = Role("roleA-1", "name", None, Set(P(0), P(1)))
-      val role2 = Role("roleA-2", "name", None, Set(P(2), P(3)))
-      val role3 = Role("roleA-3", "name", None, Set(P(4), P(5)))
+      val role1 = SimpleRole("roleA-1", "name", None, Set(P(0), P(1)))
+      val role2 = SimpleRole("roleA-2", "name", None, Set(P(2), P(3)))
+      val role3 = SimpleRole("roleA-3", "name", None, Set(P(4), P(5)))
 
       (for {
         created1 <- client.createRole.invoke(role1)
@@ -280,9 +280,9 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         Permission("Permission-D", "a", "", ""),
         Permission("Permission-D", "", "b", "c")
       )
-      val role1 = Role("roleB-1", "name", None, Set(P(0), P(1)))
-      val role2 = Role("roleB-2", "name", None, Set(P(2), P(3)))
-      val role3 = Role("roleB-3", "name", None, Set(P(4), P(5)))
+      val role1 = SimpleRole("roleB-1", "name", None, Set(P(0), P(1)))
+      val role2 = SimpleRole("roleB-2", "name", None, Set(P(2), P(3)))
+      val role3 = SimpleRole("roleB-3", "name", None, Set(P(4), P(5)))
 
       (for {
         created1 <- client.createRole.invoke(role1)
@@ -347,9 +347,9 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         Permission("Permission-F", "a", "", ""),
         Permission("Permission-F", "", "b", "c")
       )
-      val role1 = Role("roleC-1", "name", None, Set(P(0), P(1)))
-      val role2 = Role("roleC-2", "name", None, Set(P(2), P(3)))
-      val role3 = Role("roleC-3", "name", None, Set(P(4), P(5)))
+      val role1 = SimpleRole("roleC-1", "name", None, Set(P(0), P(1)))
+      val role2 = SimpleRole("roleC-2", "name", None, Set(P(2), P(3)))
+      val role3 = SimpleRole("roleC-3", "name", None, Set(P(4), P(5)))
 
       (for {
         created1 <- client.createRole.invoke(role1)

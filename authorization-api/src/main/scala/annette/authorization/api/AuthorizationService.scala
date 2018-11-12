@@ -8,10 +8,10 @@ import scala.collection._
 
 trait AuthorizationService extends Service {
 
-  def createRole: ServiceCall[Role, Role]
-  def updateRole: ServiceCall[Role, Role]
+  def createRole: ServiceCall[BaseRole, BaseRole]
+  def updateRole: ServiceCall[BaseRole, BaseRole]
   def deleteRole(id: RoleId): ServiceCall[NotUsed, Done]
-  def findRoleById(id: RoleId): ServiceCall[NotUsed, Role]
+  def findRoleById(id: RoleId): ServiceCall[NotUsed, BaseRole]
   def findRoles: ServiceCall[String, immutable.Set[RoleSummary]]
 
   def checkAllPermissions: ServiceCall[CheckPermissions, Boolean]

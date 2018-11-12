@@ -20,11 +20,11 @@ class AuthorizationServiceImpl(registry: PersistentEntityRegistry, system: Actor
 
   private def refFor(id: RoleId) = registry.refFor[RoleEntity](id)
 
-  override def createRole: ServiceCall[Role, Role] = ServiceCall { role =>
+  override def createRole: ServiceCall[BaseRole, BaseRole] = ServiceCall { role =>
     refFor(role.id)
       .ask(CreateRole(role))
   }
-  override def updateRole: ServiceCall[Role, Role] = ServiceCall { role =>
+  override def updateRole: ServiceCall[BaseRole, BaseRole] = ServiceCall { role =>
     refFor(role.id)
       .ask(UpdateRole(role))
   }
@@ -33,7 +33,7 @@ class AuthorizationServiceImpl(registry: PersistentEntityRegistry, system: Actor
       .ask(DeleteRole(id))
   }
 
-  override def findRoleById(id: RoleId): ServiceCall[NotUsed, Role] = ServiceCall { _ =>
+  override def findRoleById(id: RoleId): ServiceCall[NotUsed, BaseRole] = ServiceCall { _ =>
     refFor(id).ask(FindRoleById(id)).map {
       case Some(role) => role
       case None       => throw RoleNotFound(id)

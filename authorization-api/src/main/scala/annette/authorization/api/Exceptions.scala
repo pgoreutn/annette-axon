@@ -33,3 +33,14 @@ object RoleAlreadyExist {
   )
 
 }
+
+object RoleTypeCannotBeChanged {
+  val ErrorCode = TransportErrorCode.BadRequest
+  val MessageCode = "authorization.role.roleTypeCannotBeChanged"
+
+  def apply(id: String) = new AnnetteTransportException(
+    ErrorCode,
+    new AnnetteException(MessageCode, Map("id" -> id))
+  )
+
+}

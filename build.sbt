@@ -50,6 +50,11 @@ lazy val `authorization-api` = (project in file("authorization-api"))
 lazy val `authorization-impl` = (project in file("authorization-impl"))
   .enablePlugins(LagomScala)
   .settings(
+    mappings in Universal += {
+      (baseDirectory.value / "conf" ) / "application.conf" -> "conf/application.conf"
+    },
+    // add jvm parameter for typesafe config
+    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/application.conf"""",
     libraryDependencies ++= Seq(
       lagomScaladslPersistenceCassandra,
       lagomScaladslTestKit,

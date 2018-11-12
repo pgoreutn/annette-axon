@@ -3,13 +3,13 @@ package annette.authorization.impl
 import akka.Done
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
-import annette.authorization.api.{Permission, Role}
+import annette.authorization.api.{BaseRole, Permission, SimpleRole}
 import annette.shared.exceptions.AnnetteTransportException
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 
-class RoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
+class SimpleRoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
   private val system = ActorSystem("RoleEntitySpec", JsonSerializerRegistry.actorSystemSetupFor(AuthorizationSerializerRegistry))
 
@@ -17,7 +17,7 @@ class RoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
     TestKit.shutdownActorSystem(system)
   }
 
-  private def withTestDriver(block: PersistentEntityTestDriver[RoleCommand, RoleEvent, Option[Role]] => Unit): Unit = {
+  private def withTestDriver(block: PersistentEntityTestDriver[RoleCommand, RoleEvent, Option[BaseRole]] => Unit): Unit = {
     val driver = new PersistentEntityTestDriver(system, new RoleEntity, "bpm-1")
     block(driver)
     // driver.getAllIssues should have size 0
@@ -26,7 +26,7 @@ class RoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
   "role entity" should {
 
     "create role" in withTestDriver { driver =>
-      val role = Role("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       val cmd = CreateRole(role)
       val outcome = driver.run(cmd)
       outcome.replies should contain only role
@@ -34,7 +34,7 @@ class RoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
     }
 
     "create role with existing id" in withTestDriver { driver =>
-      val role = Role("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       val cmd = CreateRole(role)
       val outcome = driver.run(cmd)
       outcome.replies should contain only role
@@ -46,7 +46,7 @@ class RoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
     }
 
     "update role" in withTestDriver { driver =>
-      val role = Role("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       val cmd = CreateRole(role)
       val role2 = role.copy(name = "name2", permissions = Set(Permission("p1"), Permission("p4"), Permission("p5")))
       val cmd2 = UpdateRole(role2)
@@ -59,7 +59,7 @@ class RoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
     }
 
     "update role with non-existing id" in withTestDriver { driver =>
-      val role = Role("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       val cmd = UpdateRole(role)
       val outcome2 = driver.run(cmd)
       outcome2.events shouldBe empty
@@ -68,7 +68,7 @@ class RoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
     }
 
     "delete role" in withTestDriver { driver =>
-      val role = Role("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       val cmd = CreateRole(role)
       val outcome = driver.run(cmd)
       outcome.replies should contain only role
@@ -81,7 +81,7 @@ class RoleEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
     }
 
     "find role by id" in withTestDriver { driver =>
-      val role = Role("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
+      val role = SimpleRole("id", "name", Some("description"), Set(Permission("p1"), Permission("p2"), Permission("p3")))
       val cmd = CreateRole(role)
       val cmd2 = FindRoleById("id")
       val outcome = driver.run(cmd)
