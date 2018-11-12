@@ -1,5 +1,7 @@
 package annette.authorization.impl
 
+import java.util.UUID
+
 import akka.Done
 import annette.authorization.api._
 import annette.shared.exceptions.AnnetteException
@@ -442,6 +444,76 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
           }
         }
       }).flatMap(identity)
+    }
+
+    "user to role assignment/unassignment" in {
+      val assignments = Set(
+        "user1" -> "role1",
+        "user1" -> "role2",
+        "user2" -> "role1",
+        "user2" -> "role4",
+        "user3" -> "role1",
+        "user3" -> "role2",
+        "user3" -> "role4"
+      )
+
+      val rolesByUser = assignments.groupBy(a => a._1).map(r => r._1 -> r._2.map(_._2))
+      val usersByRoles = assignments.groupBy(a => a._2).map(r => r._1 -> r._2.map(_._1))
+
+      for {
+        _ <- Future.traverse(rolesByUser.keys) { key =>
+          client
+            .assignUserToRoles(key)
+            .invoke(rolesByUser(key))
+        }
+        //.recover { case th: Throwable => th }
+        userRes <- Future
+          .traverse(rolesByUser.keys) { key =>
+            client
+              .findRolesAssignedToUser(key)
+              .invoke()
+              .map(r => key -> r)
+          }
+          .map(_.toMap)
+        //.recover { case th: Throwable => th }
+        roleRes <- Future
+          .traverse(usersByRoles.keys) { key =>
+            client
+              .findUsersAssignedToRole(key)
+              .invoke()
+              .map(r => key -> r)
+          }
+          .map(_.toMap)
+        //.recover { case th: Throwable => th }
+        _ <- Future.traverse(rolesByUser.keys) { key =>
+          client
+            .unassignUserFromRoles(key)
+            .invoke(rolesByUser(key))
+        }
+        userRes2 <- Future
+          .traverse(rolesByUser.keys) { key =>
+            client
+              .findRolesAssignedToUser(key)
+              .invoke()
+              .map(r => key -> r)
+          }
+          .map(_.toMap)
+        //.recover { case th: Throwable => th }
+        roleRes2 <- Future
+          .traverse(usersByRoles.keys) { key =>
+            client
+              .findUsersAssignedToRole(key)
+              .invoke()
+              .map(r => key -> r)
+          }
+          .map(_.toMap)
+      } yield {
+        userRes shouldBe rolesByUser
+        roleRes shouldBe usersByRoles
+        userRes2 shouldBe rolesByUser.keys.map(k => k -> Set.empty[RoleId]).toMap
+        roleRes2 shouldBe usersByRoles.keys.map(k => k -> Set.empty[UserId]).toMap
+      }
+
     }
   }
 

@@ -33,6 +33,7 @@ abstract class AuthorizationApplication(context: LagomApplicationContext)
   override lazy val lagomServer = serverFor[AuthorizationService](wire[AuthorizationServiceImpl])
 
   lazy val roleRepository = wire[RoleRepository]
+  lazy val userRoleAssignmentRepository = wire[UserRoleAssignmentRepository]
   lazy val jsonSerializerRegistry = AuthorizationSerializerRegistry
 
   persistentEntityRegistry.register(wire[RoleEntity])

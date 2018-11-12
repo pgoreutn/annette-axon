@@ -13,9 +13,11 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Implementation of the BpmService.
   */
-class AuthorizationServiceImpl(registry: PersistentEntityRegistry, system: ActorSystem, roleRepository: RoleRepository)(
-    implicit ec: ExecutionContext,
-    mat: Materializer)
+class AuthorizationServiceImpl(
+    registry: PersistentEntityRegistry,
+    system: ActorSystem,
+    roleRepository: RoleRepository,
+    userRoleAssignmentRepository: UserRoleAssignmentRepository)(implicit ec: ExecutionContext, mat: Materializer)
     extends AuthorizationService {
 
   private def refFor(id: RoleId) = registry.refFor[RoleEntity](id)
@@ -39,6 +41,7 @@ class AuthorizationServiceImpl(registry: PersistentEntityRegistry, system: Actor
       case None       => throw RoleNotFound(id)
     }
   }
+
   override def findRoles: ServiceCall[String, immutable.Set[RoleSummary]] = ServiceCall { filter =>
     // TODO: temporary solution, should be implemented using ElasticSearch
     roleRepository.findRoles(filter.trim)
@@ -53,6 +56,7 @@ class AuthorizationServiceImpl(registry: PersistentEntityRegistry, system: Actor
       }
 
   }
+
   override def checkAnyPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall {
     case CheckPermissions(roles, permissions) =>
       if (roles.isEmpty || permissions.isEmpty) {
@@ -61,6 +65,7 @@ class AuthorizationServiceImpl(registry: PersistentEntityRegistry, system: Actor
         roleRepository.checkAnyPermissions(roles, permissions)
       }
   }
+
   override def findPermissions: ServiceCall[FindPermissions, immutable.Set[Permission]] = ServiceCall {
     case FindPermissions(roles, permissionIds) =>
       if (roles.isEmpty || permissionIds.isEmpty) {
@@ -68,5 +73,22 @@ class AuthorizationServiceImpl(registry: PersistentEntityRegistry, system: Actor
       } else {
         roleRepository.findPermissions(roles, permissionIds)
       }
+  }
+
+  override def assignUserToRoles(userId: UserId): ServiceCall[immutable.Set[RoleId], Done] = ServiceCall { set =>
+    // TODO: validate if all roles are exist
+    userRoleAssignmentRepository.assignUserToRoles(userId, set)
+  }
+
+  override def unassignUserFromRoles(userId: UserId): ServiceCall[immutable.Set[RoleId], Done] = ServiceCall { set =>
+    userRoleAssignmentRepository.unassignUserFromRoles(userId, set)
+  }
+
+  override def findRolesAssignedToUser(userId: UserId): ServiceCall[NotUsed, immutable.Set[RoleId]] = ServiceCall { _ =>
+    userRoleAssignmentRepository.findRolesAssignedToUser(userId)
+  }
+
+  override def findUsersAssignedToRole(roleId: RoleId): ServiceCall[NotUsed, immutable.Set[UserId]] = ServiceCall { _ =>
+    userRoleAssignmentRepository.findUsersAssignedToRole(roleId)
   }
 }

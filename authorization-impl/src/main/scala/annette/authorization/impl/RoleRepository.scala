@@ -1,6 +1,7 @@
 package annette.authorization.impl
 
-import annette.authorization.api.{Permission, PermissionId, RoleId, RoleSummary}
+import akka.Done
+import annette.authorization.api._
 import com.datastax.driver.core.Row
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraSession
 
@@ -33,12 +34,7 @@ private[impl] class RoleRepository(session: CassandraSession)(implicit ec: Execu
         .setString("a2", permission.arg2)
         .setString("a3", permission.arg3)
       res <- session.selectOne(stmt)
-    } yield {
-      // val r =
-      res.exists(r => if (r.getLong("cnt") > 0) true else false)
-      // println(s"checkPermission($roles, $permission): $res, $r")
-      // r
-    }
+    } yield res.exists(r => if (r.getLong("cnt") > 0) true else false)
   }
 
   def checkAllPermissions(roles: immutable.Set[RoleId], permissions: immutable.Set[Permission]): Future[Boolean] = {
@@ -96,22 +92,22 @@ private[impl] class RoleRepository(session: CassandraSession)(implicit ec: Execu
     session.selectAll("SELECT * FROM roles").map(_.map(convertRoleSummary))
   }
 
-  private def convertRoleSummary(role: Row): RoleSummary = {
+  private def convertRoleSummary(row: Row): RoleSummary = {
     RoleSummary(
-      role.getString("id"),
-      role.getString("name"), {
-        val s = role.getString("description")
+      row.getString("id"),
+      row.getString("name"), {
+        val s = row.getString("description")
         if (s.nonEmpty) Some(s) else None
       }
     )
   }
 
-  private def convertPermission(role: Row): Permission = {
+  private def convertPermission(row: Row): Permission = {
     Permission(
-      role.getString("permission_id"),
-      role.getString("arg1"),
-      role.getString("arg2"),
-      role.getString("arg3")
+      row.getString("permission_id"),
+      row.getString("arg1"),
+      row.getString("arg2"),
+      row.getString("arg3")
     )
   }
 }

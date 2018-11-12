@@ -42,8 +42,8 @@ private[impl] class RoleEventProcessor(session: CassandraSession, readSide: Cass
       """)
       _ <- session.executeCreateTable("""
         CREATE TABLE IF NOT EXISTS role_permissions (
-          role_id text ,
-          permission_id text ,
+          role_id text,
+          permission_id text,
           arg1 text,
           arg2 text,
           arg3 text,
