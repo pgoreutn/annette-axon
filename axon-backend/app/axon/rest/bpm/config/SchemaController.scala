@@ -1,6 +1,6 @@
 package axon.rest.bpm.config
 import annette.shared.exceptions.AnnetteException
-import annette.shared.security.AuthenticatedAction
+import annette.shared.security.authentication.AuthenticatedAction
 import axon.bpm.repository.api.{BpmRepositoryService, Schema, SchemaSummary}
 import javax.inject.Inject
 import play.api.libs.json._

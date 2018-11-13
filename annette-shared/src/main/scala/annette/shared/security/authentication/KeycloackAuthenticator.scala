@@ -1,7 +1,9 @@
-package annette.shared.security
+package annette.shared.security.authentication
+
 import java.util.UUID
 
 import annette.shared.exceptions.AnnetteException
+import annette.shared.security.SessionData
 import pdi.jwt.exceptions.JwtExpirationException
 import pdi.jwt.{JwtAlgorithm, JwtJson}
 import play.api.Configuration
@@ -11,17 +13,18 @@ import play.api.mvc.Request
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class RequestValidator(configuration: Configuration) {
+class KeycloackAuthenticator(configuration: Configuration) extends Authenticator {
+
   val key = configuration.get[String]("annette.security.client.publicKey")
   val debugMode = configuration.getOptional[Boolean]("annette.security.client.debug").getOrElse(false)
   val publicKey = s"-----BEGIN PUBLIC KEY-----\n$key\n-----END PUBLIC KEY-----"
 
-  def validate[A](request: Request[A])(implicit ec: ExecutionContext): Future[SessionData] = {
-    if (debugMode) fakeValidate(request)
-    else realValidate(request)
+  override def authenticate[A](request: Request[A])(implicit ec: ExecutionContext): Future[SessionData] = {
+    if (debugMode) fakeAuthenticate(request)
+    else realAuthenticate(request)
   }
 
-  def fakeValidate[A](request: Request[A])(implicit ec: ExecutionContext): Future[SessionData] = {
+  def fakeAuthenticate[A](request: Request[A])(implicit ec: ExecutionContext): Future[SessionData] = {
     Future.successful(
       SessionData(
         userId = UUID.randomUUID().toString,
@@ -32,7 +35,7 @@ class RequestValidator(configuration: Configuration) {
       ))
   }
 
-  def realValidate[A](request: Request[A])(implicit ec: ExecutionContext): Future[SessionData] = {
+  def realAuthenticate[A](request: Request[A])(implicit ec: ExecutionContext): Future[SessionData] = {
     Future {
       Try {
         val jwt = request.headers.get("Authorization").get.split(" ")(1)

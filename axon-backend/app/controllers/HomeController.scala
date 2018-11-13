@@ -1,5 +1,5 @@
 package controllers
-import annette.shared.security.AuthenticatedAction
+import annette.shared.security.authentication.AuthenticatedAction
 import axon.bpm.repository.api.BpmRepositoryService
 import javax.inject._
 import play.api._
