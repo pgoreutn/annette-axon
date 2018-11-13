@@ -62,6 +62,22 @@ User menu represents as dropdown control with user's avatar, first and last name
 
 ## Authorization service
 
+Authorization service provides role based access control (RBAC). The following entities are used in the service:
+* Role - entity with id, name and optional description that contains set of permissions that allows certain operations to the user assigned to this role 
+* Permission - entity with id and optional arguments (up to 3) that allows to perform certain operation
+
+Authorization service provides the following REST API for maintenance roles check find permissions:
+
+* POST /api/authorization/role - createRole
+* PUT /api/authorization/role - updateRole
+* DELETE /api/authorization/role/:id - deleteRole
+* GET /api/authorization/role/:id - findRoleById
+* POST /api/authorization/findRoles - findRoles
+* POST /api/authorization/checkAll - checkAllPermissions
+* POST /api/authorization/checkAn - checkAnyPermissions
+* POST /api/authorization/find - findPermissions
+
+
 ## Organizational Structure service
 
 ## BPM service

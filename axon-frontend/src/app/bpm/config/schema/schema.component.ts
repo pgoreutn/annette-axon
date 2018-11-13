@@ -12,7 +12,12 @@ const NEW_SCHEMA: Schema = {
   description: '',
   notation: 'BPMN',
   schema: '<?xml version="1.0" encoding="UTF-8"?>\n' +
-      '<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">\n' +
+      '<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" ' +
+      'xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" ' +
+      'xmlns:di="http://www.omg.org/spec/DD/20100524/DI" ' +
+      'xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" ' +
+      'id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" ' +
+      'exporter="Camunda Modeler" exporterVersion="1.11.3">\n' +
       '  <bpmn:process id="process" isExecutable="true">\n' +
       '    <bpmn:startEvent id="StartEvent_1" />\n' +
       '  </bpmn:process>\n' +
@@ -24,7 +29,7 @@ const NEW_SCHEMA: Schema = {
       '    </bpmndi:BPMNPlane>\n' +
       '  </bpmndi:BPMNDiagram>\n' +
       '</bpmn:definitions>`'
-}
+};
 
 @Component({
   selector: 'axon-schema',
@@ -35,16 +40,16 @@ export class SchemaComponent implements OnInit {
 
   @ViewChild('bpmnEdit') bpmnEdit: BpmnEditComponent;
 
-  action: string = '';
-  id: string = '';
+  action = '';
+  id = '';
   schema: Schema = {
     id: '',
     name: '',
     description: '',
     notation: 'BPMN',
     schema: null
-  }
-  showSchema = false
+  };
+  showSchema = false;
 
 
 
@@ -63,32 +68,32 @@ export class SchemaComponent implements OnInit {
   }
 
   save() {
-    let newSchema: Schema = {
+    const newSchema: Schema = {
       id: this.bpmnEdit.bpmnModel.getProcessId(),
       name: this.bpmnEdit.bpmnModel.getName(),
       description: this.bpmnEdit.bpmnModel.getDescription(),
       notation: this.schema.notation,
       schema: ''
-    }
+    };
 
     const done = function (err, xml) {
       if (err) {
         console.log(err);
       } else {
-        if (this.action == 'create') {
-          this.store.dispatch(new CreateSchema({schema: xml}))
-        } else if (this.action == 'update') {
-          newSchema.schema = xml
+        if (this.action === 'create') {
+          this.store.dispatch(new CreateSchema({schema: xml}));
+        } else if (this.action === 'update') {
+          newSchema.schema = xml;
           this.store.dispatch(new UpdateSchema({
             update:
                 {
                   id: this.id,
                   changes: newSchema
                 }
-          }))
+          }));
         }
       }
-    }
+    };
 
 
     this.bpmnEdit.bpmnModel.saveXML(done.bind(this));
@@ -97,7 +102,7 @@ export class SchemaComponent implements OnInit {
   update(action: string, id: string) {
     this.action = action
     this.id = id
-    if (id != "new") {
+    if (id !== "new") {
       this.showSchema = false
       //console.log('loading schema...')
       this.schemaBackend.findById(id)
@@ -109,11 +114,10 @@ export class SchemaComponent implements OnInit {
               },
               failure =>
                   console.log(failure)
-          )
-    }
-    else {
-      this.schema = NEW_SCHEMA
-      this.showSchema = true
+          );
+    } else {
+      this.schema = NEW_SCHEMA;
+      this.showSchema = true;
     }
   }
 
