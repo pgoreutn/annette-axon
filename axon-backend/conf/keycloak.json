@@ -2,9 +2,9 @@
   "realm": "Annette",
   "auth-server-url": "http://localhost:8180/auth",
   "ssl-required": "external",
-  "resource": "app",
+  "resource": "annette-axon",
   "credentials": {
-    "secret": "e6afe346-0281-42c9-902c-5e0046294a4c"
+    "secret": "2ddb5844-8898-4c85-8d40-fae121a778dd"
   },
   "confidential-port": 0,
   "policy-enforcer": {}
