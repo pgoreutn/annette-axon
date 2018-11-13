@@ -15,13 +15,10 @@
   "axon.about.get-started": "Get stared",
   "axon.about.get-notified": "Полчать уведомления о новых релизах",
   "axon.about.get-notified.follow": "Follow",
-  "axon.about.get-notified.description":
-    "a Twitter bot that helps you to stay up to date with releases of popular frontend frameworks & libraries!",
+  "axon.about.get-notified.description": "a Twitter bot that helps you to stay up to date with releases of popular frontend frameworks & libraries!",
   "axon.about.contributors": "Contributors",
-  "axon.about.contributors.description1":
-    "Want to start contributing to open source with Angular?",
-  "axon.about.contributors.description2":
-    "Leave your mark and join the growing team of contributors!",
+  "axon.about.contributors.description1": "Want to start contributing to open source with Angular?",
+  "axon.about.contributors.description2": "Leave your mark and join the growing team of contributors!",
   "axon.about.contributors.description3": "Get started by having a look on ",
   "axon.about.contributors.description4": " and ",
   "axon.about.contributors.issues": "open issues",
@@ -34,18 +31,13 @@
   "axon.features.angular-cli": "A command line interface for Angular",
   "axon.features.ngrx": "One way data flow powered by RxJS Observables",
   "axon.features.ngxtranslate": "An internationalization library for Angular",
-  "axon.features.rxjs":
-    "Reactive programming with async collections using Observables",
-  "axon.features.bootstrap":
-    "Responsive layout from battle tested, world most famous UI library",
-  "axon.features.typescript":
-    "Superior developer experience, code completion, refactoring and less bugs",
+  "axon.features.rxjs": "Reactive programming with async collections using Observables",
+  "axon.features.bootstrap": "Responsive layout from battle tested, world most famous UI library",
+  "axon.features.typescript": "Superior developer experience, code completion, refactoring and less bugs",
   "axon.features.fontawesome": "Easy to use vector icons and social logos",
-  "axon.features.themes":
-    "Flexible theming support for provided and custom components",
+  "axon.features.themes": "Flexible theming support for provided and custom components",
   "axon.features.themes.title": "Themes",
-  "axon.features.lazyloading":
-    "Faster startup time with lazy loaded feature modules",
+  "axon.features.lazyloading": "Faster startup time with lazy loaded feature modules",
   "axon.features.lazyloading.title": "Lazy loading",
   "axon.settings.title": "Settings",
   "axon.settings.general": "General",

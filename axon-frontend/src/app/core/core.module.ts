@@ -61,7 +61,6 @@ if (!environment.production) {
   providers: [
     AuthService,
     LocalStorageService,
-    // AuthGuardService,
     AnimationsService,
     TitleService,
     AuthGuard,

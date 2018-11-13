@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {Subject} from 'rxjs'
 import {select, Store} from '@ngrx/store'
 import {ActivationEnd, Router} from '@angular/router'
@@ -6,6 +6,7 @@ import {TitleService} from '@app/core'
 import {TranslateService} from '@ngx-translate/core'
 import {selectorSettings, SettingsState} from '@app/settings'
 import {filter, map, takeUntil} from 'rxjs/operators'
+import {DEFAULT_LANGUAGE} from '@app/shared/languages'
 
 @Component({
   selector: 'axon-org-structure',
@@ -24,7 +25,7 @@ export class OrgStructureComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.translate.setDefaultLang('en');
+    this.translate.setDefaultLang(DEFAULT_LANGUAGE);
     this.subscribeToSettings();
     this.subscribeToRouterEvents();
   }

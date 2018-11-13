@@ -1,10 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {SchemaBackendService} from '@app/bpm/shared/services/schema-backend.service';
-import {Schema} from '@app/bpm/shared/services/model';
-import {CreateSchema, UpdateSchema} from '@app/bpm/shared/services/schema.actions';
-import {Store} from '@ngrx/store';
-import {BpmnEditComponent} from '@app/bpm/config/schema/bpmn-view/bpmn-edit.component';
+import {ActivatedRoute} from '@angular/router'
+import {SchemaBackendService} from '@app/bpm/shared/services/schema-backend.service'
+import {Schema} from '@app/bpm/shared/services/model'
+import {CreateSchema, DeleteSchema, UpdateSchema} from '@app/bpm/shared/services/schema.actions'
+import {Store} from '@ngrx/store'
+import {BpmnEditComponent} from '@app/bpm/config/schema/bpmn-view/bpmn-edit.component'
 
 const NEW_SCHEMA: Schema = {
   id: '',
@@ -59,8 +59,8 @@ export class SchemaComponent implements OnInit {
       private store: Store<any>
   ) {
     this.activatedRoute.params.subscribe(params => {
-      console.log(params);
-      this.update(params['action'], params['id']);
+      //console.log(params)
+      this.update(params['action'], params['id'])
     });
   }
 
@@ -100,17 +100,17 @@ export class SchemaComponent implements OnInit {
   }
 
   update(action: string, id: string) {
-    this.action = action;
-    this.id = id;
-    if (id !== 'new') {
-      this.showSchema = false;
-      console.log('loading schema...');
+    this.action = action
+    this.id = id
+    if (id !== "new") {
+      this.showSchema = false
+      //console.log('loading schema...')
       this.schemaBackend.findById(id)
           .subscribe(
               schema => {
-                console.log(schema);
-                this.schema = schema;
-                this.showSchema = true;
+                //console.log(schema)
+                this.schema = schema
+                this.showSchema = true
               },
               failure =>
                   console.log(failure)

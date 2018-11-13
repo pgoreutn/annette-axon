@@ -17,8 +17,8 @@ export class BpmnEditComponent implements OnInit, OnChanges {
   ngOnChanges(changes) {
 
     if (changes.schema && changes.schema.currentValue ) {
-      console.log('ngOnChanges')
-      console.log(`[${changes.schema.currentValue}]`)
+      //console.log('ngOnChanges')
+      //console.log(`[${changes.schema.currentValue}]`)
       if (this.bpmnModel === void 0) {
         const selector = document.querySelector('.canvas');
         this.bpmnModel = new BpmnModelerModel({

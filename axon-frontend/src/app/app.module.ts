@@ -1,19 +1,35 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
+import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
+import {
+  MenuComponent,
+  HeaderComponent,
+  AppLayoutComponent,
+  AccordionAnchorDirective,
+  AccordionLinkDirective,
+  AccordionDirective
+} from './layout';
 
-import { SharedModule } from '@app/shared';
-import { CoreModule } from '@app/core';
-
-import { SettingsModule } from './settings';
-import { StaticModule } from './static';
-
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '@env/environment';
+import { CoreModule } from '@app/core';
+import { SharedModule } from '@app/shared';
+import { AppRoutingModule } from '@app/app-routing.module';
+import { SettingsModule } from '@app/settings';
 
 @NgModule({
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    MenuComponent,
+    AppLayoutComponent,
+    AccordionAnchorDirective,
+    AccordionLinkDirective,
+    AccordionDirective
+  ],
   imports: [
     // angular
     BrowserAnimationsModule,
@@ -22,9 +38,7 @@ import { environment } from '@env/environment';
     // core & shared
     CoreModule,
     SharedModule,
-
-    // features
-    StaticModule,
+    LoadingBarRouterModule,
     SettingsModule,
 
     // app
@@ -35,7 +49,6 @@ import { environment } from '@env/environment';
       logOnly: environment.production // Restrict extension to log-only mode
     })
   ],
-  declarations: [AppComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

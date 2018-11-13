@@ -73,7 +73,13 @@ export const initialState: SettingsState = {
   autoNightMode: false,
   pageAnimations: true,
   pageAnimationsDisabled: false,
-  elementsAnimations: true
+  elementsAnimations: true,
+
+  collapsed: false,
+  compact: false,
+  boxed: false,
+  dark: false,
+  dir: 'ltr'
 };
 
 export const selectorSettings = state => state.settings;
@@ -109,4 +115,10 @@ export interface SettingsState {
   pageAnimations: boolean;
   pageAnimationsDisabled: boolean;
   elementsAnimations: boolean;
+
+  collapsed: boolean,
+  compact: boolean,
+  boxed: boolean,
+  dark: boolean,
+  dir: string
 }

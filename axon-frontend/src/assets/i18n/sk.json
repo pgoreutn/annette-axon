@@ -14,13 +14,10 @@
   "axon.about.get-started": "Ako začať",
   "axon.about.get-notified": "Upozornenia na nové vydania",
   "axon.about.get-notified.follow": "Sleduj",
-  "axon.about.get-notified.description":
-    ", Twitter bota ktorý ti pomôže zostať aktuálnym s vydaniami populárnych frontend frameworkov a knižníc!",
+  "axon.about.get-notified.description": ", Twitter bota ktorý ti pomôže zostať aktuálnym s vydaniami populárnych frontend frameworkov a knižníc!",
   "axon.about.contributors": "Prispievatelia",
-  "axon.about.contributors.description1":
-    "Chceš začať prispievať do open source s Angularom?",
-  "axon.about.contributors.description2":
-    "Zanechaj svoju stopu a pridaj sa do rastúceho tímu prispievateľov!",
+  "axon.about.contributors.description1": "Chceš začať prispievať do open source s Angularom?",
+  "axon.about.contributors.description2": "Zanechaj svoju stopu a pridaj sa do rastúceho tímu prispievateľov!",
   "axon.about.contributors.description3": "Začni tým že si pozrieš ",
   "axon.about.contributors.description4": " a ",
   "axon.about.contributors.issues": "list otvorených problémov ",
@@ -29,25 +26,17 @@
   "axon.features.documentation": "Dok.",
   "axon.features.guide": "Návod",
   "axon.features.angular": "Moderný výkonný framework",
-  "axon.features.angular-material":
-    "Knižnica komponentov implementujúcich Material Dizajn",
+  "axon.features.angular-material": "Knižnica komponentov implementujúcich Material Dizajn",
   "axon.features.angular-cli": "Rozhranie príkazového riadka pre Angular",
   "axon.features.ngrx": "Jednosmerný tok dát s pomocou RxJS Observables",
-  "axon.features.rxjs":
-    "Reaktívne programovanie s asynchrónymi kolekciami s pomocou Observables",
-  "axon.features.ngxtranslate":
-    "Knižnica pre internacionalizáciu Angular applikácií",
-  "axon.features.bootstrap":
-    "Responzívny dizajn od ostrielanej, svetoznámej UI knižnice",
-  "axon.features.typescript":
-    "Vynikajúca podpora developerov, automatické dokončovanie kódu, refaktorovanie a menej chýb",
-  "axon.features.fontawesome":
-    "Ľahko použiteľné vektorové ikony a sociálne logá",
-  "axon.features.themes":
-    "Flexibilná podpora tém pre vstavané a vlastné komponenty",
+  "axon.features.rxjs": "Reaktívne programovanie s asynchrónymi kolekciami s pomocou Observables",
+  "axon.features.ngxtranslate": "Knižnica pre internacionalizáciu Angular applikácií",
+  "axon.features.bootstrap": "Responzívny dizajn od ostrielanej, svetoznámej UI knižnice",
+  "axon.features.typescript": "Vynikajúca podpora developerov, automatické dokončovanie kódu, refaktorovanie a menej chýb",
+  "axon.features.fontawesome": "Ľahko použiteľné vektorové ikony a sociálne logá",
+  "axon.features.themes": "Flexibilná podpora tém pre vstavané a vlastné komponenty",
   "axon.features.themes.title": "Témy",
-  "axon.features.lazyloading":
-    "Rýchlejší štartovací čas s lenivým nahrávaním modulov",
+  "axon.features.lazyloading": "Rýchlejší štartovací čas s lenivým nahrávaním modulov",
   "axon.features.lazyloading.title": "Lenivé nahrávanie",
   "axon.settings.title": "Nastavenia",
   "axon.settings.general": "Hlavné",
@@ -62,10 +51,8 @@
   "axon.settings.themes.light": "Svetlá",
   "axon.settings.themes.nature": "Prírodná",
   "axon.settings.themes.dark": "Tmavá",
-  "axon.settings.themes.night-mode":
-    "Automatický nočný režim (od 21:00 do 7:00)",
+  "axon.settings.themes.night-mode": "Automatický nočný režim (od 21:00 do 7:00)",
   "axon.settings.animations": "Animácie",
   "axon.settings.animations.page": "Animácia celej stránky pri navigácii",
-  "axon.settings.animations.elements":
-    "Animácia elementov stránky pri navigácii"
+  "axon.settings.animations.elements": "Animácia elementov stránky pri navigácii"
 }
