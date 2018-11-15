@@ -1,11 +1,11 @@
-package annette.security.authorization
+package annette.security.auth.authorization
 
 import annette.authorization.api.{Permission, PermissionId}
 
-case class AuthorizationQuery (
-   checkRule: CheckRule = DontCheck,
-   condition: Condition = OR,
-   findRule: FindRule = DontFind
+case class AuthorizationQuery(
+    checkRule: CheckRule = DontCheck,
+    condition: Condition = OR,
+    findRule: FindRule = DontFind
 ) {
 
   def or(authorizationQuery: AuthorizationQuery): AuthorizationQuery = {
@@ -27,7 +27,7 @@ case class AuthorizationQuery (
     if (!findRule.isInstanceOf[DontFind.type]) {
       throw new Exception("Find rule in first operand should NOT be defined")
     }
-    if (authorizationQuery.findRule.isInstanceOf[DontFind.type ] ) {
+    if (authorizationQuery.findRule.isInstanceOf[DontFind.type]) {
       throw new Exception("Find rule in second operand should be defined")
     }
 
@@ -70,4 +70,3 @@ object test {
   val q4 = CheckAll(Permission("a"), Permission("b")) and Find("p1", "p2")
 
 }
-

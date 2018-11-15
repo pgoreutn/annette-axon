@@ -1,6 +1,7 @@
-package annette.security.authorization
+package annette.security.auth.authorization
+
 import annette.authorization.api._
-import annette.security.SessionData
+import annette.security.auth.SessionData
 import javax.inject._
 import play.api.mvc.Request
 
@@ -35,7 +36,6 @@ class DefaultAuthorizer @Inject()(authorizationService: AuthorizationService) ex
       resultSessionData <- findPermissions(sessionDataAfterCheck, roles, authorizationQuery)
     } yield resultSessionData
   }
-
 
   def processAnd(sessionData: SessionData, roles: Set[RoleId], authorizationQuery: AuthorizationQuery)(
       implicit ec: ExecutionContext): Future[SessionData] = {

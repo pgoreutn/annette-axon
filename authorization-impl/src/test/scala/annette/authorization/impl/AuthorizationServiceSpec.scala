@@ -1,7 +1,5 @@
 package annette.authorization.impl
 
-import java.util.UUID
-
 import akka.Done
 import annette.authorization.api._
 import annette.shared.exceptions.AnnetteException

@@ -1,12 +1,10 @@
 package controllers
 import annette.authorization.api.Permission
-import annette.security.authentication.AuthenticatedAction
-import annette.security.authorization._
-import axon.bpm.repository.api.BpmRepositoryService
+import annette.security.auth.authentication.AuthenticatedAction
+import annette.security.auth.authorization.{AuthorizedActionFactory, CheckAny}
+import annette.security.user.{UserQuery, UserService}
 import javax.inject._
-import play.api._
 import play.api.mvc._
-import play.api.libs.ws._
 
 import scala.concurrent.ExecutionContext
 import scala.io.Source
@@ -17,11 +15,12 @@ import scala.io.Source
   */
 @Singleton
 class HomeController @Inject()(
-                               assets: Assets,
-                               authenticated: AuthenticatedAction,
-                               authorized: AuthorizedActionFactory,
-                               cc: ControllerComponents,
-                               implicit val ec: ExecutionContext)
+    assets: Assets,
+    authenticated: AuthenticatedAction,
+    authorized: AuthorizedActionFactory,
+    userService: UserService,
+    cc: ControllerComponents,
+    implicit val ec: ExecutionContext)
     extends AbstractController(cc) {
 
   def index(file: String = "") = assets.versioned("/public/dist/", "index.html")
@@ -35,16 +34,10 @@ class HomeController @Inject()(
     Ok("ok")
   }
 
-  def auth() =
-     authorized(
-       CheckAny(
-         Permission("axon.bpm.executeAll"),
-         Permission("axon.bpm.execute", "process1"),
-         Permission("axon.bpm.execute", "process2")
-       ) )
-    //authorized(AuthorizationQuery())
-    { implicit request =>
-   // request.sessionData.
-      Ok("ok")
-    }
+  def user() = authenticated.async { implicit request =>
+    userService
+      //.findUsers(request.sessionData.principal.token, UserQuery())
+        .findUserByIds(request.sessionData.principal.token, Set("a211feb8-3be1-412a-b5c3-be27bf6d872a", "a211feb8-3be1-412a-b5c3-be27bf6d872a1", "adb1c2be-f521-4f1f-bb52-fe9380bef05e"))
+      .map { res => Ok(res.toString())}
+  }
 }

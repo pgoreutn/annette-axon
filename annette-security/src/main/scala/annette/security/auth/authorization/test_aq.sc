@@ -1,5 +1,5 @@
 import annette.authorization.api.Permission
-import annette.security.authorization.{CheckAll, Find}
+import annette.security.user.{CheckAll, Find}
 
 val q1 = CheckAll(Permission("a"), Permission("b"))
 
