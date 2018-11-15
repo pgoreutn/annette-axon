@@ -1,4 +1,6 @@
-import annette.shared.security.{AuthenticatedAction, RequestValidator}
+import annette.authorization.api.AuthorizationService
+import annette.security.authentication.{AuthenticatedAction, KeycloackAuthenticator}
+import annette.security.authorization._
 import axon.bpm.repository.api.BpmRepositoryService
 import axon.rest.bpm.config.SchemaController
 import com.lightbend.lagom.scaladsl.api.{LagomConfigComponent, ServiceAcl, ServiceInfo}
@@ -41,13 +43,17 @@ abstract class WebGateway(context: Context) extends BuiltInComponentsFromContext
   }
 
   lazy val bpmService = serviceClient.implement[BpmRepositoryService]
+  lazy val authzService = serviceClient.implement[AuthorizationService]
 
   lazy val main = wire[HomeController]
 
   lazy val schemaController = wire[SchemaController]
 
-  lazy val authValidator = wire[RequestValidator]
+  lazy val authValidator = wire[KeycloackAuthenticator]
   lazy val auth = wire[AuthenticatedAction]
+  lazy val roleProvider = wire[DefaultRoleProvider]
+  lazy val authorizer = wire[DefaultAuthorizer]
+  lazy val authz = wire[AuthorizedActionFactory]
   lazy val parser = wire[BodyParsers.Default]
 }
 

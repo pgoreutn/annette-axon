@@ -8,7 +8,13 @@ case class Permission(
     arg1: String = "",
     arg2: String = "",
     arg3: String = ""
-)
+) {
+  override def toString: UserId = {
+    val argSeq = Seq(arg1, arg2, arg3).filter(!_.isEmpty)
+    val args = if (argSeq.isEmpty) "" else argSeq.mkString("[", ", ", "]")
+    s"$id$args"
+  }
+}
 
 object Permission {
   implicit val format: Format[Permission] = Json.format
