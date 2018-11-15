@@ -1,13 +1,12 @@
-package annette.security.authentication
+package annette.security.auth.authentication
 
 import java.util.UUID
 
+import annette.security.auth.{SessionData, UserPrincipal}
 import annette.shared.exceptions.AnnetteException
-import annette.security.{SessionData, UserPrincipal}
 import pdi.jwt.exceptions.JwtExpirationException
 import pdi.jwt.{JwtAlgorithm, JwtJson}
 import play.api.Configuration
-import play.api.libs.json.Json
 import play.api.mvc.Request
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,7 +14,7 @@ import scala.util.{Failure, Success, Try}
 
 class KeycloackAuthenticator(configuration: Configuration) extends Authenticator {
 
-  val realm = configuration.get[String]("annette.security.client.realm")
+  val clientId = configuration.get[String]("annette.security.client.clientId")
 
   val key = configuration.get[String]("annette.security.client.publicKey")
   val debugMode = configuration.getOptional[Boolean]("annette.security.client.debug").getOrElse(false)
@@ -34,7 +33,8 @@ class KeycloackAuthenticator(configuration: Configuration) extends Authenticator
           username = "john.doe",
           firstName = "John",
           lastName = "Doe",
-          email = "john.doe@acme.com"
+          email = "john.doe@acme.com",
+          token = ""
         )
       )
     )
@@ -46,8 +46,8 @@ class KeycloackAuthenticator(configuration: Configuration) extends Authenticator
         val jwt = request.headers.get("Authorization").get.split(" ")(1)
         val json = JwtJson.decodeJson(jwt, publicKey, Seq(JwtAlgorithm.RS256)).get
         // println(Json.prettyPrint(json))
-        val superUser = Try{
-          val roles = (json \ "resource_access" \ realm \ "roles").as[Seq[String]]
+        val superUser = Try {
+          val roles = (json \ "resource_access" \ clientId \ "roles").as[Seq[String]]
           roles.contains("iddqd")
         }.getOrElse(false)
         SessionData(
@@ -57,6 +57,7 @@ class KeycloackAuthenticator(configuration: Configuration) extends Authenticator
             firstName = (json \ "given_name").as[String],
             lastName = (json \ "family_name").as[String],
             email = (json \ "email").as[String],
+            token = jwt,
             superUser = superUser
           )
         )

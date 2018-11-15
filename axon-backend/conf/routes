@@ -9,7 +9,7 @@ GET         /                                           controllers.HomeControll
 #GET        /web-api/config        controllers.HomeController.config
 GET         /web-api/heartbeat                          controllers.HomeController.heartbeat
 GET         /web-api/keycloak                           controllers.HomeController.keycloak
-GET         /web-api/auth                               controllers.HomeController.auth
+GET         /web-api/user                               controllers.HomeController.user
 
 # BPM config
 #+nocsrf

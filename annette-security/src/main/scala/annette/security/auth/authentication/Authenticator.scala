@@ -1,6 +1,6 @@
-package annette.security.authentication
+package annette.security.auth.authentication
 
-import annette.security.SessionData
+import annette.security.auth.SessionData
 import play.api.mvc.Request
 
 import scala.concurrent.{ExecutionContext, Future}

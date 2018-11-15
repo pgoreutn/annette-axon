@@ -28,7 +28,7 @@
       </button>-->
     </div>
 
-    <table mat-table [dataSource]="schemaDataSource" matSort >
+    <table *ngIf="!loadingFailure" mat-table [dataSource]="schemaDataSource" matSort >
 
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>

@@ -7,18 +7,22 @@
   * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
   * запрещено без письменного разрешения правообладателя.
   ****************************************************************************************/
-package annette.security.authentication
+package annette.security.auth.authorization
 
-import annette.security.{AbstractAuthAction, SessionData}
+import annette.security.auth.authentication.Authenticator
 import javax.inject._
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton
-class AuthenticatedAction @Inject()(
+class AuthorizedActionFactory @Inject()(
     authenticator: Authenticator,
-    override val parser: BodyParsers.Default,
-    implicit override val executionContext: ExecutionContext
-) extends AbstractAuthAction(parser, executionContext) {
-  override def validate[A](request: Request[A]): Future[SessionData] = authenticator.authenticate(request)
+    roleProvider: RoleProvider,
+    authorizer: Authorizer,
+    parser: BodyParsers.Default,
+    executionContext: ExecutionContext
+) {
+
+  def apply(newAuthorizationQuery: AuthorizationQuery) =
+    new AuthorizedAction(authenticator, roleProvider, authorizer, newAuthorizationQuery, parser, executionContext)
 }

@@ -1,7 +1,7 @@
-package annette.security.authorization
+package annette.security.auth.authorization
 
 import annette.authorization.api.RoleId
-import annette.security.SessionData
+import annette.security.auth.SessionData
 import play.api.mvc.Request
 
 import scala.collection._

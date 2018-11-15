@@ -1,4 +1,4 @@
-package annette.security.authentication
+package annette.security.auth.authentication
 
 import annette.shared.exceptions.AnnetteException
 

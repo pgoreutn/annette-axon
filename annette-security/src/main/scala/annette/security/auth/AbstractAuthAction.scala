@@ -7,10 +7,10 @@
   * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
   * запрещено без письменного разрешения правообладателя.
   ****************************************************************************************/
-package annette.security
+package annette.security.auth
 
+import annette.security.auth.AuthenticatedRequest
 import annette.shared.exceptions.{AnnetteException, AnnetteThrowable}
-import javax.inject._
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}

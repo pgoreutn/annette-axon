@@ -1,6 +1,6 @@
-package annette.security.authorization
+package annette.security.auth.authorization
 import annette.authorization.api.{AuthorizationService, RoleId}
-import annette.security.UserId
+import annette.security.auth.UserId
 import javax.inject._
 
 import scala.concurrent.Future
