@@ -9,7 +9,10 @@ val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % Test
 
 lazy val root = (project in file("."))
   .settings(name := "annette-axon")
-  .aggregate(`axon-backend`, `annette-shared`, `bpm-repository-api`, `bpm-repository-impl`, `authorization-api`, `authorization-impl`)
+  .aggregate(`axon-backend`,
+    `annette-shared`, `annette-security`,
+    `bpm-repository-api`, `bpm-repository-impl`,
+    `authorization-api`, `authorization-impl`)
   .settings(commonSettings: _*)
 
 
@@ -17,7 +20,6 @@ lazy val `axon-backend` = (project in file("axon-backend"))
   .settings(commonSettings: _*)
   .enablePlugins(PlayScala, LagomPlay, SbtReactiveAppPlugin)
   //.disablePlugins(PlayFilters)
-  .dependsOn(`bpm-repository-api`)
   .settings(
     libraryDependencies ++= Seq(
       lagomScaladslServer,
@@ -27,6 +29,7 @@ lazy val `axon-backend` = (project in file("axon-backend"))
       "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
     )
   )
+  .dependsOn(`bpm-repository-api`, `annette-security`)
 
 lazy val `annette-shared` = (project in file("annette-shared"))
   .settings(
@@ -38,6 +41,16 @@ lazy val `annette-shared` = (project in file("annette-shared"))
     )
   )
 
+lazy val `annette-security` = (project in file("annette-security"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslApi,
+      lagomScaladslServer % Optional,
+      scalaTest,
+      Dependencies.jwt
+    )
+  )
+  .dependsOn(`authorization-api`, `annette-shared`)
 
 lazy val `authorization-api` = (project in file("authorization-api"))
   .settings(

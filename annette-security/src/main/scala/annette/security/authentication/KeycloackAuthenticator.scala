@@ -1,9 +1,9 @@
-package annette.shared.security.authentication
+package annette.security.authentication
 
 import java.util.UUID
 
 import annette.shared.exceptions.AnnetteException
-import annette.shared.security.SessionData
+import annette.security.{SessionData, UserPrincipal}
 import pdi.jwt.exceptions.JwtExpirationException
 import pdi.jwt.{JwtAlgorithm, JwtJson}
 import play.api.Configuration
@@ -14,6 +14,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 class KeycloackAuthenticator(configuration: Configuration) extends Authenticator {
+
+  val realm = configuration.get[String]("annette.security.client.realm")
 
   val key = configuration.get[String]("annette.security.client.publicKey")
   val debugMode = configuration.getOptional[Boolean]("annette.security.client.debug").getOrElse(false)
@@ -27,12 +29,15 @@ class KeycloackAuthenticator(configuration: Configuration) extends Authenticator
   def fakeAuthenticate[A](request: Request[A])(implicit ec: ExecutionContext): Future[SessionData] = {
     Future.successful(
       SessionData(
-        userId = UUID.randomUUID().toString,
-        username = "john.doe",
-        firstName = "John",
-        lastName = "Doe",
-        email = "john.doe@acme.com"
-      ))
+        UserPrincipal(
+          userId = UUID.randomUUID().toString,
+          username = "john.doe",
+          firstName = "John",
+          lastName = "Doe",
+          email = "john.doe@acme.com"
+        )
+      )
+    )
   }
 
   def realAuthenticate[A](request: Request[A])(implicit ec: ExecutionContext): Future[SessionData] = {
@@ -40,13 +45,20 @@ class KeycloackAuthenticator(configuration: Configuration) extends Authenticator
       Try {
         val jwt = request.headers.get("Authorization").get.split(" ")(1)
         val json = JwtJson.decodeJson(jwt, publicKey, Seq(JwtAlgorithm.RS256)).get
-        println(Json.prettyPrint(json))
+        // println(Json.prettyPrint(json))
+        val superUser = Try{
+          val roles = (json \ "resource_access" \ realm \ "roles").as[Seq[String]]
+          roles.contains("iddqd")
+        }.getOrElse(false)
         SessionData(
-          userId = (json \ "sub").as[String],
-          username = (json \ "preferred_username").as[String],
-          firstName = (json \ "given_name").as[String],
-          lastName = (json \ "family_name").as[String],
-          email = (json \ "email").as[String]
+          UserPrincipal(
+            userId = (json \ "sub").as[String],
+            username = (json \ "preferred_username").as[String],
+            firstName = (json \ "given_name").as[String],
+            lastName = (json \ "family_name").as[String],
+            email = (json \ "email").as[String],
+            superUser = superUser
+          )
         )
       } match {
         case Success(sd)                   => sd

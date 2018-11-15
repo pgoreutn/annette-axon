@@ -7,7 +7,7 @@
   * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
   * запрещено без письменного разрешения правообладателя.
   ****************************************************************************************/
-package annette.shared.security
+package annette.security
 
 import annette.shared.exceptions.{AnnetteException, AnnetteThrowable}
 import javax.inject._

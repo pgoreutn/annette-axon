@@ -1,5 +1,7 @@
 package controllers
-import annette.shared.security.authentication.AuthenticatedAction
+import annette.authorization.api.Permission
+import annette.security.authentication.AuthenticatedAction
+import annette.security.authorization._
 import axon.bpm.repository.api.BpmRepositoryService
 import javax.inject._
 import play.api._
@@ -17,6 +19,7 @@ import scala.io.Source
 class HomeController @Inject()(
                                assets: Assets,
                                authenticated: AuthenticatedAction,
+                               authorized: AuthorizedActionFactory,
                                cc: ControllerComponents,
                                implicit val ec: ExecutionContext)
     extends AbstractController(cc) {
@@ -28,7 +31,20 @@ class HomeController @Inject()(
     Ok(config)
   }
 
-  def heartbeat() = authenticated { implicit  request =>
+  def heartbeat() = authenticated { implicit request =>
     Ok("ok")
   }
+
+  def auth() =
+     authorized(
+       CheckAny(
+         Permission("axon.bpm.executeAll"),
+         Permission("axon.bpm.execute", "process1"),
+         Permission("axon.bpm.execute", "process2")
+       ) )
+    //authorized(AuthorizationQuery())
+    { implicit request =>
+   // request.sessionData.
+      Ok("ok")
+    }
 }

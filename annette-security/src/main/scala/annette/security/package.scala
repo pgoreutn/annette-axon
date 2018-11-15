@@ -1,4 +1,4 @@
-package annette.shared
+package annette
 
 package object security {
   type UserId = String
