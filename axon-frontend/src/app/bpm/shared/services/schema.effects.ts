@@ -33,7 +33,7 @@ export class SchemaEffects {
               .pipe(
                   map(response => new FindSchemasSuccess({schemas: response})),
                   catchError(failure =>
-                      of(new FindSchemasFailure({failure: failure}))
+                      of(new FindSchemasFailure({failure: failure.error}))
                   )
               )
       )

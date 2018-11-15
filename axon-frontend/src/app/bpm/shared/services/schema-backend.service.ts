@@ -14,11 +14,11 @@ export class SchemaBackendService {
   constructor(private httpClient: HttpClient) { }
 
   findAll(): Observable<SchemaSummary[]> {
-    return this.find("")
+    return this.find('')
   }
 
   find(filter: string) {
-    return this.httpClient.post<SchemaSummary[]>(`${SERVICE_BASE}/schemas`,{filter: filter})
+    return this.httpClient.post<SchemaSummary[]>(`${SERVICE_BASE}/schemas`, { filter: filter })
   }
 
   create(xml: string) {

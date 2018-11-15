@@ -25,6 +25,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  loadingFailure: any
 
   constructor(private schemaBackend: SchemaBackendService,
               private store: Store<any>) {
@@ -37,16 +38,25 @@ export class SchemasComponent implements OnInit, OnDestroy {
     this.store.pipe(select(fromSchema.selectFilter))
         .subscribe(
             res => {
-              //console.log(`Filter pipe: ${res}`)
+              // console.log(`Filter pipe: ${res}`)
               this.filter = res
+            }
+        )
+    this.store
+        .pipe(select(fromSchema.selectLoadingFailure))
+        .subscribe(
+            loadingFailure => {
+              console.log(`loadingFailure: `)
+              console.log(loadingFailure)
+              this.loadingFailure = loadingFailure
             }
         )
     this.store
         .pipe(select(fromSchema.selectAll))
         .subscribe(
             res => {
-              //console.log('Schemas pipe:')
-              //console.log(res)
+              // console.log('Schemas pipe:')
+              // console.log(res)
               this.schemaDataSource = new MatTableDataSource<SchemaSummary>(res)
               this.schemaDataSource.paginator = this.paginator;
               this.schemaDataSource.sort = this.sort;

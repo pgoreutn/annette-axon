@@ -71,5 +71,9 @@
   "axon.settings.themes.night-mode": "Auto night mode (from 21:00 to 7:00)",
   "axon.settings.animations": "Animations",
   "axon.settings.animations.page": "Navigation whole page transition",
-  "axon.settings.animations.elements": "Navigation page elements slide up"
+  "axon.settings.animations.elements": "Navigation page elements slide up",
+
+  "core.authorization.failed": "Authorization failed ",
+  "core.authorization.requiredAllPermissions": "Authorization failed. Required ALL following permissions: {{permissions}}.",
+  "core.authorization.requiredAnyPermissions": "Authorization failed. Required ANY of the following permissions: {{permissions}}. "
 }

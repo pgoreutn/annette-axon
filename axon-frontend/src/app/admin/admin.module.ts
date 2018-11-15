@@ -10,6 +10,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { AdminComponent } from './admin.component';
+import {MultiTranslateHttpLoader} from 'ngx-translate-multi-http-loader'
 
 @NgModule({
   imports: [
@@ -34,9 +35,8 @@ export class AdminModule {
 }
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(
-    http,
-    `${environment.i18nPrefix}/assets/i18n/admin/`,
-    '.json'
-  );
+  return new MultiTranslateHttpLoader(http, [
+    {prefix: `${environment.i18nPrefix}/assets/i18n/`, suffix: '.json'},
+    {prefix: `${environment.i18nPrefix}/assets/i18n/admin/`, suffix: '.json'},
+  ]);
 }
