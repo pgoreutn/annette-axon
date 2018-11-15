@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate/core';
 
-import {SharedModule} from '../../shared/index'
+import {SharedModule} from '@app/shared/index'
 
 import { BpmConfigRoutingModule } from './bpm-config-routing.module';
 import {HttpClient} from '@angular/common/http'
@@ -16,6 +15,8 @@ import {BpmSharedModule} from '@app/bpm/shared/bpm-shared.module';
 import { SchemaComponent } from './schema/schema.component'
 import {BpmnEditComponent} from '@app/bpm/config/schema/bpmn-view/bpmn-edit.component'
 import {EntityDefinitionService} from 'ngrx-data'
+import {DEFAULT_LANGUAGE} from '@app/shared/languages'
+import {MultiTranslateHttpLoader} from 'ngx-translate-multi-http-loader'
 
 @NgModule({
   imports: [
@@ -41,13 +42,14 @@ import {EntityDefinitionService} from 'ngrx-data'
   ]
 })
 export class BpmConfigModule {
-  constructor() {}
+  constructor(translate: TranslateService) {
+    translate.use(DEFAULT_LANGUAGE)
+  }
 }
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(
-      http,
-      `${environment.i18nPrefix}/assets/i18n/bpm/`,
-      '.json'
-  );
+  return new MultiTranslateHttpLoader(http, [
+    {prefix: `${environment.i18nPrefix}/assets/i18n/`, suffix: '.json'},
+    {prefix: `${environment.i18nPrefix}/assets/i18n/bpm/`, suffix: '.json'},
+  ]);
 }

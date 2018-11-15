@@ -26,6 +26,8 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.translate.setDefaultLang(DEFAULT_LANGUAGE);
+
+    console.log(this.translate.translations)
     this.subscribeToSettings();
     this.subscribeToRouterEvents();
   }
@@ -38,8 +40,11 @@ export class ConfigComponent implements OnInit, OnDestroy {
   private subscribeToSettings() {
     this.store
         .pipe(select(selectorSettings), takeUntil(this.unsubscribe$))
-        .subscribe((settings: SettingsState) =>
-            this.translate.use(settings.language)
+        .subscribe((settings: SettingsState) => {
+              console.log(`new lang ${settings.language}`);
+              this.translate.use(settings.language)
+              this.translate.reloadLang(settings.language)
+            }
         );
   }
 

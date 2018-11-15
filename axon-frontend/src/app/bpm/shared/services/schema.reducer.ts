@@ -95,3 +95,5 @@ export const {
 } = adapter.getSelectors(selectSchemaState);
 
 export const selectFilter = state => state.schema.filter;
+export const selectLoadingFailure = state => state.schema.loadingFailure;
+export const selectSavingFailure = state => state.schema.savingFailure;

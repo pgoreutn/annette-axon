@@ -8,6 +8,7 @@ import { OrgStructureRoutingModule } from './org-structure-routing.module';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { OrgStructureComponent } from './org-structure.component';
+import {MultiTranslateHttpLoader} from 'ngx-translate-multi-http-loader'
 
 @NgModule({
   imports: [
@@ -24,8 +25,7 @@ import { OrgStructureComponent } from './org-structure.component';
     }),
   ],
   declarations: [
-    
-  OrgStructureComponent],
+    OrgStructureComponent],
   providers: []
 })
 export class OrgStructureModule {
@@ -33,9 +33,8 @@ export class OrgStructureModule {
 }
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(
-    http,
-    `${environment.i18nPrefix}/assets/i18n/org-structure/`,
-    '.json'
-  );
+  return new MultiTranslateHttpLoader(http, [
+    {prefix: `${environment.i18nPrefix}/assets/i18n/`, suffix: '.json'},
+    {prefix: `${environment.i18nPrefix}/assets/i18n/org-structure/`, suffix: '.json'},
+  ]);
 }
