@@ -62,7 +62,7 @@ private[impl] class UserRoleAssignmentRepository(session: CassandraSession)(impl
       deleteRoleUserAssignmentStatement = deleteRoleUserAssignment
       findRolesAssignedToUserStatement = findRolesAssignedToUser
       findUsersAssignedToRoleStatement = findUsersAssignedToRole
-      println("preparation done !!!!!")
+      //println("preparation done !!!!!")
       Done
     }
   }

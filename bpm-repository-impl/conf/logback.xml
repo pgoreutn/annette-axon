@@ -35,11 +35,11 @@
 
   <logger name="play" level="INFO" />
   <logger name="akka" level="INFO" />
-  <logger name="akka.io.InetAddressDnsResolver" level="NONE" />
   <logger name="com.lightbend.lagom" level="INFO" />
   <logger name="org.apache.cassandra" level="ERROR" />
   <logger name="com.datastax.driver" level="ERROR" />
   <logger name="org.apache.kafka" level="WARN" />
+
 
   <root level="DEBUG">
     <appender-ref ref="ASYNCFILE" />

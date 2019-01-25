@@ -1,6 +1,5 @@
 package annette.security.auth
 import annette.authorization.api.Permission
-import annette.security.auth.UserId
 import annette.security.auth.authorization._
 
 case class SessionData(principal: UserPrincipal, authorizationResult: AuthorizationResult = AuthorizationResult())

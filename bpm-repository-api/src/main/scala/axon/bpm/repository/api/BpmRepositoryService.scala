@@ -10,8 +10,8 @@ import scala.collection._
 
 trait BpmRepositoryService extends Service {
 
-  def createSchema: ServiceCall[String, Schema]
-  def updateSchema: ServiceCall[String, Schema]
+  def createSchema: ServiceCall[Schema, Schema]
+  def updateSchema: ServiceCall[Schema, Schema]
   def deleteSchema(id: SchemaId): ServiceCall[NotUsed, Done]
   def findSchemaById(id: String): ServiceCall[NotUsed, Schema]
   def findSchemas: ServiceCall[String, immutable.Seq[SchemaSummary]]

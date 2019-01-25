@@ -1,5 +1,6 @@
 package axon.bpm.repository.impl
 
+import axon.bpm.repository.impl.schema.{SchemaEntity, SchemaEventProcessor, SchemaRepository, SchemaSerializerRegistry}
 import axon.bpm.repository.api.BpmRepositoryService
 import axon.bpm.repository.impl.schema.{SchemaEntity, SchemaEventProcessor, SchemaRepository, SchemaSerializerRegistry}
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
@@ -14,6 +15,8 @@ import play.api.libs.ws.ahc.AhcWSComponents
 import scala.collection.immutable
 
 class BpmRepositoryLoader extends LagomApplicationLoader {
+
+
 
   override def load(context: LagomApplicationContext): LagomApplication =
     new BpmRepositoryApplication(context) {

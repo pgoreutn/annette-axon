@@ -6,9 +6,8 @@ import akka.testkit.TestKit
 import annette.shared.exceptions.AnnetteTransportException
 import axon.bpm.repository.api.Schema
 import axon.bpm.repository.impl.schema._
-import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.InvalidCommandException
-import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
+import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 
 class SchemaEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {

@@ -73,7 +73,7 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       } yield {
         created shouldBe a[Schema]
         updated shouldBe a[Schema]
-        schema.schema shouldBe sch
+        schema.xml shouldBe sch
         schema.name shouldBe "name1"
         schema.description shouldBe Some("description1")
       }

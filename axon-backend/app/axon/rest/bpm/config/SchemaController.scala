@@ -44,20 +44,20 @@ class SchemaController @Inject()(
       }
   }
 
-  def create = authorized(CheckAny(CREATE_SCHEMA)).async(parse.json[SchemaXML]) { implicit request =>
-    val xml = request.body.xml
+  def create = authorized(CheckAny(CREATE_SCHEMA)).async(parse.json[Schema]) { implicit request =>
+    val schema = request.body
     bpmService.createSchema
-      .invoke(xml)
+      .invoke(schema)
       .map(r => Ok(Json.toJson(r)))
       .recover {
         case ex: AnnetteException =>
           BadRequest(ex.toMessage)
       }
   }
-  def update() = authorized(CheckAny(UPDATE_SCHEMA)).async(parse.json[SchemaXML]) { implicit request =>
-    val xml = request.body.xml
+  def update() = authorized(CheckAny(UPDATE_SCHEMA)).async(parse.json[Schema]) { implicit request =>
+    val schema = request.body
     bpmService.updateSchema
-      .invoke(xml)
+      .invoke(schema)
       .map(r => Ok(Json.toJson(r)))
       .recover {
         case ex: AnnetteException =>

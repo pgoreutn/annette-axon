@@ -8,10 +8,10 @@ import play.api.libs.json.{Format, Json}
 
 sealed trait SchemaCommand
 
-case class CreateSchema(id: SchemaId, name: String, description: Option[String], notation: String, schema: String)
+case class CreateSchema(schema: Schema)
     extends SchemaCommand
     with ReplyType[Schema]
-case class UpdateSchema(id: SchemaId, name: String, description: Option[String], notation: String, schema: String)
+case class UpdateSchema(schema: Schema)
     extends SchemaCommand
     with ReplyType[Schema]
 case class DeleteSchema(id: SchemaId) extends SchemaCommand with ReplyType[Done]
@@ -39,8 +39,8 @@ object SchemaEvent {
   val Tag = AggregateEventTag.sharded[SchemaEvent](NumShards)
 }
 
-case class SchemaCreated(id: SchemaId, name: String, description: Option[String], notation: String, schema: String) extends SchemaEvent
-case class SchemaUpdated(id: SchemaId, name: String, description: Option[String], schema: String) extends SchemaEvent
+case class SchemaCreated(schema: Schema) extends SchemaEvent
+case class SchemaUpdated(schema: Schema) extends SchemaEvent
 case class SchemaDeleted(id: SchemaId) extends SchemaEvent
 
 object SchemaCreated {

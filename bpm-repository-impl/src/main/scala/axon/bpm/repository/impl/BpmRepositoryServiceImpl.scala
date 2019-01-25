@@ -3,6 +3,7 @@ package axon.bpm.repository.impl
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.{Done, NotUsed}
+import axon.bpm.repository.impl.schema._
 import axon.bpm.repository.api._
 import axon.bpm.repository.impl.schema._
 import com.lightbend.lagom.scaladsl.api.ServiceCall
@@ -22,16 +23,14 @@ class BpmRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Actor
     mat: Materializer)
     extends BpmRepositoryService {
 
-  override def createSchema: ServiceCall[String, Schema] = ServiceCall { xml =>
-    val schema = parseXml(xml)
+  override def createSchema: ServiceCall[Schema, Schema] = ServiceCall { schema =>
     refFor(schema.id)
-      .ask(CreateSchema(schema.id, schema.name, schema.description, schema.notation, xml))
+      .ask(CreateSchema(schema))
   }
 
-  override def updateSchema: ServiceCall[String, Schema] = ServiceCall { xml =>
-    val schema = parseXml(xml)
+  override def updateSchema: ServiceCall[Schema, Schema] = ServiceCall { schema =>
     refFor(schema.id)
-      .ask(UpdateSchema(schema.id, schema.name, schema.description, schema.notation, xml))
+      .ask(UpdateSchema(schema))
   }
 
   override def deleteSchema(id: SchemaId): ServiceCall[NotUsed, Done] = ServiceCall { _ => refFor(id).ask(DeleteSchema(id))
@@ -49,20 +48,20 @@ class BpmRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Actor
 
   private def refFor(id: SchemaId) = registry.refFor[SchemaEntity](id)
 
-  private def parseXml(schema: String): Schema = {
-    val xml = Try(XML.loadString(schema)).getOrElse(throw XmlParseError())
-    println(xml)
-    val r = Try {
-      val id = (xml \\ "process" \ "@id").text
-      if (id.trim.isEmpty) throw XmlParseError()
-      val name = (xml \\ "process" \ "@name").text
-      val description = (xml \\ "process" \ "documentation").text
-      val descriptionOpt = if (description.isEmpty) None else Some(description)
-      val notation = "BPMN"
-      Schema(id, name, descriptionOpt, notation, schema)
-    }.getOrElse(throw XmlParseError())
-    println(r)
-    r
-  }
+//  private def parseXml(schema: String): Schema = {
+//    val xml = Try(XML.loadString(schema)).getOrElse(throw XmlParseError())
+//    println(xml)
+//    val r = Try {
+//      val id = (xml \\ "process" \ "@id").text
+//      if (id.trim.isEmpty) throw XmlParseError()
+//      val name = (xml \\ "process" \ "@name").text
+//      val description = (xml \\ "process" \ "documentation").text
+//      val descriptionOpt = if (description.isEmpty) None else Some(description)
+//      val notation = "BPMN"
+//      Schema(id, name, descriptionOpt, notation, schema)
+//    }.getOrElse(throw XmlParseError())
+//    println(r)
+//    r
+//  }
 
 }

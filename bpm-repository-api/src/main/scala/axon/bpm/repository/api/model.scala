@@ -11,13 +11,13 @@ package axon.bpm.repository.api
 
 import play.api.libs.json.{Format, Json}
 
-case class Schema(id: SchemaId, name: String, description: Option[String], notation: String, schema: String)
+case class Schema(id: SchemaId, name: String, description: Option[String], notation: String, xml: String, processDefinitions: Option[String])
 
 object Schema {
   implicit val format: Format[Schema] = Json.format
 }
 
-case class SchemaSummary(id: SchemaId, name: String, description: Option[String], notation: String)
+case class SchemaSummary(id: SchemaId, name: String, description: Option[String], notation: String, processDefinitions: Option[String])
 
 object SchemaSummary {
   implicit val format: Format[SchemaSummary] = Json.format

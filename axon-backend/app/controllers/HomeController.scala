@@ -24,6 +24,7 @@ class HomeController @Inject()(
     extends AbstractController(cc) {
 
   def index(file: String = "") = assets.versioned("/public/dist/", "index.html")
+  def serviceWorker = assets.versioned("/public/dist/", "service-worker.js")
 
   def keycloak = Action { request: Request[AnyContent] =>
     val config = Source.fromResource("keycloak.json").mkString

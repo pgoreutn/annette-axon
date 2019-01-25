@@ -9,7 +9,6 @@
   ****************************************************************************************/
 package annette.security.auth
 
-import annette.security.auth.AuthenticatedRequest
 import annette.shared.exceptions.{AnnetteException, AnnetteThrowable}
 import play.api.mvc._
 

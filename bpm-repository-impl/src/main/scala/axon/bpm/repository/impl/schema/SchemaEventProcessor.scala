@@ -33,7 +33,8 @@ private[impl] class SchemaEventProcessor(session: CassandraSession, readSide: Ca
           id text PRIMARY KEY,
           name text,
           description text,
-          notation text
+          notation text,
+          process_definitions text
         )
       """)
 
@@ -43,10 +44,10 @@ private[impl] class SchemaEventProcessor(session: CassandraSession, readSide: Ca
   private def prepareStatements() = {
     for {
       insertSchema <- session.prepare("""
-        INSERT INTO schemas(id, name, description, notation) VALUES (?, ?, ?, ?)
+        INSERT INTO schemas(id, name, description, notation, process_definitions) VALUES (?, ?, ?, ?, ?)
       """)
       updateSchema <- session.prepare("""
-        UPDATE schemas SET name = ?, description = ? WHERE id = ?
+        UPDATE schemas SET name = ?, description = ?, process_definitions = ? WHERE id = ?
       """)
       deleteSchema <- session.prepare("""
         DELETE FROM schemas WHERE id = ?
@@ -60,19 +61,19 @@ private[impl] class SchemaEventProcessor(session: CassandraSession, readSide: Ca
   }
 
   private def insertSchema(event: SchemaCreated) = {
-    println(s"insertSchema: ${event.id}")
+    println(s"insertSchema: ${event.schema.id}")
     Future.successful(
       List(
-        insertSchemaStatement.bind(event.id, event.name, event.description.getOrElse(""), event.notation)
+        insertSchemaStatement.bind(event.schema.id, event.schema.name, event.schema.description.getOrElse(""), event.schema.notation, event.schema.processDefinitions.getOrElse(""))
       ))
   }
 
   private def updateSchema(event: SchemaUpdated) = {
-    println(s"updateSchema: ${event.id}")
+    println(s"updateSchema: ${event.schema.id}")
 
     Future.successful(
       List(
-        updateSchemaStatement.bind(event.name, event.description.getOrElse(""), event.id)
+        updateSchemaStatement.bind(event.schema.name, event.schema.description.getOrElse(""), event.schema.processDefinitions.getOrElse(""), event.schema.id)
       ))
   }
 

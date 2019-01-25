@@ -21,8 +21,10 @@ private[impl] class SchemaRepository(session: CassandraSession)(implicit ec: Exe
 
         seq
           .filter { summary =>
-            summary.id.toLowerCase.contains(filterLC) || summary.name.toLowerCase.contains(filterLC) ||
-              summary.description.getOrElse("").toLowerCase.contains(filterLC)
+              summary.name.toLowerCase.contains(filterLC) ||
+              summary.notation.toLowerCase.contains(filterLC) ||
+              summary.description.getOrElse("").toLowerCase.contains(filterLC) ||
+              summary.processDefinitions.getOrElse("").toLowerCase.contains(filterLC)
           }
           .to[collection.immutable.Seq]
       }
@@ -40,7 +42,11 @@ private[impl] class SchemaRepository(session: CassandraSession)(implicit ec: Exe
         val s = schema.getString("description")
         if (s.nonEmpty) Some(s) else None
       },
-      schema.getString("notation")
+      schema.getString("notation"),
+      {
+        val s = schema.getString("process_definitions")
+        if (s.nonEmpty) Some(s) else None
+      }
     )
   }
 }

@@ -26,22 +26,22 @@ class SchemaEntity extends PersistentEntity {
           case (FindSchemaById(id), ctx, state) => ctx.reply(state)
         }
         .onReadOnlyCommand[CreateSchema, Schema] {
-          case (CreateSchema(id, _, _, _, _), ctx, state) =>
+          case (CreateSchema(Schema(id, _, _, _, _, _)), ctx, state) =>
             ctx.commandFailed(SchemaAlreadyExist(id))
           //ctx.commandFailed(NotFound(id))
         }
         .onCommand[UpdateSchema, Schema] {
-          case (UpdateSchema(id, name, description, notation, schema), ctx, state) =>
+          case (UpdateSchema(schema), ctx, state) =>
             // TODO: validate notation
-            ctx.thenPersist(SchemaUpdated(id, name, description, schema))(_ => ctx.reply(Schema(id, name, description, state.get.notation, schema)))
+            ctx.thenPersist(SchemaUpdated(schema))(_ => ctx.reply(schema))
         }
         .onCommand[DeleteSchema, Done] {
           case (DeleteSchema(id), ctx, state) =>
             ctx.thenPersist(SchemaDeleted(id))(_ => ctx.reply(Done))
         }
         .onEvent {
-          case (SchemaUpdated(_, name, description, schema), state) =>
-            state.map(s => s.copy(name = name, description = description, schema = schema))
+          case (SchemaUpdated(schema), state) =>
+            state.map(s => s.copy(name = schema.name, description = schema.description, xml = schema.xml))
           case (SchemaDeleted(_), _) =>
             None
         }
@@ -49,11 +49,11 @@ class SchemaEntity extends PersistentEntity {
     case None =>
       Actions()
         .onCommand[CreateSchema, Schema] {
-          case (CreateSchema(id, name, description, notation, schema), ctx, state) =>
-            ctx.thenPersist(SchemaCreated(id, name, description, notation, schema))(_ => ctx.reply(Schema(id, name, description, notation, schema)))
+          case (CreateSchema(schema), ctx, state) =>
+            ctx.thenPersist(SchemaCreated(schema))(_ => ctx.reply(schema))
         }
         .onReadOnlyCommand[UpdateSchema, Schema] {
-          case (UpdateSchema(id, _, _, _, _), ctx, state) => ctx.commandFailed(SchemaNotFound(id))
+          case (UpdateSchema(Schema(id, _, _, _, _, _)), ctx, state) => ctx.commandFailed(SchemaNotFound(id))
         }
         .onReadOnlyCommand[DeleteSchema, Done] {
           case (DeleteSchema(id), ctx, state) => ctx.commandFailed(SchemaNotFound(id))
@@ -62,8 +62,8 @@ class SchemaEntity extends PersistentEntity {
           case (FindSchemaById(_), ctx, state) => ctx.reply(None)
         }
         .onEvent {
-          case (SchemaCreated(id, name, description, notation, schema), state) =>
-            Some(Schema(id, name, description, notation, schema))
+          case (SchemaCreated(schema), state) =>
+            Some(schema)
         }
   }
 
