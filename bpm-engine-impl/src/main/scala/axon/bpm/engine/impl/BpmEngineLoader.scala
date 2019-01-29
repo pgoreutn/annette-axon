@@ -31,7 +31,6 @@ abstract class BpmEngineApplication(context: LagomApplicationContext)
     with AhcWSComponents {
 
   override lazy val lagomServer = serverFor[BpmEngineService](wire[BpmEngineServiceImpl])
-  // lazy val schemaEngine = wire[SchemaEngine]
   lazy val jsonSerializerRegistry = BpmEngineSerializerRegistry
   lazy val processEngine = wireWith(ProcessEngineProvider.create _)
 

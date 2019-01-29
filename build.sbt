@@ -17,6 +17,7 @@ lazy val root = (project in file("."))
     `bpm-repository-impl`,
     `bpm-engine-api`,
     `bpm-engine-impl`,
+    `knowledge-repository-api`,
     `authorization-api`,
     `authorization-impl`
   )
@@ -34,7 +35,12 @@ lazy val `axon-backend` = (project in file("axon-backend"))
       "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
     ) ++ Dependencies.tests
   )
-  .dependsOn(`bpm-repository-api`, `bpm-engine-api`, `annette-security`)
+  .dependsOn(
+    `bpm-repository-api`,
+    `bpm-engine-api`,
+    `knowledge-repository-api`,
+    `annette-security`
+  )
 
 lazy val `annette-shared` = (project in file("annette-shared"))
   .settings(
@@ -42,7 +48,7 @@ lazy val `annette-shared` = (project in file("annette-shared"))
       lagomScaladslApi,
       lagomScaladslServer % Optional,
       Dependencies.jwt
-    ) ++  Dependencies.tests
+    ) ++ Dependencies.tests
   )
 
 lazy val `annette-security` = (project in file("annette-security"))
@@ -51,7 +57,7 @@ lazy val `annette-security` = (project in file("annette-security"))
       lagomScaladslApi,
       lagomScaladslServer % Optional,
       Dependencies.jwt
-    ) ++  Dependencies.tests
+    ) ++ Dependencies.tests
   )
   .dependsOn(`authorization-api`, `annette-shared`)
 
@@ -123,6 +129,14 @@ lazy val `bpm-engine-impl` = (project in file("bpm-engine-impl"))
   )
   .settings(lagomForkedTestSettings: _*)
   .dependsOn(`bpm-engine-api`, `bpm-repository-api`)
+
+lazy val `knowledge-repository-api` = (project in file("knowledge-repository-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslApi,
+    ) ++ Dependencies.tests
+  )
+  .dependsOn(`annette-shared`)
 
 def commonSettings: Seq[Setting[_]] = Seq(
   )
