@@ -12,9 +12,9 @@ package axon.bpm.repository.api
 import annette.shared.exceptions.{AnnetteException, AnnetteTransportException}
 import com.lightbend.lagom.scaladsl.api.transport.TransportErrorCode
 
-object SchemaNotFound {
+object BpmDiagramNotFound {
   val ErrorCode = TransportErrorCode.NotFound
-  val MessageCode = "bpmRepository.schema.notFound"
+  val MessageCode = "bpmRepository.bpmDiagram.notFound"
 
   def apply(id: String) = new AnnetteTransportException(
     ErrorCode,
@@ -23,9 +23,9 @@ object SchemaNotFound {
 
 }
 
-object SchemaAlreadyExist {
+object BpmDiagramAlreadyExist {
   val ErrorCode = TransportErrorCode.BadRequest
-  val MessageCode = "bpmRepository.schema.alreadyExist"
+  val MessageCode = "bpmRepository.bpmDiagram.alreadyExist"
 
   def apply(id: String) = new AnnetteTransportException(
     ErrorCode,
@@ -34,29 +34,30 @@ object SchemaAlreadyExist {
 
 }
 
-object XmlParseError {
+object IdRequired {
   val ErrorCode = TransportErrorCode.BadRequest
-  val MessageCode = "bpmRepository.schema.xmlParseError"
+  val MessageCode = "bpmRepository.bpmDiagram.idRequired"
 
   def apply() = new AnnetteTransportException(
     ErrorCode,
     new AnnetteException(MessageCode)
   )
+
 }
 
 object InvalidNotation {
   val ErrorCode = TransportErrorCode.BadRequest
-  val MessageCode = "bpmRepository.schema.invalidNotation"
+  val MessageCode = "bpmRepository.bpmDiagram.invalidNotation"
 
   def apply() = new AnnetteTransportException(
     ErrorCode,
     new AnnetteException(MessageCode)
   )
-
 }
+
 object NotationChangeProhibited {
   val ErrorCode = TransportErrorCode.BadRequest
-  val MessageCode = "bpmRepository.schema.notationChangeProhibited"
+  val MessageCode = "bpmRepository.bpmDiagram.notationChangeProhibited"
 
   def apply() = new AnnetteTransportException(
     ErrorCode,

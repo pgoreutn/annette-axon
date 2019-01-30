@@ -14,11 +14,11 @@ GET         /web-api/user                               controllers.HomeControll
 
 # BPM config
 #+nocsrf
-POST          /web-api/bpm/config/schemas                 axon.rest.bpm.config.SchemaController.find
-GET           /web-api/bpm/config/schema/:id              axon.rest.bpm.config.SchemaController.findById(id: String)
-POST          /web-api/bpm/config/schema                  axon.rest.bpm.config.SchemaController.create
-PUT           /web-api/bpm/config/schema                  axon.rest.bpm.config.SchemaController.update
-DELETE        /web-api/bpm/config/schema/:id              axon.rest.bpm.config.SchemaController.delete(id: String)
+POST          /web-api/bpm/repository/bpmDiagrams                 axon.rest.bpm.repository.BpmDiagramController.find
+GET           /web-api/bpm/repository/bpmDiagram/:id              axon.rest.bpm.repository.BpmDiagramController.findById(id: String)
+POST          /web-api/bpm/repository/bpmDiagram                  axon.rest.bpm.repository.BpmDiagramController.create
+PUT           /web-api/bpm/repository/bpmDiagram                  axon.rest.bpm.repository.BpmDiagramController.update
+DELETE        /web-api/bpm/repository/bpmDiagram/:id              axon.rest.bpm.repository.BpmDiagramController.delete(id: String)
 
 
 # Map static resources from the /public folder to the /assets URL path

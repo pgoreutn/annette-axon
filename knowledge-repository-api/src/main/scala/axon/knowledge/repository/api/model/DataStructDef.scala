@@ -8,27 +8,28 @@
   * запрещено без письменного разрешения правообладателя.
 ****************************************************************************************/
 package axon.knowledge.repository.api.model
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsValue, Json}
 
 case class DataStructDef(
     key: DataStructKey,
     name: String,
     description: Option[String],
     baseObjects: Seq[DataStructKey],
-    items: Map[DataItemKey, DataItemDef]
+    items: Map[DataItemKey, DataItemDef],
 )
-
-object DataStructDef {
-  implicit val format: Format[DataStructDef] = Json.format
-}
 
 case class DataItemDef(
     key: DataItemKey,
     name: String,
     description: Option[String],
     caption: String,
-    data: Data
+    datatype: Datatype,
+    value: Option[JsValue],
 )
+
+object DataStructDef {
+  implicit val format: Format[DataStructDef] = Json.format
+}
 
 object DataItemDef {
   implicit val format: Format[DataItemDef] = Json.format

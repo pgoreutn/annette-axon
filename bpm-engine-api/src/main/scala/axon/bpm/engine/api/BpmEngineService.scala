@@ -13,7 +13,7 @@ trait BpmEngineService extends Service {
   def findProcessDef: ServiceCall[FindProcessDefOptions, immutable.Seq[ProcessDef]]
   def findCaseDef: ServiceCall[FindCaseDefOptions, immutable.Seq[CaseDef]]
   def findDecisionDef: ServiceCall[FindDecisionDefOptions, immutable.Seq[DecisionDef]]
-  def deploy: ServiceCall[Schema, DeploymentWithDefs]
+  def deploy: ServiceCall[BpmDiagram, DeploymentWithDefs]
 
   def test: ServiceCall[JsObject, String]
 

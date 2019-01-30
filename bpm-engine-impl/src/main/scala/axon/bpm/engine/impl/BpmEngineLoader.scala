@@ -36,8 +36,8 @@ abstract class BpmEngineApplication(context: LagomApplicationContext)
 
   //println(processEngine.getName)
 
-  // persistentEntityRegistry.register(wire[SchemaEntity])
-  // readSide.register(wire[SchemaEventProcessor])
+  // persistentEntityRegistry.register(wire[BpmDiagramEntity])
+  // readSide.register(wire[BpmDiagramEventProcessor])
 
 }
 

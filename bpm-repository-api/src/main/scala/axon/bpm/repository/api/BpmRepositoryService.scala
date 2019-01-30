@@ -10,22 +10,22 @@ import scala.collection._
 
 trait BpmRepositoryService extends Service {
 
-  def createSchema: ServiceCall[Schema, Schema]
-  def updateSchema: ServiceCall[Schema, Schema]
-  def deleteSchema(id: SchemaId): ServiceCall[NotUsed, Done]
-  def findSchemaById(id: String): ServiceCall[NotUsed, Schema]
-  def findSchemas: ServiceCall[String, immutable.Seq[SchemaSummary]]
+  def createBpmDiagram: ServiceCall[BpmDiagram, BpmDiagram]
+  def updateBpmDiagram: ServiceCall[BpmDiagram, BpmDiagram]
+  def deleteBpmDiagram(id: BpmDiagramId): ServiceCall[NotUsed, Done]
+  def findBpmDiagramById(id: String): ServiceCall[NotUsed, BpmDiagram]
+  def findBpmDiagrams: ServiceCall[String, immutable.Seq[BpmDiagramSummary]]
 
   final override def descriptor = {
     import Service._
     // @formatter:off
     named("bpm-repository")
       .withCalls(
-        restCall(Method.POST, "/api/bpm/repository/schema", createSchema),
-        restCall(Method.PUT, "/api/bpm/repository/schema", updateSchema),
-        restCall(Method.DELETE, "/api/bpm/repository/schema/:id", deleteSchema _),
-        restCall(Method.GET, "/api/bpm/repository/schema/:id", findSchemaById _),
-        restCall(Method.POST, "/api/bpm/repository/findSchema", findSchemas _)
+        restCall(Method.POST, "/api/bpm/repository/bpmDiagram", createBpmDiagram),
+        restCall(Method.PUT, "/api/bpm/repository/bpmDiagram", updateBpmDiagram),
+        restCall(Method.DELETE, "/api/bpm/repository/bpmDiagram/:id", deleteBpmDiagram _),
+        restCall(Method.GET, "/api/bpm/repository/bpmDiagram/:id", findBpmDiagramById _),
+        restCall(Method.POST, "/api/bpm/repository/findBpmDiagram", findBpmDiagrams _)
       )
       .withExceptionSerializer(new AnnetteExceptionSerializer())
       .withAutoAcl(true)

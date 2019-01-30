@@ -3,7 +3,7 @@ package axon.bpm.repository.impl
 import scala.xml.XML
 
 object TestData {
-  def xmlSchema(id: String = "id", name: String = "name", description: String = "description") = s"""|<?xml version="1.0" encoding="UTF-8"?>
+  def xmlBpmDiagram(id: String = "id", name: String = "name", description: String = "description") = s"""|<?xml version="1.0" encoding="UTF-8"?>
                      |<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                      |                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                      |                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
@@ -90,10 +90,9 @@ object TestData {
                      |</bpmn:definitions>
                   """.stripMargin
 
-  val xml = XML.loadString(xmlSchema())
+  val xml = XML.loadString(xmlBpmDiagram())
   val id = (xml \\ "process" \ "@id").text
   val name = (xml \\ "process" \ "@name").text
   val description = (xml \\ "process" \ "documentation").text
-
 
 }
