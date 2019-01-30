@@ -11,19 +11,19 @@ package axon.bpm.repository.api
 
 import play.api.libs.json.{Format, Json}
 
-case class Schema(id: SchemaId, name: String, description: Option[String], notation: String, xml: String, processDefinitions: Option[String])
+case class BpmDiagram(id: BpmDiagramId, name: String, description: Option[String], notation: String, xml: String, processDefinitions: Option[String] = None)
 
-object Schema {
-  implicit val format: Format[Schema] = Json.format
+object BpmDiagram {
+  implicit val format: Format[BpmDiagram] = Json.format
 }
 
-case class SchemaSummary(id: SchemaId, name: String, description: Option[String], notation: String, processDefinitions: Option[String])
+case class BpmDiagramSummary(id: BpmDiagramId, name: String, description: Option[String], notation: String, processDefinitions: Option[String])
 
-object SchemaSummary {
-  implicit val format: Format[SchemaSummary] = Json.format
+object BpmDiagramSummary {
+  implicit val format: Format[BpmDiagramSummary] = Json.format
 }
 
-case class BusinessProcess(id: BusinessProcessId, name: String, description: Option[String], schemaKey: SchemaId)
+case class BusinessProcess(id: BusinessProcessId, name: String, description: Option[String], bpmDiagramKey: BpmDiagramId)
 
 object BusinessProcess {
   implicit val format: Format[BusinessProcess] = Json.format

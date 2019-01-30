@@ -1,11 +1,9 @@
 package axon.knowledge.repository.api
 
 import axon.knowledge.repository.api.builder.DataStructBuilder
-import axon.knowledge.repository.api.model.{DataItemDef, DataStructDef, StringData}
+import axon.knowledge.repository.api.model.DataStructDef
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.json.Json
-
-import scala.concurrent.Future
 
 class DataStructSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
 

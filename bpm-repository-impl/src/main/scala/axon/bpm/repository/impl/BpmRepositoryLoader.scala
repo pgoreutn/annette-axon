@@ -1,7 +1,7 @@
 package axon.bpm.repository.impl
 
 import axon.bpm.repository.api.BpmRepositoryService
-import axon.bpm.repository.impl.schema.{SchemaEntity, SchemaEventProcessor, SchemaRepository, SchemaSerializerRegistry}
+import axon.bpm.repository.impl.bpmDiagram.{BpmDiagramEntity, BpmDiagramEventProcessor, BpmDiagramRepository, BpmDiagramSerializerRegistry}
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
@@ -32,14 +32,14 @@ abstract class BpmRepositoryApplication(context: LagomApplicationContext)
     with AhcWSComponents {
 
   override lazy val lagomServer = serverFor[BpmRepositoryService](wire[BpmRepositoryServiceImpl])
-  lazy val schemaRepository = wire[SchemaRepository]
+  lazy val bpmDiagramRepository = wire[BpmDiagramRepository]
   lazy val jsonSerializerRegistry = BpmRepositorySerializerRegistry
 
-  persistentEntityRegistry.register(wire[SchemaEntity])
-  readSide.register(wire[SchemaEventProcessor])
+  persistentEntityRegistry.register(wire[BpmDiagramEntity])
+  readSide.register(wire[BpmDiagramEventProcessor])
 
 }
 
 object BpmRepositorySerializerRegistry extends JsonSerializerRegistry {
-  override def serializers: immutable.Seq[JsonSerializer[_]] = SchemaSerializerRegistry.serializers
+  override def serializers: immutable.Seq[JsonSerializer[_]] = BpmDiagramSerializerRegistry.serializers
 }

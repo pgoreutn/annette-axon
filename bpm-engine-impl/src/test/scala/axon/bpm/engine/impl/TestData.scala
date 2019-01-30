@@ -4,7 +4,7 @@ import scala.xml.XML
 
 object TestData {
 
-  def xmlSchema(id: String = "id", name: String = "name", description: String = "description") = s"""|<?xml version="1.0" encoding="UTF-8"?>
+  def xmlBpmDiagram(id: String = "id", name: String = "name", description: String = "description") = s"""|<?xml version="1.0" encoding="UTF-8"?>
                      |<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                      |                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                      |                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
@@ -91,11 +91,11 @@ object TestData {
                      |</bpmn:definitions>
                   """.stripMargin
 
-  val xml = XML.loadString(xmlSchema())
+  val xml = XML.loadString(xmlBpmDiagram())
   val id = (xml \\ "process" \ "@id").text
   val name = (xml \\ "process" \ "@name").text
   val description = (xml \\ "process" \ "documentation").text
-  val bpmnSchema =
+  val bpmnBpmDiagram =
     """<?xml version="1.0" encoding="UTF-8"?>
       |<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
       |  <bpmn:collaboration id="Collaboration_1">
@@ -272,7 +272,7 @@ object TestData {
       |  </bpmndi:BPMNDiagram>
       |</bpmn:definitions>
     """.stripMargin
-  val dmnSchema =
+  val dmnBpmDiagram =
     """<?xml version="1.0" encoding="UTF-8"?>
       |<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" id="definitions_08agkzm" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
       |  <decision id="dish" name="Dish">
@@ -360,7 +360,7 @@ object TestData {
       |</definitions>
     """.stripMargin
 
-  val cmmnSchema = s"""|<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  val cmmnBpmDiagram = s"""|<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
        |<cmmn:definitions id="_d7e7cad4-86f1-4c04-9dff-a9aace3afb61"
        |  targetNamespace="http://cmmn.org" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL"
        |  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/cmmn">

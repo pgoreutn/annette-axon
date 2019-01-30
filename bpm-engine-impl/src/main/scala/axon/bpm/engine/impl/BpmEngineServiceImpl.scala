@@ -3,7 +3,7 @@ package axon.bpm.engine.impl
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import axon.bpm.engine.api._
-import axon.bpm.repository.api.Schema
+import axon.bpm.repository.api.BpmDiagram
 import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
 import org.camunda.bpm.engine.ProcessEngine
@@ -80,13 +80,13 @@ class BpmEngineServiceImpl(registry: PersistentEntityRegistry, system: ActorSyst
     }
   }
 
-  override def deploy: ServiceCall[Schema, DeploymentWithDefs] = ServiceCall { schema =>
+  override def deploy: ServiceCall[BpmDiagram, DeploymentWithDefs] = ServiceCall { bpmDiagram =>
     Future.successful {
       val result = repositoryService
         .createDeployment()
-        .name(schema.name)
-        .source(schema.id)
-        .addString(s"${schema.name}.${schema.notation.toLowerCase}", schema.xml)
+        .name(bpmDiagram.name)
+        .source(bpmDiagram.id)
+        .addString(s"${bpmDiagram.name}.${bpmDiagram.notation.toLowerCase}", bpmDiagram.xml)
         .deployWithResult()
       DeploymentWithDefs(result)
     }

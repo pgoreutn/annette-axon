@@ -4,7 +4,7 @@ import java.util.UUID
 
 package object api {
 
-  type SchemaId = String
+  type BpmDiagramId = String
   type BusinessProcessId = UUID
 
 }

@@ -3,7 +3,7 @@ package axon.bpm.engine.impl
 import java.util.UUID
 
 import axon.bpm.engine.api._
-import axon.bpm.repository.api.Schema
+import axon.bpm.repository.api.BpmDiagram
 import com.lightbend.lagom.scaladsl.api.AdditionalConfiguration
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
@@ -40,10 +40,10 @@ class BpmEngineServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAft
       val id = UUID.randomUUID().toString
       val name = "Схема бизнес процесса"
       val description = "Описание схемы бизнес процесса"
-      val xml = TestData.bpmnSchema
-      val schema = Schema(id, name, Some(description), "BPMN", xml, None)
+      val xml = TestData.bpmnBpmDiagram
+      val bpmDiagram = BpmDiagram(id, name, Some(description), "BPMN", xml, None)
       for {
-        deployment <- client.deploy.invoke(schema)
+        deployment <- client.deploy.invoke(bpmDiagram)
       } yield {
         println
         println
@@ -60,10 +60,10 @@ class BpmEngineServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAft
       val id = UUID.randomUUID().toString
       val name = "Схема бизнес процесса"
       val description = "Описание схемы бизнес процесса"
-      val xml = TestData.dmnSchema
-      val schema = Schema(id, name, Some(description), "DMN", xml, None)
+      val xml = TestData.dmnBpmDiagram
+      val bpmDiagram = BpmDiagram(id, name, Some(description), "DMN", xml, None)
       for {
-        deployment <- client.deploy.invoke(schema)
+        deployment <- client.deploy.invoke(bpmDiagram)
       } yield {
         println
         println
@@ -79,10 +79,10 @@ class BpmEngineServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAft
       val id = UUID.randomUUID().toString
       val name = "Схема бизнес процесса"
       val description = "Описание схемы бизнес процесса"
-      val xml = TestData.cmmnSchema
-      val schema = Schema(id, name, Some(description), "CMMN", xml, None)
+      val xml = TestData.cmmnBpmDiagram
+      val bpmDiagram = BpmDiagram(id, name, Some(description), "CMMN", xml, None)
       for {
-        deployment <- client.deploy.invoke(schema)
+        deployment <- client.deploy.invoke(bpmDiagram)
       } yield {
         println
         println

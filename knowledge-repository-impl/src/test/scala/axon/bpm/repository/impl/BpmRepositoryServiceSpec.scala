@@ -1,8 +1,8 @@
-package axon.bpm.repository.impl
+package axon.knowledge.repository.impl
 
 import akka.Done
 import annette.shared.exceptions.AnnetteException
-import axon.bpm.repository.api.{BpmDiagram, BpmDiagramAlreadyExist, BpmDiagramNotFound, BpmRepositoryService}
+import axon.knowledge.repository.api.{KnowledgeRepositoryService, Schema, SchemaAlreadyExist, SchemaNotFound}
 import com.lightbend.lagom.scaladsl.api.AdditionalConfiguration
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
@@ -13,13 +13,13 @@ import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
 import scala.util.Random
 
-class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
+class KnowledgeRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
 
   private val server = ServiceTest.startServer(
     ServiceTest.defaultSetup
       .withCassandra()
   ) { ctx =>
-    new BpmRepositoryApplication(ctx) with LocalServiceLocator {
+    new KnowledgeRepositoryApplication(ctx) with LocalServiceLocator {
       override def additionalConfiguration: AdditionalConfiguration = {
         super.additionalConfiguration ++ Configuration.from(
           Map(
@@ -29,125 +29,125 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     }
   }
 
-  val client = server.serviceClient.implement[BpmRepositoryService]
+  val client = server.serviceClient.implement[KnowledgeRepositoryService]
 
   override protected def afterAll() = server.stop()
 
-  "bpm repository service" should {
+  "knowledge repository service" should {
 
-    "create bpmDiagram & find it by id" in {
-      val xmlBpmDiagram = TestData.xmlBpmDiagram()
+    "create schema & find it by id" in {
+      val xmlSchema = TestData.xmlSchema()
       for {
-        created <- client.createBpmDiagram.invoke(xmlBpmDiagram)
-        found <- client.findBpmDiagramById(TestData.id).invoke()
+        created <- client.createSchema.invoke(xmlSchema)
+        found <- client.findSchemaById(TestData.id).invoke()
       } yield {
-        created shouldBe BpmDiagram(TestData.id, TestData.name, Some(TestData.description), "BPMN", xmlBpmDiagram)
-        found shouldBe BpmDiagram(TestData.id, TestData.name, Some(TestData.description), "BPMN", xmlBpmDiagram)
+        created shouldBe Schema(TestData.id, TestData.name, Some(TestData.description), "KNOWLEDGEN", xmlSchema)
+        found shouldBe Schema(TestData.id, TestData.name, Some(TestData.description), "KNOWLEDGEN", xmlSchema)
       }
     }
 
-    "create bpmDiagram with existing id" in {
+    "create schema with existing id" in {
       for {
-        created <- client.createBpmDiagram.invoke(TestData.xmlBpmDiagram("id3"))
-        created2 <- client.createBpmDiagram
-          .invoke(TestData.xmlBpmDiagram("id3"))
+        created <- client.createSchema.invoke(TestData.xmlSchema("id3"))
+        created2 <- client.createSchema
+          .invoke(TestData.xmlSchema("id3"))
           .recover {
             case th: Throwable => th
           }
       } yield {
-        created shouldBe a[BpmDiagram]
+        created shouldBe a[Schema]
         created2 shouldBe a[AnnetteException]
-        created2.asInstanceOf[AnnetteException].code shouldBe BpmDiagramAlreadyExist.MessageCode
+        created2.asInstanceOf[AnnetteException].code shouldBe SchemaAlreadyExist.MessageCode
       }
 
     }
 
-    "update bpmDiagram" in {
-      val sch = TestData.xmlBpmDiagram("id4", name = "name1", description = "description1")
+    "update schema" in {
+      val sch = TestData.xmlSchema("id4", name = "name1", description = "description1")
       for {
-        created <- client.createBpmDiagram.invoke(TestData.xmlBpmDiagram("id4"))
-        updated <- client.updateBpmDiagram
+        created <- client.createSchema.invoke(TestData.xmlSchema("id4"))
+        updated <- client.updateSchema
           .invoke(sch)
           .recover { case th: Throwable => th }
-        bpmDiagram <- client.findBpmDiagramById("id4").invoke()
+        schema <- client.findSchemaById("id4").invoke()
       } yield {
-        created shouldBe a[BpmDiagram]
-        updated shouldBe a[BpmDiagram]
-        bpmDiagram.xml shouldBe sch
-        bpmDiagram.name shouldBe "name1"
-        bpmDiagram.description shouldBe Some("description1")
+        created shouldBe a[Schema]
+        updated shouldBe a[Schema]
+        schema.xml shouldBe sch
+        schema.name shouldBe "name1"
+        schema.description shouldBe Some("description1")
       }
 
     }
 
-    "update bpmDiagram with non-existing id" in {
-      val sch = TestData.xmlBpmDiagram("id5", name = "name1", description = "description1")
+    "update schema with non-existing id" in {
+      val sch = TestData.xmlSchema("id5", name = "name1", description = "description1")
       for {
-        updated <- client.updateBpmDiagram
+        updated <- client.updateSchema
           .invoke(sch)
           .recover { case th: Throwable => th }
       } yield {
         updated shouldBe a[AnnetteException]
-        updated.asInstanceOf[AnnetteException].code shouldBe BpmDiagramNotFound.MessageCode
+        updated.asInstanceOf[AnnetteException].code shouldBe SchemaNotFound.MessageCode
       }
 
     }
 
-    "delete bpmDiagram" in {
+    "delete schema" in {
       val id = s"id${Random.nextInt()}"
-      val sch = TestData.xmlBpmDiagram(id)
+      val sch = TestData.xmlSchema(id)
       for {
-        created <- client.createBpmDiagram.invoke(sch)
+        created <- client.createSchema.invoke(sch)
         found1 <- client
-          .findBpmDiagramById(id)
+          .findSchemaById(id)
           .invoke()
           .recover { case th: Throwable => th }
-        deleted <- client.deleteBpmDiagram(id).invoke()
+        deleted <- client.deleteSchema(id).invoke()
         found2 <- client
-          .findBpmDiagramById(id)
+          .findSchemaById(id)
           .invoke()
           .recover {
             case th: Throwable =>
               th
           }
       } yield {
-        created shouldBe a[BpmDiagram]
-        found1 shouldBe BpmDiagram(id, TestData.name, Some(TestData.description), "BPMN", sch)
+        created shouldBe a[Schema]
+        found1 shouldBe Schema(id, TestData.name, Some(TestData.description), "KNOWLEDGEN", sch)
         deleted shouldBe Done
         found2 shouldBe a[AnnetteException]
-        found2.asInstanceOf[AnnetteException].code shouldBe BpmDiagramNotFound.MessageCode
+        found2.asInstanceOf[AnnetteException].code shouldBe SchemaNotFound.MessageCode
       }
 
     }
 
-    "delete bpmDiagram with nonexisting id" in {
+    "delete schema with nonexisting id" in {
       val id = s"id${Random.nextInt()}"
       for {
         deleted <- client
-          .deleteBpmDiagram(id)
+          .deleteSchema(id)
           .invoke()
           .recover { case th: Throwable => th }
       } yield {
         deleted shouldBe a[AnnetteException]
-        deleted.asInstanceOf[AnnetteException].code shouldBe BpmDiagramNotFound.MessageCode
+        deleted.asInstanceOf[AnnetteException].code shouldBe SchemaNotFound.MessageCode
       }
 
     }
 
-    "find bpmDiagram by non-existing id" in {
-      val xmlBpmDiagram = TestData.xmlBpmDiagram()
+    "find schema by non-existing id" in {
+      val xmlSchema = TestData.xmlSchema()
       for {
         found <- client
-          .findBpmDiagramById(Random.nextInt().toString)
+          .findSchemaById(Random.nextInt().toString)
           .invoke()
           .recover { case th: Throwable => th }
       } yield {
         found shouldBe a[AnnetteException]
-        found.asInstanceOf[AnnetteException].code shouldBe BpmDiagramNotFound.MessageCode
+        found.asInstanceOf[AnnetteException].code shouldBe SchemaNotFound.MessageCode
       }
     }
 
-    "find bpmDiagrams" in {
+    "find schemas" in {
       val ids = Seq(
         s"id-${Random.nextInt()}",
         s"id-${Random.nextInt()}",
@@ -163,20 +163,20 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         s"description-${Random.nextInt()}",
         s"description-${Random.nextInt()}"
       )
-      val bpmDiagrams = for (i <- 0 until ids.length) yield TestData.xmlBpmDiagram(ids(i), names(i), descriptions(i))
+      val schemas = for (i <- 0 until ids.length) yield TestData.xmlSchema(ids(i), names(i), descriptions(i))
 
-      val createFuture = Future.traverse(bpmDiagrams)(bpmDiagram => client.createBpmDiagram.invoke(bpmDiagram))
+      val createFuture = Future.traverse(schemas)(schema => client.createSchema.invoke(schema))
 
       (for {
         created <- createFuture.recover { case th: Throwable => th }
       } yield {
         awaitSuccess() {
           for {
-            found0 <- client.findBpmDiagrams.invoke("")
-            found1 <- client.findBpmDiagrams.invoke(ids(0))
-            found2 <- client.findBpmDiagrams.invoke(names(1))
-            found3 <- client.findBpmDiagrams.invoke(descriptions(2))
-            found4 <- client.findBpmDiagrams.invoke(Random.nextInt().toString)
+            found0 <- client.findSchemas.invoke("")
+            found1 <- client.findSchemas.invoke(ids(0))
+            found2 <- client.findSchemas.invoke(names(1))
+            found3 <- client.findSchemas.invoke(descriptions(2))
+            found4 <- client.findSchemas.invoke(Random.nextInt().toString)
           } yield {
 
             found0.length shouldBe >=(ids.length)
