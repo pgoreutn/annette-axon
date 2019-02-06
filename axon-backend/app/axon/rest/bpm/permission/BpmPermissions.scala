@@ -1,4 +1,5 @@
-package axon.rest.bpm
+package axon.rest.bpm.permission
+
 import annette.authorization.api.Permission
 
 object BpmPermissions {

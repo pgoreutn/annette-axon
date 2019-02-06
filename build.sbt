@@ -18,6 +18,7 @@ lazy val root = (project in file("."))
     `bpm-engine-api`,
     `bpm-engine-impl`,
     `knowledge-repository-api`,
+    `knowledge-repository-impl`,
     `authorization-api`,
     `authorization-impl`
   )
@@ -137,6 +138,21 @@ lazy val `knowledge-repository-api` = (project in file("knowledge-repository-api
     ) ++ Dependencies.tests
   )
   .dependsOn(`annette-shared`)
+
+lazy val `knowledge-repository-impl` = (project in file("knowledge-repository-impl"))
+  .enablePlugins(LagomScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslTestKit,
+      Dependencies.macwire
+    ) ++ Dependencies.tests,
+    unmanagedClasspath in Runtime += baseDirectory.value / "conf",
+    mappings in Universal ++= directory(baseDirectory.value / "conf"),
+    scriptClasspath := "../conf/" +: scriptClasspath.value,
+  )
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`knowledge-repository-api`)
 
 def commonSettings: Seq[Setting[_]] = Seq(
   )

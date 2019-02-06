@@ -21,6 +21,16 @@ PUT           /web-api/bpm/repository/bpmDiagram                  axon.rest.bpm.
 DELETE        /web-api/bpm/repository/bpmDiagram/:id              axon.rest.bpm.repository.BpmDiagramController.delete(id: String)
 
 
+# Knowledge config
+#+nocsrf
+POST          /web-api/knowledge/repository/dataSchemas                 axon.rest.knowledge.repository.DataSchemaController.find
+PUT           /web-api/knowledge/repository/dataSchemas                 axon.rest.knowledge.repository.DataSchemaController.findByKeys
+GET           /web-api/knowledge/repository/dataSchema/:key             axon.rest.knowledge.repository.DataSchemaController.findByKey(key: String)
+POST          /web-api/knowledge/repository/dataSchema                  axon.rest.knowledge.repository.DataSchemaController.create
+PUT           /web-api/knowledge/repository/dataSchema                  axon.rest.knowledge.repository.DataSchemaController.update
+DELETE        /web-api/knowledge/repository/dataSchema/:key             axon.rest.knowledge.repository.DataSchemaController.delete(key: String)
+
+
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
 

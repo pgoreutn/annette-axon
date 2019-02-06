@@ -17,7 +17,7 @@ class BpmDiagramEntity extends PersistentEntity {
   override type Command = BpmDiagramCommand
   override type Event = BpmDiagramEvent
   override type State = Option[BpmDiagram]
-  override def initialState = None
+  override def initialState: State = None
 
   override def behavior: Behavior = {
     case Some(_) =>

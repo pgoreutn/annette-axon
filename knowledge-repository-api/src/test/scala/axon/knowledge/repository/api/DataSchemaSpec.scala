@@ -1,11 +1,11 @@
 package axon.knowledge.repository.api
 
 import axon.knowledge.repository.api.builder.DataStructBuilder
-import axon.knowledge.repository.api.model.DataStructDef
+import axon.knowledge.repository.api.model.DataSchema
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import play.api.libs.json.Json
 
-class DataStructSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
+class DataSchemaSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
 
   "data struct def " should {
 
@@ -19,10 +19,10 @@ class DataStructSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll 
       for {
         oneLevelAddress <- builder.buildSingleLevelDef(TestData.addressDS.key)
       } yield {
-        oneLevelAddress.items.values.foreach(println)
+        oneLevelAddress.fields.values.foreach(println)
 
-        oneLevelAddress.baseObjects.length shouldBe 0
-        oneLevelAddress.items.size shouldBe 10
+        oneLevelAddress.baseSchemas.length shouldBe 0
+        oneLevelAddress.fields.size shouldBe 10
       }
 
     }
@@ -39,10 +39,10 @@ class DataStructSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll 
       } yield {
         println
         println("build multilevel data struct def")
-        oneLevelDS.items.values.foreach(println)
+        oneLevelDS.fields.values.foreach(println)
 
-        oneLevelDS.baseObjects.length shouldBe 0
-        oneLevelDS.items.size shouldBe 9
+        oneLevelDS.baseSchemas.length shouldBe 0
+        oneLevelDS.fields.size shouldBe 9
 
       }
 
@@ -75,7 +75,7 @@ class DataStructSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll 
         val js = Json.toJson(in)
         println(Json.prettyPrint(js))
 
-        val out = Json.fromJson[DataStructDef](js).getOrElse(sys.error("Oh no!"))
+        val out = Json.fromJson[DataSchema](js).getOrElse(sys.error("Oh no!"))
         out shouldBe in
       }).head
 
@@ -95,7 +95,7 @@ class DataStructSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll 
         val js = Json.toJson(oneLevelDS)
         println(Json.prettyPrint(js))
 
-        val out = Json.fromJson[DataStructDef](js).getOrElse(sys.error("Oh no!"))
+        val out = Json.fromJson[DataSchema](js).getOrElse(sys.error("Oh no!"))
         out shouldBe oneLevelDS
       }
 

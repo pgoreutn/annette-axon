@@ -1,13 +1,15 @@
-package axon.knowledge.repository.api.model
+package axon.knowledge.repository.api
+
+import axon.knowledge.repository.api.model.{DataSchemaFieldKey, DataSchemaKey, Datatype}
 import play.api.libs.json.{Format, JsValue, Json}
 
 case class DataStruct(
-    key: DataStructKey,
-    items: Map[DataItemKey, DataItem],
+    key: DataSchemaKey,
+    items: Map[DataSchemaFieldKey, DataItem],
 )
 
 case class DataItem(
-    key: DataItemKey,
+    key: DataSchemaFieldKey,
     datatype: Datatype,
     value: Option[JsValue],
 )

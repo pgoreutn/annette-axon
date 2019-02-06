@@ -3,7 +3,7 @@ import annette.security.auth.authentication.AuthenticatedAction
 import annette.security.auth.authorization.{AuthorizedActionFactory, CheckAny}
 import annette.shared.exceptions.AnnetteException
 import axon.bpm.repository.api.{BpmRepositoryService, BpmDiagram, BpmDiagramSummary}
-import axon.rest.bpm.BpmPermissions._
+import axon.rest.bpm.permission.BpmPermissions._
 import javax.inject.Inject
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}

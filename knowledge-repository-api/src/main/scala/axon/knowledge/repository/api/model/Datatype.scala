@@ -9,11 +9,11 @@ case class DoubleType() extends Datatype
 case class DecimalType() extends Datatype
 case class BooleanType() extends Datatype
 case class DateType() extends Datatype
-case class ObjectType(key: DataStructKey, struct: Option[DataStructDef] = None) extends Datatype
-case class ArrayType(element: Datatype, struct: Option[DataStructDef] = None) extends Datatype
+case class RecordType(key: DataSchemaKey, struct: Option[DataSchema] = None) extends Datatype
+case class ArrayType(element: Datatype, struct: Option[DataSchema] = None) extends Datatype
 
-object ObjectType {
-  implicit val format: Format[ObjectType] = Json.format
+object RecordType {
+  implicit val format: Format[RecordType] = Json.format
 }
 
 object ArrayType {
@@ -24,17 +24,18 @@ object Datatype {
   implicit val format: Format[Datatype] = new Format[Datatype] {
     def reads(json: JsValue): JsResult[Datatype] = {
       json match {
-        case data: JsObject if data.keys.contains("$type") =>
-          val type_ = data.value("$type")
+
+        case data: JsObject if data.keys.contains("type") =>
+          val type_ = data.value("type")
           type_ match {
-            case JsString("String")  => JsSuccess(StringType())
-            case JsString("Int")     => JsSuccess(IntType())
-            case JsString("Double")  => JsSuccess(DoubleType())
-            case JsString("Decimal") => JsSuccess(DecimalType())
-            case JsString("Boolean") => JsSuccess(BooleanType())
-            case JsString("Date")    => JsSuccess(DateType())
-            case JsString("Object")  => Json.fromJson[ObjectType](data)(ObjectType.format)
-            case JsString("Array")   => Json.fromJson[ArrayType](data)(ArrayType.format)
+            case JsString("string")  => JsSuccess(StringType())
+            case JsString("int")     => JsSuccess(IntType())
+            case JsString("double")  => JsSuccess(DoubleType())
+            case JsString("decimal") => JsSuccess(DecimalType())
+            case JsString("boolean") => JsSuccess(BooleanType())
+            case JsString("date")    => JsSuccess(DateType())
+            case JsString("record")  => Json.fromJson[RecordType](data)(RecordType.format)
+            case JsString("array")   => Json.fromJson[ArrayType](data)(ArrayType.format)
             case _                   => JsError(s"Unknown class '$type_'")
           }
         case _ => JsError(s"Unexpected JSON value $json")
@@ -43,14 +44,14 @@ object Datatype {
 
     def writes(datatype: Datatype): JsValue = {
       datatype match {
-        case StringType()  => JsObject(Seq("$type" -> JsString("String")))
-        case IntType()     => JsObject(Seq("$type" -> JsString("Int")))
-        case DoubleType()  => JsObject(Seq("$type" -> JsString("Double")))
-        case DecimalType() => JsObject(Seq("$type" -> JsString("Decimal")))
-        case BooleanType() => JsObject(Seq("$type" -> JsString("Boolean")))
-        case DateType()    => JsObject(Seq("$type" -> JsString("Date")))
-        case b: ObjectType => Json.toJson(b)(ObjectType.format).asInstanceOf[JsObject] + ("$type" -> JsString("Object"))
-        case b: ArrayType  => Json.toJson(b)(ArrayType.format).asInstanceOf[JsObject] + ("$type" -> JsString("Array"))
+        case StringType()  => JsObject(Seq("type" -> JsString("string")))
+        case IntType()     => JsObject(Seq("type" -> JsString("int")))
+        case DoubleType()  => JsObject(Seq("type" -> JsString("double")))
+        case DecimalType() => JsObject(Seq("type" -> JsString("decimal")))
+        case BooleanType() => JsObject(Seq("type" -> JsString("boolean")))
+        case DateType()    => JsObject(Seq("type" -> JsString("date")))
+        case b: RecordType => Json.toJson(b)(RecordType.format).asInstanceOf[JsObject] + ("type" -> JsString("record"))
+        case b: ArrayType  => Json.toJson(b)(ArrayType.format).asInstanceOf[JsObject] + ("type" -> JsString("array"))
       }
     }
   }

@@ -1,15 +1,21 @@
-package axon.knowledge.repository.api
+package axon.knowledge.repository.impl
+
 import java.time.{OffsetDateTime, ZoneOffset}
 
 import axon.knowledge.repository.api.model._
 import play.api.libs.json.{JsArray, JsBoolean, JsNumber, JsString}
 
+import scala.util.Random
+
 object TestData {
 
-  val addressDS = DataSchema(
-    "Address",
-    "Addresss data structure definition",
-    Some("Description of address data structure definition"),
+  def addressDS(
+      key: String = s"Address-${Random.nextInt(9999).toString}",
+      name: String = "Addresss data structure definition",
+      description: String = "Description of address data structure definition") = DataSchema(
+    key,
+    name,
+    Some(description),
     baseSchemas = Seq("UpdatedBase", "VersionBase"),
     fields = Seq(
       DataSchemaField("zipCode", "Zip code", "Zip code", StringType(), Some(JsString("123456"))),

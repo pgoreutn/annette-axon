@@ -10,27 +10,36 @@
 package axon.knowledge.repository.api.model
 import play.api.libs.json.{Format, JsValue, Json}
 
-case class DataStructDef(
-    key: DataStructKey,
+case class DataSchemaSummary(
+    key: DataSchemaKey,
     name: String,
     description: Option[String],
-    baseObjects: Seq[DataStructKey],
-    items: Map[DataItemKey, DataItemDef],
 )
 
-case class DataItemDef(
-    key: DataItemKey,
+case class DataSchema(
+    key: DataSchemaKey,
     name: String,
     description: Option[String],
+    baseSchemas: Seq[DataSchemaKey],
+    fields: Map[DataSchemaFieldKey, DataSchemaField],
+)
+
+case class DataSchemaField(
+    key: DataSchemaFieldKey,
+    name: String,
     caption: String,
     datatype: Datatype,
     value: Option[JsValue],
 )
 
-object DataStructDef {
-  implicit val format: Format[DataStructDef] = Json.format
+object DataSchemaSummary {
+  implicit val format: Format[DataSchemaSummary] = Json.format
 }
 
-object DataItemDef {
-  implicit val format: Format[DataItemDef] = Json.format
+object DataSchema {
+  implicit val format: Format[DataSchema] = Json.format
+}
+
+object DataSchemaField {
+  implicit val format: Format[DataSchemaField] = Json.format
 }
