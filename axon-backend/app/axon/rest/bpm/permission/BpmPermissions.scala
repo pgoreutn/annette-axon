@@ -7,4 +7,5 @@ object BpmPermissions {
   val UPDATE_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.update")
   val DELETE_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.delete")
   final val VIEW_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.view")
+  final val DEPLOY_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.deploy")
 }

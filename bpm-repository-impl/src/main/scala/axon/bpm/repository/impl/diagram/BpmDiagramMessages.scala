@@ -1,7 +1,7 @@
-package axon.bpm.repository.impl.bpmDiagram
+package axon.bpm.repository.impl.diagram
 
 import akka.Done
-import axon.bpm.repository.api.{BpmDiagram, BpmDiagramId}
+import axon.bpm.repository.api.model.{BpmDiagram, BpmDiagramId}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag}
 import play.api.libs.json.{Format, Json}

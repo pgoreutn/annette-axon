@@ -3,7 +3,7 @@ package axon.bpm.engine.impl
 import java.util.UUID
 
 import axon.bpm.engine.api._
-import axon.bpm.repository.api.BpmDiagram
+import axon.bpm.repository.api.model.BpmDiagram
 import com.lightbend.lagom.scaladsl.api.AdditionalConfiguration
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest

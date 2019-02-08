@@ -32,6 +32,12 @@ case class DataSchemaField(
     value: Option[JsValue],
 )
 
+case class DataValue(
+    key: DataSchemaFieldKey,
+    datatype: Datatype,
+    value: Option[JsValue],
+)
+
 object DataSchemaSummary {
   implicit val format: Format[DataSchemaSummary] = Json.format
 }
@@ -42,4 +48,8 @@ object DataSchema {
 
 object DataSchemaField {
   implicit val format: Format[DataSchemaField] = Json.format
+}
+
+object DataValue {
+  implicit val format: Format[DataValue] = Json.format
 }

@@ -7,10 +7,11 @@
   * Распространение и/или использование в исходном или бинарном формате, с изменениями или без таковых,
   * запрещено без письменного разрешения правообладателя.
 ****************************************************************************************/
-package axon.bpm.repository.impl.bpmDiagram
+package axon.bpm.repository.impl.diagram
 
 import akka.Done
-import axon.bpm.repository.api.{BpmDiagram, BpmDiagramAlreadyExist, BpmDiagramNotFound, NotationChangeProhibited}
+import axon.bpm.repository.api.model.BpmDiagram
+import axon.bpm.repository.api.{BpmDiagramAlreadyExist, BpmDiagramNotFound, NotationChangeProhibited}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 
 class BpmDiagramEntity extends PersistentEntity {

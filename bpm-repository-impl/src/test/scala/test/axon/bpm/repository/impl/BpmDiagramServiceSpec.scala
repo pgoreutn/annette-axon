@@ -1,8 +1,10 @@
-package axon.bpm.repository.impl
+package test.axon.bpm.repository.impl
 
 import akka.Done
 import annette.shared.exceptions.AnnetteException
-import axon.bpm.repository.api.{BpmDiagram, BpmDiagramAlreadyExist, BpmDiagramNotFound, BpmRepositoryService}
+import axon.bpm.repository.api.model.BpmDiagram
+import axon.bpm.repository.api.{BpmDiagramAlreadyExist, BpmDiagramNotFound, BpmRepositoryService}
+import axon.bpm.repository.impl.BpmRepositoryApplication
 import com.lightbend.lagom.scaladsl.api.AdditionalConfiguration
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
 import com.lightbend.lagom.scaladsl.testkit.ServiceTest
@@ -13,7 +15,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
 import scala.util.Random
 
-class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
+class BpmDiagramServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
 
   private val server = ServiceTest.startServer(
     ServiceTest.defaultSetup
@@ -36,21 +38,21 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
   "bpm repository service" should {
 
     "create bpmDiagram & find it by id" in {
-      val xmlBpmDiagram = TestData.xmlBpmDiagram()
+      val diagram = TestData.bpmDiagram()
       for {
-        created <- client.createBpmDiagram.invoke(xmlBpmDiagram)
-        found <- client.findBpmDiagramById(TestData.id).invoke()
+        created <- client.createBpmDiagram.invoke(diagram)
+        found <- client.findBpmDiagramById(diagram.id).invoke()
       } yield {
-        created shouldBe BpmDiagram(TestData.id, TestData.name, Some(TestData.description), "BPMN", xmlBpmDiagram)
-        found shouldBe BpmDiagram(TestData.id, TestData.name, Some(TestData.description), "BPMN", xmlBpmDiagram)
+        created shouldBe diagram
+        found shouldBe diagram
       }
     }
 
     "create bpmDiagram with existing id" in {
       for {
-        created <- client.createBpmDiagram.invoke(TestData.xmlBpmDiagram("id3"))
+        created <- client.createBpmDiagram.invoke(TestData.bpmDiagram("id3"))
         created2 <- client.createBpmDiagram
-          .invoke(TestData.xmlBpmDiagram("id3"))
+          .invoke(TestData.bpmDiagram("id3"))
           .recover {
             case th: Throwable => th
           }
@@ -59,13 +61,12 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         created2 shouldBe a[AnnetteException]
         created2.asInstanceOf[AnnetteException].code shouldBe BpmDiagramAlreadyExist.MessageCode
       }
-
     }
 
     "update bpmDiagram" in {
-      val sch = TestData.xmlBpmDiagram("id4", name = "name1", description = "description1")
+      val sch = TestData.bpmDiagram("id4", name = "name1", description = "description1").copy(xml = "xml1")
       for {
-        created <- client.createBpmDiagram.invoke(TestData.xmlBpmDiagram("id4"))
+        created <- client.createBpmDiagram.invoke(TestData.bpmDiagram("id4").copy(xml = "xml"))
         updated <- client.updateBpmDiagram
           .invoke(sch)
           .recover { case th: Throwable => th }
@@ -73,15 +74,15 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       } yield {
         created shouldBe a[BpmDiagram]
         updated shouldBe a[BpmDiagram]
-        bpmDiagram.xml shouldBe sch
-        bpmDiagram.name shouldBe "name1"
-        bpmDiagram.description shouldBe Some("description1")
+        bpmDiagram.xml shouldBe sch.xml
+        bpmDiagram.name shouldBe sch.name
+        bpmDiagram.description shouldBe sch.description
       }
 
     }
 
     "update bpmDiagram with non-existing id" in {
-      val sch = TestData.xmlBpmDiagram("id5", name = "name1", description = "description1")
+      val sch = TestData.bpmDiagram("id5", name = "name1", description = "description1")
       for {
         updated <- client.updateBpmDiagram
           .invoke(sch)
@@ -95,9 +96,9 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
 
     "delete bpmDiagram" in {
       val id = s"id${Random.nextInt()}"
-      val sch = TestData.xmlBpmDiagram(id)
+      val diagram = TestData.bpmDiagram(id)
       for {
-        created <- client.createBpmDiagram.invoke(sch)
+        created <- client.createBpmDiagram.invoke(diagram)
         found1 <- client
           .findBpmDiagramById(id)
           .invoke()
@@ -112,7 +113,7 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
           }
       } yield {
         created shouldBe a[BpmDiagram]
-        found1 shouldBe BpmDiagram(id, TestData.name, Some(TestData.description), "BPMN", sch)
+        found1 shouldBe diagram
         deleted shouldBe Done
         found2 shouldBe a[AnnetteException]
         found2.asInstanceOf[AnnetteException].code shouldBe BpmDiagramNotFound.MessageCode
@@ -135,7 +136,7 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     }
 
     "find bpmDiagram by non-existing id" in {
-      val xmlBpmDiagram = TestData.xmlBpmDiagram()
+      val diagram = TestData.bpmDiagram()
       for {
         found <- client
           .findBpmDiagramById(Random.nextInt().toString)
@@ -163,7 +164,7 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         s"description-${Random.nextInt()}",
         s"description-${Random.nextInt()}"
       )
-      val bpmDiagrams = for (i <- 0 until ids.length) yield TestData.xmlBpmDiagram(ids(i), names(i), descriptions(i))
+      val bpmDiagrams = for (i <- ids.indices) yield TestData.bpmDiagram(ids(i), names(i), descriptions(i))
 
       val createFuture = Future.traverse(bpmDiagrams)(bpmDiagram => client.createBpmDiagram.invoke(bpmDiagram))
 
@@ -173,18 +174,12 @@ class BpmRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         awaitSuccess() {
           for {
             found0 <- client.findBpmDiagrams.invoke("")
-            found1 <- client.findBpmDiagrams.invoke(ids(0))
             found2 <- client.findBpmDiagrams.invoke(names(1))
             found3 <- client.findBpmDiagrams.invoke(descriptions(2))
             found4 <- client.findBpmDiagrams.invoke(Random.nextInt().toString)
           } yield {
 
             found0.length shouldBe >=(ids.length)
-
-            found1.length shouldBe 1
-            found1.head.id shouldBe ids(0)
-            found1.head.name shouldBe names(0)
-            found1.head.description shouldBe Some(descriptions(0))
 
             found2.length shouldBe 1
             found2.head.id shouldBe ids(1)

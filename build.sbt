@@ -91,7 +91,7 @@ lazy val `bpm-repository-api` = (project in file("bpm-repository-api"))
       lagomScaladslApi
     )
   )
-  .dependsOn(`annette-shared`)
+  .dependsOn(`annette-shared`, `knowledge-repository-api`)
 
 lazy val `bpm-repository-impl` = (project in file("bpm-repository-impl"))
   .enablePlugins(LagomScala)
@@ -114,7 +114,7 @@ lazy val `bpm-engine-api` = (project in file("bpm-engine-api"))
       lagomScaladslApi,
     ) ++ Dependencies.bpmEngine
   )
-  .dependsOn(`annette-shared`, `bpm-repository-api`)
+  .dependsOn(`annette-shared`, `bpm-repository-api`, `knowledge-repository-api`)
 
 lazy val `bpm-engine-impl` = (project in file("bpm-engine-impl"))
   .enablePlugins(LagomScala)

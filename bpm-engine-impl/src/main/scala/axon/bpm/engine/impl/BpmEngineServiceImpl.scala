@@ -3,7 +3,7 @@ package axon.bpm.engine.impl
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import axon.bpm.engine.api._
-import axon.bpm.repository.api.BpmDiagram
+import axon.bpm.repository.api.model.BpmDiagram
 import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
 import org.camunda.bpm.engine.ProcessEngine

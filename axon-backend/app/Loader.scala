@@ -4,9 +4,10 @@ import annette.authorization.api.AuthorizationService
 import annette.security.auth.authentication.{AuthenticatedAction, KeycloackAuthenticator}
 import annette.security.auth.authorization.{AuthorizedActionFactory, DefaultAuthorizer, DefaultRoleProvider}
 import annette.security.user.UserService
+import axon.bpm.engine.api.BpmEngineService
 import axon.bpm.repository.api.BpmRepositoryService
 import axon.knowledge.repository.api.KnowledgeRepositoryService
-import axon.rest.bpm.repository.BpmDiagramController
+import axon.rest.bpm.repository.{BpmDeploymentController, BpmDiagramController}
 import axon.rest.knowledge.repository.DataSchemaController
 import com.lightbend.lagom.scaladsl.api.{LagomConfigComponent, ServiceAcl, ServiceInfo}
 import com.lightbend.lagom.scaladsl.client.LagomServiceClientComponents
@@ -47,6 +48,7 @@ abstract class WebGateway(context: Context)
   }
 
   lazy val bpmRepositoryService = serviceClient.implement[BpmRepositoryService]
+  lazy val bpmEngineService = serviceClient.implement[BpmEngineService]
   lazy val knowledgeRepositoryService = serviceClient.implement[KnowledgeRepositoryService]
   lazy val authzService = serviceClient.implement[AuthorizationService]
 
@@ -60,6 +62,7 @@ abstract class WebGateway(context: Context)
   lazy val parser = wire[BodyParsers.Default]
 
   lazy val main = wire[HomeController]
+  lazy val bpmDeploymentController = wire[BpmDeploymentController]
   lazy val bpmDiagramController = wire[BpmDiagramController]
   lazy val dataSchemaController = wire[DataSchemaController]
 

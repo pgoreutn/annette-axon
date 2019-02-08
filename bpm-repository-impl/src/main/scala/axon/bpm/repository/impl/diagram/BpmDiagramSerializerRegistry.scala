@@ -1,6 +1,6 @@
-package axon.bpm.repository.impl.bpmDiagram
+package axon.bpm.repository.impl.diagram
 
-import axon.bpm.repository.api.BpmDiagram
+import axon.bpm.repository.api.model.BpmDiagram
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
 
 object BpmDiagramSerializerRegistry extends JsonSerializerRegistry {

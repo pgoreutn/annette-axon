@@ -20,6 +20,9 @@ POST          /web-api/bpm/repository/bpmDiagram                  axon.rest.bpm.
 PUT           /web-api/bpm/repository/bpmDiagram                  axon.rest.bpm.repository.BpmDiagramController.update
 DELETE        /web-api/bpm/repository/bpmDiagram/:id              axon.rest.bpm.repository.BpmDiagramController.delete(id: String)
 
+POST          /web-api/bpm/deployment/deploy/:id                  axon.rest.bpm.repository.BpmDeploymentController.deploy(id: String)
+POST          /web-api/bpm/deployment/processDefs                  axon.rest.bpm.repository.BpmDeploymentController.find
+
 
 # Knowledge config
 #+nocsrf

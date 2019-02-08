@@ -1,9 +1,20 @@
-package axon.bpm.repository.impl
+package test.axon.bpm.repository.impl
+import axon.bpm.repository.api.model.{BpmDiagram, BusinessProcess, ProcessReferenceByKey}
 
-import scala.xml.XML
+import scala.util.Random
 
 object TestData {
-  def xmlBpmDiagram(id: String = "id", name: String = "name", description: String = "description") = s"""|<?xml version="1.0" encoding="UTF-8"?>
+  def businessProcess(
+      id: String = s"id-${Random.nextInt(9999).toString}",
+      name: String = s"Business process name ${Random.nextInt(9999).toString}",
+      description: String = s"Description of Business process  ${Random.nextInt(9999).toString}") = {
+    BusinessProcess(id, name, Some(description), ProcessReferenceByKey("key"), "dataSchemaKey", Map.empty)
+  }
+  def bpmDiagram(id: String = "id", name: String = "name", description: String = "description") = {
+    BpmDiagram(id, name, Some(description), "BPMN", xml(id, name, description))
+  }
+
+  def xml(id: String = "id", name: String = "name", description: String = "description") = s"""|<?xml version="1.0" encoding="UTF-8"?>
                      |<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                      |                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                      |                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
@@ -89,10 +100,5 @@ object TestData {
                      |    </bpmndi:BPMNDiagram>
                      |</bpmn:definitions>
                   """.stripMargin
-
-  val xml = XML.loadString(xmlBpmDiagram())
-  val id = (xml \\ "process" \ "@id").text
-  val name = (xml \\ "process" \ "@name").text
-  val description = (xml \\ "process" \ "documentation").text
 
 }

@@ -1,6 +1,6 @@
-package axon.bpm.repository.impl.bpmDiagram
+package axon.bpm.repository.impl.diagram
 
-import axon.bpm.repository.api.BpmDiagramSummary
+import axon.bpm.repository.api.model.BpmDiagramSummary
 import com.datastax.driver.core.Row
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraSession
 

@@ -5,6 +5,8 @@ logs
 target
 /.idea
 /.idea_modules
+/.metals
+.bloop
 /.classpath
 /.project
 /.settings

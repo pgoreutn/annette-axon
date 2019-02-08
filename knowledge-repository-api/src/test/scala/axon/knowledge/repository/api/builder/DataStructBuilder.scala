@@ -29,7 +29,7 @@ class DataStructBuilder(finder: DataStructDefFinder) {
       .filter(_ match {
         case DataSchemaField(_, _, _, RecordType(_, _), None) => true
         case DataSchemaField(_, _, _, ArrayType(_, _), None)  => true
-        case _                                               => false
+        case _                                                => false
       })
       .foldLeft(Future.successful(ds))((acc: Future[DataSchema], item: DataSchemaField) => {
         for {
@@ -60,7 +60,7 @@ class DataStructBuilder(finder: DataStructDefFinder) {
           case DataSchemaField(_, _, _, DateType(), Some(value))       => Some(e.key -> value)
           case DataSchemaField(_, _, _, RecordType(_, _), Some(value)) => Some(e.key -> value)
           case DataSchemaField(_, _, _, ArrayType(_, _), Some(value))  => Some(e.key -> value)
-          case _                                                      => None
+          case _                                                       => None
         }
       }.toMap
       new JsObject(map)

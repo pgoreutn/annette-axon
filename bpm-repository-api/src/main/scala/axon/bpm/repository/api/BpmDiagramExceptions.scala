@@ -34,7 +34,7 @@ object BpmDiagramAlreadyExist {
 
 }
 
-object IdRequired {
+object BpmDiagramIdRequired {
   val ErrorCode = TransportErrorCode.BadRequest
   val MessageCode = "bpmRepository.bpmDiagram.idRequired"
 

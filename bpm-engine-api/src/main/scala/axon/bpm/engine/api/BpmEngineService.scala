@@ -2,6 +2,7 @@ package axon.bpm.engine.api
 
 import annette.shared.exceptions.AnnetteExceptionSerializer
 import axon.bpm.repository.api._
+import axon.bpm.repository.api.model.BpmDiagram
 import com.lightbend.lagom.scaladsl.api.transport.Method
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import play.api.libs.json.JsObject

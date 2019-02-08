@@ -1,4 +1,4 @@
-package axon.bpm.repository.impl.bpmDiagram
+package axon.bpm.repository.impl.diagram
 
 import akka.Done
 import com.datastax.driver.core.PreparedStatement
