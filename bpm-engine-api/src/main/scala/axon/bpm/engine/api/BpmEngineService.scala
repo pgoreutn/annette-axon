@@ -1,5 +1,6 @@
 package axon.bpm.engine.api
 
+import akka.NotUsed
 import annette.shared.exceptions.AnnetteExceptionSerializer
 import axon.bpm.repository.api._
 import axon.bpm.repository.api.model.BpmDiagram
@@ -12,11 +13,11 @@ import scala.collection._
 trait BpmEngineService extends Service {
 
   def findProcessDef: ServiceCall[FindProcessDefOptions, immutable.Seq[ProcessDef]]
+  def findProcessDefByIds: ServiceCall[immutable.Seq[String], immutable.Seq[ProcessDef]]
+  def findProcessDefByKeys: ServiceCall[immutable.Seq[String], immutable.Seq[ProcessDef]]
   def findCaseDef: ServiceCall[FindCaseDefOptions, immutable.Seq[CaseDef]]
   def findDecisionDef: ServiceCall[FindDecisionDefOptions, immutable.Seq[DecisionDef]]
   def deploy: ServiceCall[BpmDiagram, DeploymentWithDefs]
-
-  def test: ServiceCall[JsObject, String]
 
   final override def descriptor = {
     import Service._
@@ -24,10 +25,11 @@ trait BpmEngineService extends Service {
     named("bpm-engine")
       .withCalls(
         restCall(Method.POST, "/api/bpm/engine/repository/findProcessDef", findProcessDef),
+        restCall(Method.POST, "/api/bpm/engine/repository/findProcessDefByIds", findProcessDefByIds),
+        restCall(Method.POST, "/api/bpm/engine/repository/findProcessDefByKeys", findProcessDefByKeys),
         restCall(Method.POST, "/api/bpm/engine/repository/findCaseDef", findCaseDef),
         restCall(Method.POST, "/api/bpm/engine/repository/findDecisionDef", findDecisionDef),
         restCall(Method.POST, "/api/bpm/engine/repository/deploy", deploy),
-        restCall(Method.POST, "/api/bpm/engine/repository/test", test),
 //        restCall(Method.PUT, "/api/bpm/repository/schema", updateSchema),
 //        restCall(Method.DELETE, "/api/bpm/repository/schema/:id", deleteSchema _),
 //        restCall(Method.GET, "/api/bpm/repository/schema/:id", findSchemaById _),

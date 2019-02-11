@@ -4,7 +4,7 @@ import annette.security.auth.authorization.{AuthorizedActionFactory, CheckAny}
 import annette.shared.exceptions.AnnetteException
 import axon.bpm.engine.api.BpmEngineService
 import axon.bpm.repository.api.model.{BpmDiagram, BpmDiagramSummary}
-import axon.bpm.repository.api.{BpmDiagramSummary, BpmRepositoryService}
+import axon.bpm.repository.api.BpmRepositoryService
 import axon.rest.bpm.permission.BpmPermissions._
 import javax.inject.Inject
 import play.api.libs.json._
@@ -13,7 +13,6 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 import scala.concurrent.ExecutionContext
 
 class BpmDiagramController @Inject()(
-    authenticated: AuthenticatedAction,
     authorized: AuthorizedActionFactory,
     bpmRepositoryService: BpmRepositoryService,
     bpmEngineService: BpmEngineService,
@@ -22,11 +21,10 @@ class BpmDiagramController @Inject()(
     extends AbstractController(cc) {
 
   implicit val findBpmDiagramsFormat = Json.format[FindBpmDiagrams]
-  implicit val bpmDiagramSummaryFormat = Json.format[BpmDiagramSummary]
-  implicit val bpmDiagramFormat = Json.format[BpmDiagram]
-  implicit val bpmDiagramXmlFormat = Json.format[BpmDiagramXML]
+  //implicit val bpmDiagramSummaryFormat = Json.format[BpmDiagramSummary]
+  //implicit val bpmDiagramFormat = Json.format[BpmDiagram]
 
-  def find() = authorized(CheckAny(VIEW_BPM_DIAGRAM)).async(parse.json[FindBpmDiagrams]) { implicit request =>
+  def find() = authorized(CheckAny(BPM_DIAGRAM_VIEW)).async(parse.json[FindBpmDiagrams]) { implicit request =>
     val findBpmDiagrams = request.body
     bpmRepositoryService.findBpmDiagrams
       .invoke(findBpmDiagrams.filter)
@@ -36,7 +34,7 @@ class BpmDiagramController @Inject()(
           BadRequest(ex.toMessage)
       }
   }
-  def findById(id: String) = authorized(CheckAny(VIEW_BPM_DIAGRAM)).async { implicit request =>
+  def findById(id: String) = authorized(CheckAny(BPM_DIAGRAM_VIEW)).async { implicit request =>
     bpmRepositoryService
       .findBpmDiagramById(id)
       .invoke()
@@ -47,7 +45,7 @@ class BpmDiagramController @Inject()(
       }
   }
 
-  def create = authorized(CheckAny(CREATE_BPM_DIAGRAM)).async(parse.json[BpmDiagram]) { implicit request =>
+  def create = authorized(CheckAny(BPM_REPOSITORY_CONTROL)).async(parse.json[BpmDiagram]) { implicit request =>
     val bpmDiagram = request.body
     bpmRepositoryService.createBpmDiagram
       .invoke(bpmDiagram)
@@ -57,7 +55,7 @@ class BpmDiagramController @Inject()(
           BadRequest(ex.toMessage)
       }
   }
-  def update() = authorized(CheckAny(UPDATE_BPM_DIAGRAM)).async(parse.json[BpmDiagram]) { implicit request =>
+  def update() = authorized(CheckAny(BPM_REPOSITORY_CONTROL)).async(parse.json[BpmDiagram]) { implicit request =>
     val bpmDiagram = request.body
     bpmRepositoryService.updateBpmDiagram
       .invoke(bpmDiagram)
@@ -67,7 +65,7 @@ class BpmDiagramController @Inject()(
           BadRequest(ex.toMessage)
       }
   }
-  def delete(id: String) = authorized(CheckAny(DELETE_BPM_DIAGRAM)).async { implicit request =>
+  def delete(id: String) = authorized(CheckAny(BPM_REPOSITORY_CONTROL)).async { implicit request =>
     bpmRepositoryService
       .deleteBpmDiagram(id)
       .invoke()
@@ -78,7 +76,7 @@ class BpmDiagramController @Inject()(
       }
   }
 
-  def deploy(id: String) = authorized(CheckAny(DEPLOY_BPM_DIAGRAM)).async { implicit request =>
+  def deploy(id: String) = authorized(CheckAny(BPM_REPOSITORY_CONTROL)).async { implicit request =>
     (for {
       bpmDiagram <- bpmRepositoryService
         .findBpmDiagramById(id)
@@ -94,4 +92,3 @@ class BpmDiagramController @Inject()(
 }
 
 case class FindBpmDiagrams(filter: String)
-case class BpmDiagramXML(xml: String)

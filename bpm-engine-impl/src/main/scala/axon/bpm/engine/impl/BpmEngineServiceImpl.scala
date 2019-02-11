@@ -92,7 +92,35 @@ class BpmEngineServiceImpl(registry: PersistentEntityRegistry, system: ActorSyst
     }
   }
 
-  override def test: ServiceCall[JsObject, String] = ServiceCall { jsObject =>
-    Future.successful(Json.prettyPrint(jsObject))
+  override def findProcessDefByIds: ServiceCall[immutable.Seq[String], immutable.Seq[ProcessDef]] = ServiceCall { ids =>
+    Future.successful {
+      var list = repositoryService
+        .createProcessDefinitionQuery()
+        .processDefinitionIdIn(ids.filter(_.trim.nonEmpty): _*)
+        .latestVersion()
+        .withoutTenantId()
+        .orderByProcessDefinitionName()
+        .asc()
+        .list()
+        .asScala
+        .map(pd => ProcessDef.apply(pd))
+      immutable.Seq(list: _*)
+    }
+  }
+
+  override def findProcessDefByKeys: ServiceCall[immutable.Seq[String], immutable.Seq[ProcessDef]] = ServiceCall { keys =>
+    Future.successful {
+      var list = repositoryService
+        .createProcessDefinitionQuery()
+        .processDefinitionKeysIn(keys.filter(_.trim.nonEmpty): _*)
+        .latestVersion()
+        .withoutTenantId()
+        .orderByProcessDefinitionName()
+        .asc()
+        .list()
+        .asScala
+        .map(pd => ProcessDef.apply(pd))
+      immutable.Seq(list: _*)
+    }
   }
 }

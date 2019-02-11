@@ -75,9 +75,9 @@ class BpmRepositoryServiceImpl(
       case None                  => throw BusinessProcessNotFound(id)
     }
   }
-  override def findBusinessProcesss: ServiceCall[String, immutable.Seq[BusinessProcessSummary]] = ServiceCall { filter =>
+  override def findBusinessProcess: ServiceCall[String, immutable.Seq[BusinessProcessSummary]] = ServiceCall { filter =>
     // TODO: temporary solution, should be implemented using ElasticSearch
-    businessProcessRepository.findBusinessProcesss(filter.trim)
+    businessProcessRepository.findBusinessProcess(filter.trim)
   }
 
   private def businessProcessRefFor(id: BusinessProcessId) = {

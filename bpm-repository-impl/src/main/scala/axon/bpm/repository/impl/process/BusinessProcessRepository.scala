@@ -8,11 +8,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 private[impl] class BusinessProcessRepository(session: CassandraSession)(implicit ec: ExecutionContext) {
 
-  def findBusinessProcesss(filter: String): Future[immutable.Seq[BusinessProcessSummary]] = {
+  def findBusinessProcess(filter: String): Future[immutable.Seq[BusinessProcessSummary]] = {
     val filterLC = filter.toLowerCase
     // Don't use in production
     for {
-      seq <- selectBusinessProcesss
+      seq <- selectBusinessProcesses
     } yield {
       if (filter.isEmpty) {
         seq.to[collection.immutable.Seq]
@@ -33,7 +33,7 @@ private[impl] class BusinessProcessRepository(session: CassandraSession)(implici
     }
   }
 
-  private def selectBusinessProcesss = {
+  private def selectBusinessProcesses = {
     session.selectAll("SELECT * FROM business_processes").map(_.map(convertBusinessProcessSummary))
   }
 
@@ -45,7 +45,7 @@ private[impl] class BusinessProcessRepository(session: CassandraSession)(implici
     val procRef = businessProcess.getString("process_reference")
     val processReference =
       if (refType == "id") ProcessReferenceById(procRef)
-      else ProcessReferenceById(procRef)
+      else ProcessReferenceByKey(procRef)
 
     BusinessProcessSummary(
       id = businessProcess.getString("id"),

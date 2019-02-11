@@ -45,7 +45,7 @@ class KnowledgeRepositoryServiceImpl(registry: PersistentEntityRegistry, system:
   }
 
   override def findDataSchemaByKeys: ServiceCall[immutable.Seq[DataSchemaKey], immutable.Seq[DataSchemaSummary]] = { keys =>
-    dataSchemaRepository.findDataSchemaByKeys(keys)
+    dataSchemaRepository.findDataSchemaByKeys(keys.filter(_.trim.nonEmpty))
   }
 
   private def refFor(key: DataSchemaKey) = {

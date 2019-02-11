@@ -7,7 +7,7 @@ import annette.security.user.UserService
 import axon.bpm.engine.api.BpmEngineService
 import axon.bpm.repository.api.BpmRepositoryService
 import axon.knowledge.repository.api.KnowledgeRepositoryService
-import axon.rest.bpm.repository.{BpmDeploymentController, BpmDiagramController}
+import axon.rest.bpm.repository.{BpmDeploymentController, BpmDiagramController, BusinessProcessController}
 import axon.rest.knowledge.repository.DataSchemaController
 import com.lightbend.lagom.scaladsl.api.{LagomConfigComponent, ServiceAcl, ServiceInfo}
 import com.lightbend.lagom.scaladsl.client.LagomServiceClientComponents
@@ -64,6 +64,7 @@ abstract class WebGateway(context: Context)
   lazy val main = wire[HomeController]
   lazy val bpmDeploymentController = wire[BpmDeploymentController]
   lazy val bpmDiagramController = wire[BpmDiagramController]
+  lazy val businessProcessController = wire[BusinessProcessController]
   lazy val dataSchemaController = wire[DataSchemaController]
 
 }

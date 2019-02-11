@@ -3,9 +3,11 @@ package axon.rest.bpm.permission
 import annette.authorization.api.Permission
 
 object BpmPermissions {
-  val CREATE_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.create")
-  val UPDATE_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.update")
-  val DELETE_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.delete")
-  final val VIEW_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.view")
-  final val DEPLOY_BPM_DIAGRAM = Permission("axon.bpm.repository.bpmDiagram.deploy")
+
+  final val BPM_REPOSITORY_CONTROL = Permission("axon.bpm.repository.control")
+  final val BPM_DIAGRAM_VIEW = Permission("axon.bpm.repository.bpmDiagram.view")
+  final val PROCESS_DEF_VIEW = Permission("axon.bpm.deployment.view")
+  final val BUSINESS_PROCESS_VIEW = Permission("axon.bpm.repository.bpmDiagram.view")
+
+
 }
