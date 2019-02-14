@@ -4,7 +4,7 @@ import axon.knowledge.repository.api.model.{DataSchemaKey, DataValue}
 import play.api.libs.json._
 
 case class BusinessProcess(
-    id: BusinessProcessId,
+    key: BusinessProcessKey,
     name: String,
     description: Option[String],
     processReference: ProcessReference,
@@ -12,12 +12,14 @@ case class BusinessProcess(
     defaults: Map[String, DataValue]
 )
 
+
+
 object BusinessProcess {
   implicit val format: Format[BusinessProcess] = Json.format
 }
 
 case class BusinessProcessSummary(
-    id: BusinessProcessId,
+    key: BusinessProcessKey,
     name: String,
     description: Option[String],
     processReference: ProcessReference,

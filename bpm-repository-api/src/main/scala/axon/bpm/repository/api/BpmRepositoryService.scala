@@ -18,8 +18,8 @@ trait BpmRepositoryService extends Service {
 
   def createBusinessProcess: ServiceCall[BusinessProcess, BusinessProcess]
   def updateBusinessProcess: ServiceCall[BusinessProcess, BusinessProcess]
-  def deleteBusinessProcess(id: BusinessProcessId): ServiceCall[NotUsed, Done]
-  def findBusinessProcessById(id: String): ServiceCall[NotUsed, BusinessProcess]
+  def deleteBusinessProcess(key: BusinessProcessKey): ServiceCall[NotUsed, Done]
+  def findBusinessProcessByKey(key: String): ServiceCall[NotUsed, BusinessProcess]
   def findBusinessProcess: ServiceCall[String, immutable.Seq[BusinessProcessSummary]]
 
   final override def descriptor = {
@@ -35,8 +35,8 @@ trait BpmRepositoryService extends Service {
 
         restCall(Method.POST, "/api/bpm/repository/businessProcess", createBusinessProcess),
         restCall(Method.PUT, "/api/bpm/repository/businessProcess", updateBusinessProcess),
-        restCall(Method.DELETE, "/api/bpm/repository/businessProcess/:id", deleteBusinessProcess _),
-        restCall(Method.GET, "/api/bpm/repository/businessProcess/:id", findBusinessProcessById _),
+        restCall(Method.DELETE, "/api/bpm/repository/businessProcess/:key", deleteBusinessProcess _),
+        restCall(Method.GET, "/api/bpm/repository/businessProcess/:key", findBusinessProcessByKey _),
         restCall(Method.POST, "/api/bpm/repository/findBusinessProcess", findBusinessProcess _)
       )
       .withExceptionSerializer(new AnnetteExceptionSerializer())

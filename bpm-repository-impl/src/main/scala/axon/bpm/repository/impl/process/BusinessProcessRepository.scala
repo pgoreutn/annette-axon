@@ -23,6 +23,7 @@ private[impl] class BusinessProcessRepository(session: CassandraSession)(implici
               case ProcessReferenceByKey(key) => key
               case ProcessReferenceById(id)   => ""
             }
+            summary.key.toLowerCase.contains(filterLC) ||
             summary.name.toLowerCase.contains(filterLC) ||
             summary.description.getOrElse("").toLowerCase.contains(filterLC) ||
             processReference.toLowerCase.contains(filterLC) ||
@@ -48,7 +49,7 @@ private[impl] class BusinessProcessRepository(session: CassandraSession)(implici
       else ProcessReferenceByKey(procRef)
 
     BusinessProcessSummary(
-      id = businessProcess.getString("id"),
+      key = businessProcess.getString("key"),
       name = businessProcess.getString("name"),
       description = description,
       processReference = processReference,

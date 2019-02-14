@@ -31,7 +31,7 @@ private[impl] class BusinessProcessEventProcessor(session: CassandraSession, rea
     for {
       _ <- session.executeCreateTable("""
         CREATE TABLE IF NOT EXISTS business_processes (
-          id text PRIMARY KEY,
+          key text PRIMARY KEY,
           name text,
           description text,
           ref_type text,
@@ -46,15 +46,15 @@ private[impl] class BusinessProcessEventProcessor(session: CassandraSession, rea
   private def prepareStatements() = {
     for {
       insertBusinessProcess <- session.prepare("""
-        INSERT INTO business_processes(id, name, description, ref_type, process_reference, data_schema_key)
-          VALUES (:id, :name, :description, :refType, :processReference, :dataSchemaKey)
+        INSERT INTO business_processes(key, name, description, ref_type, process_reference, data_schema_key)
+          VALUES (:key, :name, :description, :refType, :processReference, :dataSchemaKey)
       """)
       updateBusinessProcess <- session.prepare("""
         UPDATE business_processes SET name = :name, description = :description,
-          ref_type = :refType, process_reference = :processReference, data_schema_key = :dataSchemaKey WHERE id = :id
+          ref_type = :refType, process_reference = :processReference, data_schema_key = :dataSchemaKey WHERE key = :key
       """)
       deleteBusinessProcess <- session.prepare("""
-        DELETE FROM business_processes WHERE id = :id
+        DELETE FROM business_processes WHERE key = :key
       """)
     } yield {
       insertBusinessProcessStatement = insertBusinessProcess
@@ -73,7 +73,7 @@ private[impl] class BusinessProcessEventProcessor(session: CassandraSession, rea
       List(
         insertBusinessProcessStatement
           .bind()
-          .setString("id", event.businessProcess.id)
+          .setString("key", event.businessProcess.key)
           .setString("name", event.businessProcess.name)
           .setString("description", event.businessProcess.description.getOrElse(""))
           .setString("refType", refType)
@@ -91,7 +91,7 @@ private[impl] class BusinessProcessEventProcessor(session: CassandraSession, rea
       List(
         updateBusinessProcessStatement
           .bind()
-          .setString("id", event.businessProcess.id)
+          .setString("key", event.businessProcess.key)
           .setString("name", event.businessProcess.name)
           .setString("description", event.businessProcess.description.getOrElse(""))
           .setString("refType", refType)
@@ -101,11 +101,11 @@ private[impl] class BusinessProcessEventProcessor(session: CassandraSession, rea
   }
 
   private def deleteBusinessProcess(event: BusinessProcessDeleted) = {
-    println(s"deleteBusinessProcess: ${event.id}")
+    println(s"deleteBusinessProcess: ${event.key}")
 
     Future.successful(
       List(
-        deleteBusinessProcessStatement.bind().setString("id", event.id)
+        deleteBusinessProcessStatement.bind().setString("key", event.key)
       ))
   }
 

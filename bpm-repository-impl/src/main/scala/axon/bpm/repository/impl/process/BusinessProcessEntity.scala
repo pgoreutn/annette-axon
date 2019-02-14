@@ -23,12 +23,12 @@ class BusinessProcessEntity extends PersistentEntity {
   override def behavior: Behavior = {
     case Some(_) =>
       Actions()
-        .onReadOnlyCommand[FindBusinessProcessById, Option[BusinessProcess]] {
-          case (FindBusinessProcessById(id), ctx, state) => ctx.reply(state)
+        .onReadOnlyCommand[FindBusinessProcessByKey, Option[BusinessProcess]] {
+          case (FindBusinessProcessByKey(id), ctx, state) => ctx.reply(state)
         }
         .onReadOnlyCommand[CreateBusinessProcess, BusinessProcess] {
           case (CreateBusinessProcess(bp), ctx, state) =>
-            ctx.commandFailed(BusinessProcessAlreadyExist(bp.id))
+            ctx.commandFailed(BusinessProcessAlreadyExist(bp.key))
         }
         .onCommand[UpdateBusinessProcess, BusinessProcess] {
           case (UpdateBusinessProcess(businessProcess), ctx, state) =>
@@ -53,14 +53,14 @@ class BusinessProcessEntity extends PersistentEntity {
         }
         .onReadOnlyCommand[UpdateBusinessProcess, BusinessProcess] {
           case (UpdateBusinessProcess(businessProcess), ctx, state) =>
-            ctx.commandFailed(BusinessProcessNotFound(businessProcess.id))
+            ctx.commandFailed(BusinessProcessNotFound(businessProcess.key))
         }
         .onReadOnlyCommand[DeleteBusinessProcess, Done] {
           case (DeleteBusinessProcess(id), ctx, state) =>
             ctx.commandFailed(BusinessProcessNotFound(id))
         }
-        .onReadOnlyCommand[FindBusinessProcessById, Option[BusinessProcess]] {
-          case (FindBusinessProcessById(_), ctx, state) =>
+        .onReadOnlyCommand[FindBusinessProcessByKey, Option[BusinessProcess]] {
+          case (FindBusinessProcessByKey(_), ctx, state) =>
             ctx.reply(None)
         }
         .onEvent {

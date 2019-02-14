@@ -8,7 +8,7 @@ object BusinessProcessSerializerRegistry extends JsonSerializerRegistry {
     JsonSerializer[CreateBusinessProcess],
     JsonSerializer[UpdateBusinessProcess],
     JsonSerializer[DeleteBusinessProcess],
-    JsonSerializer[FindBusinessProcessById],
+    JsonSerializer[FindBusinessProcessByKey],
     JsonSerializer[BusinessProcessCreated],
     JsonSerializer[BusinessProcessUpdated],
     JsonSerializer[BusinessProcessDeleted],

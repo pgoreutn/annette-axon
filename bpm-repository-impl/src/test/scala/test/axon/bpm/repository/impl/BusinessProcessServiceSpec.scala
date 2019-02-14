@@ -41,7 +41,7 @@ class BusinessProcessServiceSpec extends AsyncWordSpec with Matchers with Before
       val diagram = TestData.businessProcess()
       for {
         created <- client.createBusinessProcess.invoke(diagram)
-        found <- client.findBusinessProcessById(diagram.id).invoke()
+        found <- client.findBusinessProcessByKey(diagram.key).invoke()
       } yield {
         created shouldBe diagram
         found shouldBe diagram
@@ -70,7 +70,7 @@ class BusinessProcessServiceSpec extends AsyncWordSpec with Matchers with Before
         updated <- client.updateBusinessProcess
           .invoke(sch)
           .recover { case th: Throwable => th }
-        businessProcess <- client.findBusinessProcessById("id4").invoke()
+        businessProcess <- client.findBusinessProcessByKey("id4").invoke()
       } yield {
         created shouldBe a[BusinessProcess]
         updated shouldBe a[BusinessProcess]
@@ -99,12 +99,12 @@ class BusinessProcessServiceSpec extends AsyncWordSpec with Matchers with Before
       for {
         created <- client.createBusinessProcess.invoke(diagram)
         found1 <- client
-          .findBusinessProcessById(id)
+          .findBusinessProcessByKey(id)
           .invoke()
           .recover { case th: Throwable => th }
         deleted <- client.deleteBusinessProcess(id).invoke()
         found2 <- client
-          .findBusinessProcessById(id)
+          .findBusinessProcessByKey(id)
           .invoke()
           .recover {
             case th: Throwable =>
@@ -138,7 +138,7 @@ class BusinessProcessServiceSpec extends AsyncWordSpec with Matchers with Before
       val diagram = TestData.businessProcess()
       for {
         found <- client
-          .findBusinessProcessById(Random.nextInt().toString)
+          .findBusinessProcessByKey(Random.nextInt().toString)
           .invoke()
           .recover { case th: Throwable => th }
       } yield {

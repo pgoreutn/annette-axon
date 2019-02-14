@@ -34,7 +34,7 @@ object BusinessProcessAlreadyExist {
 
 }
 
-object BusinessProcessIdRequired {
+object BusinessProcessKeyRequired {
   val ErrorCode = TransportErrorCode.BadRequest
   val MessageCode = "bpmRepository.businessProcess.idRequired"
 

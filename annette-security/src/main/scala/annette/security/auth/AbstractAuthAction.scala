@@ -10,14 +10,17 @@
 package annette.security.auth
 
 import annette.shared.exceptions.{AnnetteException, AnnetteThrowable}
+import org.slf4j.{Logger, LoggerFactory}
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class AbstractAuthAction(val parser: BodyParsers.Default, implicit val executionContext: ExecutionContext)
     extends ActionBuilder[AuthenticatedRequest, AnyContent] {
+  private final val log: Logger = LoggerFactory.getLogger(classOf[AbstractAuthAction])
 
-  def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] = {
+  def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+    log.info("Request method={}, uri={}, ip={}", request.method, request.uri, request.connection.remoteAddressString )
     validate(request)
       .map(sessionData => block(AuthenticatedRequest[A](sessionData, request)))
       .recover {

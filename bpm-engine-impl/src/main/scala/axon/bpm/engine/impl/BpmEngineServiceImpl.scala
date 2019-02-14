@@ -97,7 +97,6 @@ class BpmEngineServiceImpl(registry: PersistentEntityRegistry, system: ActorSyst
       var list = repositoryService
         .createProcessDefinitionQuery()
         .processDefinitionIdIn(ids.filter(_.trim.nonEmpty): _*)
-        .latestVersion()
         .withoutTenantId()
         .orderByProcessDefinitionName()
         .asc()

@@ -57,22 +57,22 @@ class BpmRepositoryServiceImpl(
   }
 
   override def createBusinessProcess: ServiceCall[BusinessProcess, BusinessProcess] = ServiceCall { businessProcess =>
-    businessProcessRefFor(businessProcess.id)
+    businessProcessRefFor(businessProcess.key)
       .ask(CreateBusinessProcess(businessProcess))
   }
 
   override def updateBusinessProcess: ServiceCall[BusinessProcess, BusinessProcess] = ServiceCall { businessProcess =>
-    businessProcessRefFor(businessProcess.id)
+    businessProcessRefFor(businessProcess.key)
       .ask(UpdateBusinessProcess(businessProcess))
   }
 
-  override def deleteBusinessProcess(id: BusinessProcessId): ServiceCall[NotUsed, Done] = ServiceCall { _ =>
-    businessProcessRefFor(id).ask(DeleteBusinessProcess(id))
+  override def deleteBusinessProcess(key: BusinessProcessKey): ServiceCall[NotUsed, Done] = ServiceCall { _ =>
+    businessProcessRefFor(key).ask(DeleteBusinessProcess(key))
   }
-  override def findBusinessProcessById(id: String): ServiceCall[NotUsed, BusinessProcess] = ServiceCall { _ =>
-    businessProcessRefFor(id).ask(FindBusinessProcessById(id)).map {
+  override def findBusinessProcessByKey(key: String): ServiceCall[NotUsed, BusinessProcess] = ServiceCall { _ =>
+    businessProcessRefFor(key).ask(FindBusinessProcessByKey(key)).map {
       case Some(businessProcess) => businessProcess
-      case None                  => throw BusinessProcessNotFound(id)
+      case None                  => throw BusinessProcessNotFound(key)
     }
   }
   override def findBusinessProcess: ServiceCall[String, immutable.Seq[BusinessProcessSummary]] = ServiceCall { filter =>
@@ -80,11 +80,11 @@ class BpmRepositoryServiceImpl(
     businessProcessRepository.findBusinessProcess(filter.trim)
   }
 
-  private def businessProcessRefFor(id: BusinessProcessId) = {
-    if (id.trim.length != 0) {
-      registry.refFor[BusinessProcessEntity](id)
+  private def businessProcessRefFor(key: BusinessProcessKey) = {
+    if (key.trim.length != 0) {
+      registry.refFor[BusinessProcessEntity](key)
     } else {
-      throw BusinessProcessIdRequired()
+      throw BusinessProcessKeyRequired()
     }
   }
 
