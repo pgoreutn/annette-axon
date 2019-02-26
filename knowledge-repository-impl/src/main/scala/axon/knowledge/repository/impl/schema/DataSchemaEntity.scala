@@ -27,7 +27,7 @@ class DataSchemaEntity extends PersistentEntity {
           case (FindDataSchemaByKey(key), ctx, state) => ctx.reply(state)
         }
         .onReadOnlyCommand[CreateDataSchema, DataSchema] {
-          case (CreateDataSchema(DataSchema(key, _, _, _, _)), ctx, state) =>
+          case (CreateDataSchema(DataSchema(key, _, _, _)), ctx, state) =>
             ctx.commandFailed(DataSchemaAlreadyExist(key))
         }
         .onCommand[UpdateDataSchema, DataSchema] {
@@ -40,8 +40,7 @@ class DataSchemaEntity extends PersistentEntity {
         }
         .onEvent {
           case (DataSchemaUpdated(dataSchema), state) =>
-            state.map(s =>
-              s.copy(name = dataSchema.name, description = dataSchema.description, baseSchemas = dataSchema.baseSchemas, fields = dataSchema.fields))
+            state.map(s => s.copy(name = dataSchema.name, description = dataSchema.description, fields = dataSchema.fields))
           case (DataSchemaDeleted(_), _) =>
             None
         }
@@ -53,7 +52,7 @@ class DataSchemaEntity extends PersistentEntity {
             ctx.thenPersist(DataSchemaCreated(dataSchema))(_ => ctx.reply(dataSchema))
         }
         .onReadOnlyCommand[UpdateDataSchema, DataSchema] {
-          case (UpdateDataSchema(DataSchema(key, _, _, _, _)), ctx, state) => ctx.commandFailed(DataSchemaNotFound(key))
+          case (UpdateDataSchema(DataSchema(key, _, _, _)), ctx, state) => ctx.commandFailed(DataSchemaNotFound(key))
         }
         .onReadOnlyCommand[DeleteDataSchema, Done] {
           case (DeleteDataSchema(key), ctx, state) => ctx.commandFailed(DataSchemaNotFound(key))

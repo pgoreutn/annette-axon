@@ -10,7 +10,7 @@ case class DecimalType() extends Datatype
 case class BooleanType() extends Datatype
 case class DateType() extends Datatype
 case class RecordType(key: DataSchemaKey, struct: Option[DataSchema] = None) extends Datatype
-case class ArrayType(element: Datatype, struct: Option[DataSchema] = None) extends Datatype
+case class ArrayType(element: Datatype) extends Datatype
 
 object RecordType {
   implicit val format: Format[RecordType] = Json.format

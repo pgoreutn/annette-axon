@@ -19,10 +19,12 @@ class DataSchemaSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll 
       for {
         oneLevelAddress <- builder.buildSingleLevelDef(TestData.addressDS.key)
       } yield {
+        println
+        println("build onelevel data struct def")
+        println(oneLevelAddress.prettyPrint())
         oneLevelAddress.fields.values.foreach(println)
 
-        oneLevelAddress.baseSchemas.length shouldBe 0
-        oneLevelAddress.fields.size shouldBe 10
+        oneLevelAddress.fields.size shouldBe 7
       }
 
     }
@@ -35,14 +37,15 @@ class DataSchemaSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll 
       val builder = new DataStructBuilder(repo)
 
       for {
-        oneLevelDS <- builder.buildSingleLevelDef(TestData.person.key)
+        oneLevelDS <- builder.buildMultiLevelDef(TestData.person.key)
       } yield {
         println
         println("build multilevel data struct def")
+        println(oneLevelDS.prettyPrint())
+        println
         oneLevelDS.fields.values.foreach(println)
 
-        oneLevelDS.baseSchemas.length shouldBe 0
-        oneLevelDS.fields.size shouldBe 9
+        oneLevelDS.fields.size shouldBe 10
 
       }
 
@@ -73,7 +76,7 @@ class DataSchemaSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll 
         in <- seq
       } yield {
         val js = Json.toJson(in)
-        println(Json.prettyPrint(js))
+        //println(Json.prettyPrint(js))
 
         val out = Json.fromJson[DataSchema](js).getOrElse(sys.error("Oh no!"))
         out shouldBe in
@@ -93,7 +96,9 @@ class DataSchemaSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll 
       } yield {
 
         val js = Json.toJson(oneLevelDS)
-        println(Json.prettyPrint(js))
+//        println
+//        println("serialize multilevel data struct def")
+//        println(Json.prettyPrint(js))
 
         val out = Json.fromJson[DataSchema](js).getOrElse(sys.error("Oh no!"))
         out shouldBe oneLevelDS

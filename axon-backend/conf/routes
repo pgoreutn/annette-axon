@@ -38,6 +38,9 @@ GET           /web-api/knowledge/repository/dataSchema/:key             axon.res
 POST          /web-api/knowledge/repository/dataSchema                  axon.rest.knowledge.repository.DataSchemaController.create
 PUT           /web-api/knowledge/repository/dataSchema                  axon.rest.knowledge.repository.DataSchemaController.update
 DELETE        /web-api/knowledge/repository/dataSchema/:key             axon.rest.knowledge.repository.DataSchemaController.delete(key: String)
+GET           /web-api/knowledge/repository/buildMultiLevel/:key        axon.rest.knowledge.repository.DataSchemaController.buildMultiLevel(key: String)
+GET           /web-api/knowledge/repository/buildSingleLevel/:key       axon.rest.knowledge.repository.DataSchemaController.buildSingleLevel(key: String)
+
 
 
 # Map static resources from the /public folder to the /assets URL path

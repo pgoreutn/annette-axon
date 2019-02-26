@@ -24,7 +24,7 @@ class DataSchemaController @Inject()(
   implicit val dataSchemaSummaryFormat = Json.format[DataSchemaSummary]
   implicit val dataSchemaFormat = Json.format[DataSchema]
 
-  def find() = authorized(CheckAny(VIEW_DATA_SCHEMA)).async(parse.json[FindDataSchemas]) { implicit request =>
+  def find() = authorized(CheckAny(DATA_SCHEMA_VIEW)).async(parse.json[FindDataSchemas]) { implicit request =>
     val findDataSchemas = request.body
     knowledgeRepositoryService.findDataSchema
       .invoke(findDataSchemas.filter)
@@ -35,7 +35,7 @@ class DataSchemaController @Inject()(
       }
   }
 
-  def findByKeys() = authorized(CheckAny(VIEW_DATA_SCHEMA)).async(parse.json[immutable.Seq[String]]) { implicit request =>
+  def findByKeys() = authorized(CheckAny(DATA_SCHEMA_VIEW)).async(parse.json[immutable.Seq[String]]) { implicit request =>
     val keys = request.body
     knowledgeRepositoryService.findDataSchemaByKeys
       .invoke(keys)
@@ -46,7 +46,7 @@ class DataSchemaController @Inject()(
       }
   }
 
-  def findByKey(key: String) = authorized(CheckAny(VIEW_DATA_SCHEMA)).async { implicit request =>
+  def findByKey(key: String) = authorized(CheckAny(DATA_SCHEMA_VIEW)).async { implicit request =>
     knowledgeRepositoryService
       .findDataSchemaByKey(key)
       .invoke()
@@ -62,7 +62,7 @@ class DataSchemaController @Inject()(
     dataSchema.copy(fields = fields)
   }
 
-  def create = authorized(CheckAny(CREATE_DATA_SCHEMA)).async(parse.json[DataSchema]) { implicit request =>
+  def create = authorized(CheckAny(KNOWLEDGE_REPOSITORY_CONTROL)).async(parse.json[DataSchema]) { implicit request =>
     val dataSchema = normalizeFields(request.body)
     knowledgeRepositoryService.createDataSchema
       .invoke(dataSchema)
@@ -72,7 +72,7 @@ class DataSchemaController @Inject()(
           BadRequest(ex.toMessage)
       }
   }
-  def update() = authorized(CheckAny(UPDATE_DATA_SCHEMA)).async(parse.json[DataSchema]) { implicit request =>
+  def update() = authorized(CheckAny(KNOWLEDGE_REPOSITORY_CONTROL)).async(parse.json[DataSchema]) { implicit request =>
     val dataSchema = normalizeFields(request.body)
     knowledgeRepositoryService.updateDataSchema
       .invoke(dataSchema)
@@ -82,7 +82,7 @@ class DataSchemaController @Inject()(
           BadRequest(ex.toMessage)
       }
   }
-  def delete(key: String) = authorized(CheckAny(DELETE_DATA_SCHEMA)).async { implicit request =>
+  def delete(key: String) = authorized(CheckAny(KNOWLEDGE_REPOSITORY_CONTROL)).async { implicit request =>
     knowledgeRepositoryService
       .deleteDataSchema(key)
       .invoke()
@@ -92,6 +92,29 @@ class DataSchemaController @Inject()(
           BadRequest(ex.toMessage)
       }
   }
+
+  def buildMultiLevel(key: String) = authorized(CheckAny(KNOWLEDGE_REPOSITORY_CONTROL)).async { implicit request =>
+    knowledgeRepositoryService
+      .buildMultiLevel(key)
+      .invoke()
+      .map(r => Ok(Json.toJson(r)))
+      .recover {
+        case ex: AnnetteException =>
+          BadRequest(ex.toMessage)
+      }
+  }
+
+  def buildSingleLevel(key: String) = authorized(CheckAny(KNOWLEDGE_REPOSITORY_CONTROL)).async { implicit request =>
+    knowledgeRepositoryService
+      .buildSingleLevel(key)
+      .invoke()
+      .map(r => Ok(Json.toJson(r)))
+      .recover {
+        case ex: AnnetteException =>
+          BadRequest(ex.toMessage)
+      }
+  }
+
 }
 
 case class FindDataSchemas(filter: String)

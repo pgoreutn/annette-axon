@@ -20,9 +20,37 @@ case class DataSchema(
     key: DataSchemaKey,
     name: String,
     description: Option[String],
-    baseSchemas: Seq[DataSchemaKey],
     fields: Map[DataSchemaFieldKey, DataSchemaField],
-)
+) {
+  def prettyPrint(level: Int = 0): String = {
+    fields.values
+      .map { f =>
+        val prefix = "  " * level
+        val postfix = f.datatype match {
+          case RecordType(_, Some(ds)) =>
+            s":\n${ds.prettyPrint(level + 1)}"
+          case ArrayType(RecordType(_, Some(ds))) =>
+            s":\n${ds.prettyPrint(level + 1)}"
+          case _ => ""
+        }
+        s"$prefix${f.key}: ${datatypeToString(f.datatype)}${postfix}"
+      }
+      .mkString("\n")
+  }
+
+  private def datatypeToString(datatype: Datatype): String = {
+    datatype match {
+      case StringType()  => "String"
+      case IntType()     => "Int"
+      case DoubleType()  => "Double"
+      case DecimalType() => "Decimal"
+      case BooleanType() => "Boolean"
+      case DateType()    => "Date"
+      case b: RecordType => s"Record ${b.key}"
+      case b: ArrayType  => s"Array of ${datatypeToString(b.element)}"
+    }
+  }
+}
 
 case class DataSchemaField(
     key: DataSchemaFieldKey,

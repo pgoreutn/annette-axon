@@ -14,6 +14,8 @@ trait KnowledgeRepositoryService extends Service {
   def createDataSchema: ServiceCall[DataSchema, DataSchema]
   def updateDataSchema: ServiceCall[DataSchema, DataSchema]
   def deleteDataSchema(key: DataSchemaKey): ServiceCall[NotUsed, Done]
+  def buildSingleLevel(key: String): ServiceCall[NotUsed, DataSchema]
+  def buildMultiLevel(key: String): ServiceCall[NotUsed, DataSchema]
   def findDataSchemaByKey(key: String): ServiceCall[NotUsed, DataSchema]
   def findDataSchema: ServiceCall[String, immutable.Seq[DataSchemaSummary]]
   def findDataSchemaByKeys: ServiceCall[immutable.Seq[DataSchemaKey], immutable.Seq[DataSchemaSummary]]
@@ -27,6 +29,8 @@ trait KnowledgeRepositoryService extends Service {
         restCall(Method.PUT, "/api/knowledge/repository/dataSchema", updateDataSchema),
         restCall(Method.DELETE, "/api/knowledge/repository/dataSchema/:key", deleteDataSchema _),
         restCall(Method.GET, "/api/knowledge/repository/dataSchema/:key", findDataSchemaByKey _),
+        restCall(Method.GET, "/api/knowledge/repository/buildSingleLevel/:key", buildSingleLevel _),
+        restCall(Method.GET, "/api/knowledge/repository/buildMultiLevel/:key", buildMultiLevel _),
         restCall(Method.POST, "/api/knowledge/repository/findDataSchema", findDataSchema _),
         restCall(Method.POST, "/api/knowledge/repository/findDataSchemaByKeys", findDataSchemaByKeys _),
       )

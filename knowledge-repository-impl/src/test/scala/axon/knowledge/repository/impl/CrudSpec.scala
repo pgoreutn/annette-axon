@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
 import scala.util.Random
 
-class KnowledgeRepositoryServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
+class CrudSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAll {
 
   private val server = ServiceTest.startServer(
     ServiceTest.defaultSetup
