@@ -4,8 +4,7 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET         /                                           controllers.HomeController.index(file: String = "")
-GET         /service-worker.js                          controllers.HomeController.serviceWorker
+GET         /                                           controllers.HomeController.index
 #GET        /web-api/token                              controllers.HomeController.token
 #GET        /web-api/config                             controllers.HomeController.config
 GET         /web-api/heartbeat                          controllers.HomeController.heartbeat
@@ -44,6 +43,6 @@ GET           /web-api/knowledge/repository/buildSingleLevel/:key       axon.res
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
+#GET         /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /*file                                      controllers.HomeController.index(file: String)
+GET         /*file                                      controllers.HomeController.assetOrDefault(file: String)

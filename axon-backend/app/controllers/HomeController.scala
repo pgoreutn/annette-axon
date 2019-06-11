@@ -23,8 +23,11 @@ class HomeController @Inject()(
     implicit val ec: ExecutionContext)
     extends AbstractController(cc) {
 
-  def index(file: String = "") = assets.versioned("/public/dist/", "index.html")
-  def serviceWorker = assets.versioned("/public/dist/", "service-worker.js")
+  def index = assets.versioned("/public/dist/", "index.html")
+
+  def assetOrDefault(resource: String): Action[AnyContent] = {
+    if (resource.contains(".")) assets.versioned("/public/dist/", resource) else index
+  }
 
   def keycloak = Action { request: Request[AnyContent] =>
     val config = Source.fromResource("keycloak.json").mkString
