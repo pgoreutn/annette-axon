@@ -7,6 +7,12 @@ maintainer in ThisBuild := "valery@lobachev.biz"
 // the Scala version that will be used for cross-compiled libraries
 scalaVersion in ThisBuild := "2.12.6"
 
+def commonSettings: Seq[Setting[_]] = Seq(
+  unmanagedClasspath in Runtime += baseDirectory.value / "conf",
+  mappings in Universal ++= directory(baseDirectory.value / "conf"),
+  scriptClasspath := "../conf/" +: scriptClasspath.value,
+)
+
 lazy val root = (project in file("."))
   .settings(name := "annette-axon")
   .aggregate(
@@ -22,10 +28,9 @@ lazy val root = (project in file("."))
     `authorization-api`,
     `authorization-impl`
   )
-  .settings(commonSettings: _*)
+  
 
 lazy val `axon-backend` = (project in file("axon-backend"))
-  .settings(commonSettings: _*)
   .enablePlugins(PlayScala, LagomPlay, SbtReactiveAppPlugin)
   //.disablePlugins(PlayFilters)
   .settings(
@@ -36,6 +41,7 @@ lazy val `axon-backend` = (project in file("axon-backend"))
       "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
     ) ++ Dependencies.tests
   )
+  .settings(commonSettings: _*)
   .dependsOn(
     `bpm-repository-api`,
     `bpm-engine-api`,
@@ -49,7 +55,7 @@ lazy val `annette-shared` = (project in file("annette-shared"))
       lagomScaladslApi,
       lagomScaladslServer % Optional,
       Dependencies.jwt
-    ) ++ Dependencies.tests
+    ) ++ Dependencies.tests ++ Dependencies.elastic
   )
 
 lazy val `annette-security` = (project in file("annette-security"))
@@ -78,11 +84,9 @@ lazy val `authorization-impl` = (project in file("authorization-impl"))
       lagomScaladslTestKit,
       Dependencies.macwire
     ) ++ Dependencies.tests,
-    unmanagedClasspath in Runtime += baseDirectory.value / "conf",
-    mappings in Universal ++= directory(baseDirectory.value / "conf"),
-    scriptClasspath := "../conf/" +: scriptClasspath.value,
   )
   .settings(lagomForkedTestSettings: _*)
+  .settings(commonSettings: _*)
   .dependsOn(`authorization-api`)
 
 lazy val `bpm-repository-api` = (project in file("bpm-repository-api"))
@@ -101,11 +105,9 @@ lazy val `bpm-repository-impl` = (project in file("bpm-repository-impl"))
       lagomScaladslTestKit,
       Dependencies.macwire
     ) ++ Dependencies.tests,
-    unmanagedClasspath in Runtime += baseDirectory.value / "conf",
-    mappings in Universal ++= directory(baseDirectory.value / "conf"),
-    scriptClasspath := "../conf/" +: scriptClasspath.value,
   )
   .settings(lagomForkedTestSettings: _*)
+  .settings(commonSettings: _*)
   .dependsOn(`bpm-repository-api`)
 
 lazy val `bpm-engine-api` = (project in file("bpm-engine-api"))
@@ -124,11 +126,9 @@ lazy val `bpm-engine-impl` = (project in file("bpm-engine-impl"))
       lagomScaladslTestKit,
       Dependencies.macwire
     ) ++ Dependencies.tests,
-    unmanagedClasspath in Runtime += baseDirectory.value / "conf",
-    mappings in Universal ++= directory(baseDirectory.value / "conf"),
-    scriptClasspath := "../conf/" +: scriptClasspath.value,
   )
   .settings(lagomForkedTestSettings: _*)
+  .settings(commonSettings: _*)
   .dependsOn(`bpm-engine-api`, `bpm-repository-api`)
 
 lazy val `knowledge-repository-api` = (project in file("knowledge-repository-api"))
@@ -147,15 +147,11 @@ lazy val `knowledge-repository-impl` = (project in file("knowledge-repository-im
       lagomScaladslTestKit,
       Dependencies.macwire
     ) ++ Dependencies.tests,
-    unmanagedClasspath in Runtime += baseDirectory.value / "conf",
-    mappings in Universal ++= directory(baseDirectory.value / "conf"),
-    scriptClasspath := "../conf/" +: scriptClasspath.value,
+    
   )
   .settings(lagomForkedTestSettings: _*)
+  .settings(commonSettings: _*)
   .dependsOn(`knowledge-repository-api`)
-
-def commonSettings: Seq[Setting[_]] = Seq(
-  )
 
 lagomCassandraCleanOnStart in ThisBuild := false
 

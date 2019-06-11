@@ -42,7 +42,15 @@ class BpmDiagramEntity extends PersistentEntity {
         }
         .onEvent {
           case (BpmDiagramUpdated(bpmDiagram), state) =>
-            state.map(s => s.copy(name = bpmDiagram.name, description = bpmDiagram.description, xml = bpmDiagram.xml))
+            state.map(
+              s =>
+                s.copy(
+                  name = bpmDiagram.name,
+                  description = bpmDiagram.description,
+                  processDefinitions = bpmDiagram.processDefinitions,
+                  xml = bpmDiagram.xml
+              )
+            )
           case (BpmDiagramDeleted(_), _) =>
             None
         }
