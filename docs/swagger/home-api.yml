@@ -1,0 +1,86 @@
+---
+swagger: '2.0'
+info:
+  description: 'This file describe api provided by base API of Annette platform'
+  version: 1.0.0
+  title: Home API
+  contact:
+    email: valery@lobachev.biz
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: localhost:9000
+basePath: "/"
+tags:
+  - name: home
+    description: Annette Platform base API
+#    externalDocs:
+#      description: Find out more
+#      url: http://swagger.io
+schemes:
+  - https
+  - http
+paths:
+  "/":
+    get:
+      tags:
+        - home
+      summary: Returns frontend's index.html 
+      description: ''
+      operationId: index
+      produces:
+        - html
+      responses:
+        '200':
+          description: content of index.html
+  "/heartbeat":
+    get:
+      tags:
+        - home
+      summary: Returns 'Ok' text. 
+      description: Purposes of this endpoint are checking liveliness of container and refresing jwt token.
+      produces:
+        - text
+      responses:
+        '200':
+          description: Text 'Ok'
+  "/keycloak":
+      get:
+        tags:
+          - home
+        summary: Returns keycloak.json file.
+        description: File keycloak.json contains data that frontend is required to connect to Keycloak server and authenticate user.
+        produces: 
+          - application/json
+        responses:
+          '200':
+            description: File keycloak.json
+            schema:
+              "$ref": "#/definitions/Keycloak"
+
+definitions:
+  Keycloak:
+    type: object
+    properties:
+      realm:
+        type: string
+        description: Keycloak realm
+        example: Annette
+      auth-server-url:
+        type: string
+        description: URL of Keycloak server
+        example: 'http://localhost:8180/auth'
+      ssl-required:
+        type: string
+        example: external
+      resource:
+        type: string
+        description: Keycloak Client Id
+        example: annette-axon
+      public-client:
+        type: boolean
+        description: Flag describes if client public or private
+        example: true
+      confidential-port:
+        type: integer
+        example: 0

@@ -3,9 +3,6 @@
   "auth-server-url": "http://localhost:8180/auth",
   "ssl-required": "external",
   "resource": "annette-axon",
-  "credentials": {
-    "secret": "2ddb5844-8898-4c85-8d40-fae121a778dd"
-  },
-  "confidential-port": 0,
-  "policy-enforcer": {}
+  "public-client": true,
+  "confidential-port": 0
 }
