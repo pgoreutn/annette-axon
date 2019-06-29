@@ -79,7 +79,7 @@ paths:
     delete:
       tags:
       - bpm-diagram
-      summary: Deletes a BPM Diagram
+      summary: Delete a BPM Diagram
       description: ''
       operationId: deleteBpmDiagram
       produces:
@@ -95,7 +95,7 @@ paths:
           description: successful delete
           schema:
             type: object
-            properties: 
+            properties:
               deleted:
                 type: boolean
                 default: true
@@ -153,7 +153,7 @@ paths:
       security:
       - annette-auth:
         - BPM_REPOSITORY_CONTROL
-  
+
   "/businessProcesses":
     post:
       tags:
@@ -208,7 +208,7 @@ paths:
     delete:
       tags:
       - business-process
-      summary: Deletes a Business Process
+      summary: Delete a Business Process
       description: ''
       operationId: deleteBusinessProcess
       produces:
@@ -224,7 +224,7 @@ paths:
           description: successful delete
           schema:
             type: object
-            properties: 
+            properties:
               deleted:
                 type: boolean
                 default: true
@@ -282,14 +282,14 @@ paths:
       security:
       - annette-auth:
         - BPM_REPOSITORY_CONTROL
-          
+
 securityDefinitions:
   annette-auth:
     type: oauth2
     authorizationUrl: https://petstore.swagger.io/oauth/authorize
     flow: implicit
     scopes:
-      BPM_REPOSITORY_CONTROL: maintain BPM Repository 
+      BPM_REPOSITORY_CONTROL: maintain BPM Repository
       BPM_DIAGRAM_VIEW: read BPM Diagrams
       BUSINESS_PROCESS_VIEW: read Business Processes
   api_key:
@@ -304,7 +304,7 @@ definitions:
     properties:
       filter:
         type: string
-        description: filter string 
+        description: filter string
         example: 'expe'
   BpmDiagramSummary:
     type: object
@@ -327,7 +327,7 @@ definitions:
         description: description of BPM Diagram
         example: 'This schema is related to ....'
       notation:
-        type: string 
+        type: string
         description: Notation of BPM Diagram
         enum:
         - BPMN
@@ -359,7 +359,7 @@ definitions:
         description: description of BPM Diagram
         example: 'This schema is related to ....'
       notation:
-        type: string 
+        type: string
         description: Notation of BPM Diagram
         enum:
         - BPMN
@@ -378,7 +378,7 @@ definitions:
     properties:
       filter:
         type: string
-        description: filter string 
+        description: filter string
         example: 'expe'
   BusinessProcessSummary:
     type: object
@@ -401,16 +401,16 @@ definitions:
         description: description of Business Process
         example: 'Business process is related to ....'
       processReference:
-        type: object 
+        type: object
         "$ref": "#/definitions/ProcessReference"
       processReferenceDetail:
-        type: object 
+        type: object
         "$ref": "#/definitions/ProcessReferenceDetail"
       dataSchemaKey:
-        type: object 
+        type: object
         "$ref": "#/definitions/DataSchemaKey"
       dataSchemaDetail:
-        type: object 
+        type: object
         "$ref": "#/definitions/DataSchemaDetail"
   BusinessProcess:
     type: object
@@ -434,16 +434,16 @@ definitions:
         description: description of Business Process
         example: 'Business process is related to ....'
       processReference:
-        type: object 
+        type: object
         "$ref": "#/definitions/ProcessReference"
       processReferenceDetail:
-        type: object 
+        type: object
         "$ref": "#/definitions/ProcessReferenceDetail"
       dataSchemaKey:
-        type: object 
+        type: object
         "$ref": "#/definitions/DataSchemaKey"
       dataSchemaDetail:
-        type: object 
+        type: object
         "$ref": "#/definitions/DataSchemaDetail"
       defaults:
         type: object
@@ -452,18 +452,18 @@ definitions:
     type: object
     required:
       - reference
-    properties: 
+    properties:
       reference:
-        type: string 
+        type: string
         description: "type of reference: byKey or byId"
         enum:
         - byKey
         - byId
         example: byKey
-      key: 
+      key:
         type: string
         description: key of process definition (references to the latest version of process definition)
-      id: 
+      id:
         type: string
         description: id of process definition (references to the concrete process definition)
   ProcessReferenceDetail:
@@ -471,13 +471,13 @@ definitions:
     required:
       - key
       - name
-    properties: 
-      key: 
+    properties:
+      key:
         type: string
-        description: key of process definition 
-      version: 
+        description: key of process definition
+      version:
         type: string
-        description: version of process definition 
-      name: 
+        description: version of process definition
+      name:
         type: string
-        description: name of process definition 
+        description: name of process definition
