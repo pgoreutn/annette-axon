@@ -16,9 +16,13 @@ import com.lightbend.rp.servicediscovery.lagom.scaladsl.LagomServiceLocatorCompo
 import com.softwaremill.macwire._
 import controllers.{AssetsComponents, HomeController}
 import play.api.ApplicationLoader.Context
+import play.api.http.HttpErrorHandler
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.mvc.{BodyParsers, EssentialFilter}
 import play.api.{ApplicationLoader, BuiltInComponentsFromContext, Mode}
+import play.filters.HttpFiltersComponents
+import play.filters.cors.CORSComponents
+import play.filters.gzip.GzipFilterComponents
 import router.Routes
 
 import scala.collection.immutable
@@ -27,12 +31,14 @@ import scala.concurrent.ExecutionContext
 abstract class WebGateway(context: Context)
     extends BuiltInComponentsFromContext(context)
     with AssetsComponents
-    //with HttpFiltersComponents
+    with HttpFiltersComponents
+    with GzipFilterComponents
+    with CORSComponents
     with AhcWSComponents
     with LagomConfigComponent
     with LagomServiceClientComponents {
 
-  def httpFilters: Seq[EssentialFilter] = Seq()
+  override def httpFilters: Seq[EssentialFilter] = Seq(gzipFilter, securityHeadersFilter, corsFilter)
 
   override lazy val serviceInfo: ServiceInfo = ServiceInfo(
     "axon-backend",
@@ -42,6 +48,7 @@ abstract class WebGateway(context: Context)
   )
   implicit override lazy val executionContext: ExecutionContext = actorSystem.dispatcher
 
+  implicit val myErrorHandler: HttpErrorHandler = this.httpErrorHandler
   override lazy val router = {
     val prefix = "/"
     wire[Routes]
