@@ -1,10 +1,16 @@
 import com.typesafe.sbt.SbtNativePackager.autoImport.NativePackagerHelper._
 
+// Copyright settings
+def copyrightSettings: Seq[Setting[_]] = Seq(
+  organizationName := "Valery Lobachev",
+  startYear := Some(2018),
+  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
+)
+
 organization in ThisBuild := "biz.lobachev"
 version in ThisBuild := "0.1.0-SNAPSHOT"
 maintainer in ThisBuild := "valery@lobachev.biz"
 
-// the Scala version that will be used for cross-compiled libraries
 scalaVersion in ThisBuild := "2.12.6"
 
 def commonSettings: Seq[Setting[_]] = Seq(
@@ -15,6 +21,7 @@ def commonSettings: Seq[Setting[_]] = Seq(
 
 lazy val root = (project in file("."))
   .settings(name := "annette-axon")
+  .settings(copyrightSettings: _*)
   .aggregate(
     `axon-backend`,
     `annette-shared`,
@@ -42,6 +49,7 @@ lazy val `axon-backend` = (project in file("axon-backend"))
     ) ++ Dependencies.tests
   )
   .settings(commonSettings: _*)
+  .settings(copyrightSettings: _*)
   .dependsOn(
     `bpm-repository-api`,
     `bpm-engine-api`,
@@ -59,6 +67,7 @@ lazy val `annette-shared` = (project in file("annette-shared"))
       
     ) ++ Dependencies.tests ++ Dependencies.elastic 
   )
+  .settings(copyrightSettings: _*)
 
 lazy val `annette-security` = (project in file("annette-security"))
   .settings(
@@ -68,6 +77,7 @@ lazy val `annette-security` = (project in file("annette-security"))
       Dependencies.jwt
     ) ++ Dependencies.tests
   )
+  .settings(copyrightSettings: _*)
   .dependsOn(`authorization-api`, `annette-shared`)
 
 lazy val `authorization-api` = (project in file("authorization-api"))
@@ -76,6 +86,7 @@ lazy val `authorization-api` = (project in file("authorization-api"))
       lagomScaladslApi
     )
   )
+  .settings(copyrightSettings: _*)
   .dependsOn(`annette-shared`)
 
 lazy val `authorization-impl` = (project in file("authorization-impl"))
@@ -89,6 +100,7 @@ lazy val `authorization-impl` = (project in file("authorization-impl"))
   )
   .settings(lagomForkedTestSettings: _*)
   .settings(commonSettings: _*)
+  .settings(copyrightSettings: _*)
   .dependsOn(`authorization-api`)
 
 lazy val `bpm-repository-api` = (project in file("bpm-repository-api"))
@@ -97,6 +109,7 @@ lazy val `bpm-repository-api` = (project in file("bpm-repository-api"))
       lagomScaladslApi
     )
   )
+  .settings(copyrightSettings: _*)
   .dependsOn(`annette-shared`, `knowledge-repository-api`)
 
 lazy val `bpm-repository-impl` = (project in file("bpm-repository-impl"))
@@ -110,6 +123,7 @@ lazy val `bpm-repository-impl` = (project in file("bpm-repository-impl"))
   )
   .settings(lagomForkedTestSettings: _*)
   .settings(commonSettings: _*)
+  .settings(copyrightSettings: _*)
   .dependsOn(`bpm-repository-api`)
 
 lazy val `bpm-engine-api` = (project in file("bpm-engine-api"))
@@ -118,6 +132,7 @@ lazy val `bpm-engine-api` = (project in file("bpm-engine-api"))
       lagomScaladslApi,
     ) ++ Dependencies.bpmEngine
   )
+  .settings(copyrightSettings: _*)
   .dependsOn(`annette-shared`, `bpm-repository-api`, `knowledge-repository-api`)
 
 lazy val `bpm-engine-impl` = (project in file("bpm-engine-impl"))
@@ -131,6 +146,7 @@ lazy val `bpm-engine-impl` = (project in file("bpm-engine-impl"))
   )
   .settings(lagomForkedTestSettings: _*)
   .settings(commonSettings: _*)
+  .settings(copyrightSettings: _*)
   .dependsOn(`bpm-engine-api`, `bpm-repository-api`)
 
 lazy val `knowledge-repository-api` = (project in file("knowledge-repository-api"))
@@ -139,6 +155,7 @@ lazy val `knowledge-repository-api` = (project in file("knowledge-repository-api
       lagomScaladslApi,
     ) ++ Dependencies.tests
   )
+  .settings(copyrightSettings: _*)
   .dependsOn(`annette-shared`)
 
 lazy val `knowledge-repository-impl` = (project in file("knowledge-repository-impl"))
@@ -153,6 +170,7 @@ lazy val `knowledge-repository-impl` = (project in file("knowledge-repository-im
   )
   .settings(lagomForkedTestSettings: _*)
   .settings(commonSettings: _*)
+  .settings(copyrightSettings: _*)
   .dependsOn(`knowledge-repository-api`)
 
 lagomCassandraCleanOnStart in ThisBuild := false
