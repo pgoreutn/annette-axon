@@ -21,7 +21,7 @@ class BpmDeploymentController @Inject()(
     implicit val ec: ExecutionContext)
     extends AbstractController(cc) {
 
-  def find() = authorized(CheckAny(BPM_DIAGRAM_VIEW)).async(parse.json[FindProcessDefOptions]) { implicit request =>
+  def find() = authorized(CheckAny(PROCESS_DEF_VIEW)).async(parse.json[FindProcessDefOptions]) { implicit request =>
     val filter = request.body
     bpmEngineService.findProcessDef
       .invoke(filter)
