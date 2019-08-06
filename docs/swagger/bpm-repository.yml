@@ -1,5 +1,5 @@
 ---
-swagger: '2.0'
+openapi: 3.0.0
 info:
   description: BMP repository defines API to maintain BPM Diagrams, Deployments and Business Processes
   version: 1.0.0
@@ -10,8 +10,11 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-host: localhost:9000
-basePath: "/web-api/bpm/repository"
+
+servers:
+  - url: http://localhost:9000/web-api/bpm/repository
+    description: Local server
+  
 tags:
 - name: bpm-diagram
   description: API to maintain BPM Diagrams
@@ -19,9 +22,7 @@ tags:
   description: API to maintain BPM Deployments
 - name: business-process
   description: API to maintain Business Processes
-schemes:
-- https
-- http
+
 paths:
   "/bpmDiagrams":
     post:
@@ -30,27 +31,23 @@ paths:
       summary: Finds BPM Diagrams
       description: ''
       operationId: findBpmDiagrams
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - in: body
-        name: body
+      requestBody:
         description: Filter to find BPM Diagrams
         required: true
-        schema:
-          "$ref": "#/definitions/FindBpmDiagrams"
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FindBpmDiagrams"
       responses:
         '200':
           description: List of founded BPM diagram summaries
-          schema:
-            type: array
-            items:
-              "$ref": "#/definitions/BpmDiagramSummary"
-      security:
-      - annette-auth:
-        - BPM_DIAGRAM_VIEW
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/BpmDiagramSummary"
+      
   "/bpmDiagram/{id}":
     get:
       tags:
@@ -58,19 +55,20 @@ paths:
       summary: Find BPM Diagram by id
       description: Returns a single petBpm Diagram
       operationId: findBpmDiagramById
-      produces:
-      - application/json
       parameters:
       - name: id
         in: path
         description: id of BPM Diagram to return
         required: true
-        type: string
+        schema:
+          type: string
       responses:
         '200':
           description: successful operation
-          schema:
-            "$ref": "#/definitions/BpmDiagram"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BpmDiagram"
         '404':
           description: Diagram not found
       security:
@@ -82,23 +80,24 @@ paths:
       summary: Delete a BPM Diagram
       description: ''
       operationId: deleteBpmDiagram
-      produces:
-      - application/json
       parameters:
       - name: id
         in: path
         description: id of BPM Diagram to delete
         required: true
-        type: string
+        schema:
+          type: string
       responses:
         '200':
           description: successful delete
-          schema:
-            type: object
-            properties:
-              deleted:
-                type: boolean
-                default: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    default: true
       security:
       - annette-auth:
         - BPM_REPOSITORY_CONTROL
@@ -109,22 +108,20 @@ paths:
       summary: Create BPM Diagram
       description: Create and return created BPM Diagram
       operationId: createBpmDiagram
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - in: body
-        name: body
+      requestBody:
         description: BPM Diagram to be created
         required: true
-        schema:
-          "$ref": "#/definitions/BpmDiagram"
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/BpmDiagram"
       responses:
         '200':
           description: successful operation
-          schema:
-            "$ref": "#/definitions/BpmDiagram"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BpmDiagram"
       security:
       - annette-auth:
         - BPM_REPOSITORY_CONTROL
@@ -134,22 +131,20 @@ paths:
       summary: Update BPM Diagram
       description: Update and return updated BPM Diagram
       operationId: updateBpmDiagram
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - in: body
-        name: body
+      requestBody:
         description: BPM Diagram to be updated
         required: true
-        schema:
-          "$ref": "#/definitions/BpmDiagram"
+        content:
+          application/json:
+            schema:
+             "$ref": "#/components/schemas/BpmDiagram"
       responses:
         '200':
           description: successful operation
-          schema:
-            "$ref": "#/definitions/BpmDiagram"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BpmDiagram"
       security:
       - annette-auth:
         - BPM_REPOSITORY_CONTROL
@@ -161,27 +156,26 @@ paths:
       summary: Finds Business Processes
       description: ''
       operationId: findBusinessProcesses
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - in: body
-        name: body
+      requestBody:
         description: Filter to find Business Processes
         required: true
-        schema:
-          "$ref": "#/definitions/FindBusinessProcesses"
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FindBusinessProcesses"
       responses:
         '200':
           description: List of founded Business Process summaries
-          schema:
-            type: array
-            items:
-              "$ref": "#/definitions/BusinessProcessSummary"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/BusinessProcessSummary"
       security:
       - annette-auth:
         - BUSINESS_PROCESS_VIEW
+
   "/businessProcess/{key}":
     get:
       tags:
@@ -189,48 +183,52 @@ paths:
       summary: Find Business Process by key
       description: Returns a single Business Process
       operationId: findBusinessProcessByKey
-      produces:
-      - application/json
       parameters:
       - name: key
         in: path
         description: key of Business Process to return
         required: true
-        type: string
+        schema:
+          type: string
       responses:
         '200':
           description: successful operation
-          schema:
-            "$ref": "#/definitions/BusinessProcess"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BusinessProcess"
       security:
       - annette-auth:
         - BUSINESS_PROCESS_VIEW
+
     delete:
       tags:
       - business-process
       summary: Delete a Business Process
       description: ''
       operationId: deleteBusinessProcess
-      produces:
-      - application/json
       parameters:
       - name: key
         in: path
         description: key of Business Process to delete
         required: true
-        type: string
+        schema:
+          type: string
       responses:
         '200':
           description: successful delete
-          schema:
-            type: object
-            properties:
-              deleted:
-                type: boolean
-                default: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    default: true
       security:
       - annette-auth:
         - BPM_REPOSITORY_CONTROL
+
   "/businessProcess":
     post:
       tags:
@@ -238,22 +236,20 @@ paths:
       summary: Create Business Process
       description: Create and return created Business Process
       operationId: createBusinessProcess
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - in: body
-        name: body
+      requestBody:
         description: Business Process to be created
         required: true
-        schema:
-          "$ref": "#/definitions/BusinessProcess"
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/BusinessProcess"
       responses:
         '200':
           description: successful operation
-          schema:
-            "$ref": "#/definitions/BusinessProcess"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BusinessProcess"
       security:
       - annette-auth:
         - BPM_REPOSITORY_CONTROL
@@ -263,221 +259,218 @@ paths:
       summary: Update Business Process
       description: Update and return updated Business Process
       operationId: updateBusinessProcess
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - in: body
-        name: body
+      requestBody:
         description: Business Process to be updated
         required: true
-        schema:
-          "$ref": "#/definitions/BusinessProcess"
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/BusinessProcess"
       responses:
         '200':
           description: successful operation
-          schema:
-            "$ref": "#/definitions/BusinessProcess"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BusinessProcess"
       security:
       - annette-auth:
         - BPM_REPOSITORY_CONTROL
 
-securityDefinitions:
-  annette-auth:
-    type: oauth2
-    authorizationUrl: https://petstore.swagger.io/oauth/authorize
-    flow: implicit
-    scopes:
-      BPM_REPOSITORY_CONTROL: maintain BPM Repository
-      BPM_DIAGRAM_VIEW: read BPM Diagrams
-      BUSINESS_PROCESS_VIEW: read Business Processes
-  api_key:
-    type: apiKey
-    name: api_key
-    in: header
-definitions:
-  FindBpmDiagrams:
-    type: object
-    required:
-      - filter
-    properties:
-      filter:
-        type: string
-        description: filter string
-        example: 'expe'
-  BpmDiagramSummary:
-    type: object
-    required:
-      - id
-      - name
-      - notation
-      - processDefinitions
-    properties:
-      id:
-        type: string
-        description: diagram id
-        example: 'adb1c2be-f521-4f1f-bb52-fe9380bef05e'
-      name:
-        type: string
-        description: name of BPM diagram
-        example: 'Expences approve BPMN schema'
-      description:
-        type: string
-        description: description of BPM Diagram
-        example: 'This schema is related to ....'
-      notation:
-        type: string
-        description: Notation of BPM Diagram
-        enum:
-        - BPMN
-        - DMN
-        - CMMN
-        example: BPMN
-      processDefinitions:
-        type: string
-        description: Process Defenition keys separated by whitespace
-  BpmDiagram:
-    type: object
-    required:
-      - id
-      - name
-      - notation
-      - xml
-      - processDefinitions
-    properties:
-      id:
-        type: string
-        description: diagram id
-        example: 'adb1c2be-f521-4f1f-bb52-fe9380bef05e'
-      name:
-        type: string
-        description: name of BPM diagram
-        example: 'Expences approve BPMN schema'
-      description:
-        type: string
-        description: description of BPM Diagram
-        example: 'This schema is related to ....'
-      notation:
-        type: string
-        description: Notation of BPM Diagram
-        enum:
-        - BPMN
-        - DMN
-        - CMMN
-        example: BPMN
-      xml:
-        type: string
-        description: XML representation of BPM Diagram
-      processDefinitions:
-        type: string
-        description: Process Defenition keys separated by whitespace
 
-  FindBusinessProcesses:
-    type: object
-    properties:
-      filter:
-        type: string
-        description: filter string
-        example: 'expe'
-  BusinessProcessSummary:
-    type: object
-    required:
-      - key
-      - name
-      - processReference
-      - dataSchemaKey
-    properties:
-      key:
-        type: string
-        description: Business Process key
-        example: 'ExpensesApprove'
-      name:
-        type: string
-        description: name of Business Process
-        example: 'Expences approve'
-      description:
-        type: string
-        description: description of Business Process
-        example: 'Business process is related to ....'
-      processReference:
-        type: object
-        "$ref": "#/definitions/ProcessReference"
-      processReferenceDetail:
-        type: object
-        "$ref": "#/definitions/ProcessReferenceDetail"
-      dataSchemaKey:
-        type: object
-        "$ref": "#/definitions/DataSchemaKey"
-      dataSchemaDetail:
-        type: object
-        "$ref": "#/definitions/DataSchemaDetail"
-  BusinessProcess:
-    type: object
-    required:
-      - key
-      - name
-      - processReference
-      - dataSchemaKey
-      - defaults
-    properties:
-      key:
-        type: string
-        description: Business Process key
-        example: 'ExpensesApprove'
-      name:
-        type: string
-        description: name of Business Process
-        example: 'Expences approve'
-      description:
-        type: string
-        description: description of Business Process
-        example: 'Business process is related to ....'
-      processReference:
-        type: object
-        "$ref": "#/definitions/ProcessReference"
-      processReferenceDetail:
-        type: object
-        "$ref": "#/definitions/ProcessReferenceDetail"
-      dataSchemaKey:
-        type: object
-        "$ref": "#/definitions/DataSchemaKey"
-      dataSchemaDetail:
-        type: object
-        "$ref": "#/definitions/DataSchemaDetail"
-      defaults:
-        type: object
-        description: default values of data schema for Business Process
-  ProcessReference:
-    type: object
-    required:
-      - reference
-    properties:
-      reference:
-        type: string
-        description: "type of reference: byKey or byId"
-        enum:
-        - byKey
-        - byId
-        example: byKey
-      key:
-        type: string
-        description: key of process definition (references to the latest version of process definition)
-      id:
-        type: string
-        description: id of process definition (references to the concrete process definition)
-  ProcessReferenceDetail:
-    type: object
-    required:
-      - key
-      - name
-    properties:
-      key:
-        type: string
-        description: key of process definition
-      version:
-        type: string
-        description: version of process definition
-      name:
-        type: string
-        description: name of process definition
+components:
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      description: JWT Token from Keycloak
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    FindBpmDiagrams:
+      type: object
+      required:
+        - filter
+      properties:
+        filter:
+          type: string
+          description: filter string
+          example: 'expe'
+    BpmDiagramSummary:
+      type: object
+      required:
+        - id
+        - name
+        - notation
+        - processcomponents/schemas
+      properties:
+        id:
+          type: string
+          description: diagram id
+          example: 'adb1c2be-f521-4f1f-bb52-fe9380bef05e'
+        name:
+          type: string
+          description: name of BPM diagram
+          example: 'Expences approve BPMN schema'
+        description:
+          type: string
+          description: description of BPM Diagram
+          example: 'This schema is related to ....'
+        notation:
+          type: string
+          description: Notation of BPM Diagram
+          enum:
+          - BPMN
+          - DMN
+          - CMMN
+          example: BPMN
+        processcomponents/schemas:
+          type: string
+          description: Process Defenition keys separated by whitespace
+    BpmDiagram:
+      type: object
+      required:
+        - id
+        - name
+        - notation
+        - xml
+        - processcomponents/schemas
+      properties:
+        id:
+          type: string
+          description: diagram id
+          example: 'adb1c2be-f521-4f1f-bb52-fe9380bef05e'
+        name:
+          type: string
+          description: name of BPM diagram
+          example: 'Expences approve BPMN schema'
+        description:
+          type: string
+          description: description of BPM Diagram
+          example: 'This schema is related to ....'
+        notation:
+          type: string
+          description: Notation of BPM Diagram
+          enum:
+          - BPMN
+          - DMN
+          - CMMN
+          example: BPMN
+        xml:
+          type: string
+          description: XML representation of BPM Diagram
+        processcomponents/schemas:
+          type: string
+          description: Process Defenition keys separated by whitespace
+
+    FindBusinessProcesses:
+      type: object
+      properties:
+        filter:
+          type: string
+          description: filter string
+          example: 'expe'
+    BusinessProcessSummary:
+      type: object
+      required:
+        - key
+        - name
+        - processReference
+        - dataSchemaKey
+      properties:
+        key:
+          type: string
+          description: Business Process key
+          example: 'ExpensesApprove'
+        name:
+          type: string
+          description: name of Business Process
+          example: 'Expences approve'
+        description:
+          type: string
+          description: description of Business Process
+          example: 'Business process is related to ....'
+        processReference:
+          type: object
+          "$ref": "#/components/schemas/ProcessReference"
+        processReferenceDetail:
+          type: object
+          "$ref": "#/components/schemas/ProcessReferenceDetail"
+        dataSchemaKey:
+          type: object
+          "$ref": "#/components/schemas/DataSchemaKey"
+        dataSchemaDetail:
+          type: object
+          "$ref": "#/components/schemas/DataSchemaDetail"
+    BusinessProcess:
+      type: object
+      required:
+        - key
+        - name
+        - processReference
+        - dataSchemaKey
+        - defaults
+      properties:
+        key:
+          type: string
+          description: Business Process key
+          example: 'ExpensesApprove'
+        name:
+          type: string
+          description: name of Business Process
+          example: 'Expences approve'
+        description:
+          type: string
+          description: description of Business Process
+          example: 'Business process is related to ....'
+        processReference:
+          type: object
+          "$ref": "#/components/schemas/ProcessReference"
+        processReferenceDetail:
+          type: object
+          "$ref": "#/components/schemas/ProcessReferenceDetail"
+        dataSchemaKey:
+          type: object
+          "$ref": "#/components/schemas/DataSchemaKey"
+        dataSchemaDetail:
+          type: object
+          "$ref": "#/components/schemas/DataSchemaDetail"
+        defaults:
+          type: object
+          description: default values of data schema for Business Process
+    ProcessReference:
+      type: object
+      required:
+        - reference
+      properties:
+        reference:
+          type: string
+          description: "type of reference: byKey or byId"
+          enum:
+          - byKey
+          - byId
+          example: byKey
+        key:
+          type: string
+          description: key of process definition (references to the latest version of process definition)
+        id:
+          type: string
+          description: id of process definition (references to the concrete process definition)
+    ProcessReferenceDetail:
+      type: object
+      required:
+        - key
+        - name
+      properties:
+        key:
+          type: string
+          description: key of process definition
+        version:
+          type: string
+          description: version of process definition
+        name:
+          type: string
+          description: name of process definition
+
+security:
+  - bearerAuth: []
