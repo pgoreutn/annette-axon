@@ -6,14 +6,14 @@ object Dependencies {
 
     val scala = "2.12.6"
 
-    val macwire = "2.3.1"
+    val macwire = "2.3.3"
 
-    val akka = "2.5.19"
-    val akkaPersistenceCassandra = "0.02"
+    val akka = "2.5.23"
+    val akkaPersistenceCassandra = "0.98"
 
     val scalaTest = "3.0.5"
     val scalaTestPlusPlay = "3.1.2"
-    val akkaPersistenceInmemoryVersion = "2.5.1.1"
+    val akkaPersistenceInmemoryVersion = "2.5.15.2"
     val commonsIO = "2.6"
 
 
@@ -25,6 +25,7 @@ object Dependencies {
     val pgDriver = "42.2.5"
     
     val elastic4sVersion = "6.5.1"
+    val playJsonExt = "0.40.2"
   }
 
 
@@ -68,6 +69,8 @@ object Dependencies {
     "com.sksamuel.elastic4s" %% "elastic4s-testkit" % Version.elastic4sVersion % Test,
     "com.sksamuel.elastic4s" %% "elastic4s-embedded" % Version.elastic4sVersion % Test
   )
+
+  val playJsonExt: sbt.ModuleID   = "ai.x" %% "play-json-extensions" % Version.playJsonExt
 
   val core = persistence ++ tests :+ guice :+ ws :+ jwt
 }

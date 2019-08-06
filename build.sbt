@@ -54,8 +54,10 @@ lazy val `annette-shared` = (project in file("annette-shared"))
     libraryDependencies ++= Seq(
       lagomScaladslApi,
       lagomScaladslServer % Optional,
-      Dependencies.jwt
-    ) ++ Dependencies.tests ++ Dependencies.elastic
+      Dependencies.jwt,
+      Dependencies.playJsonExt
+      
+    ) ++ Dependencies.tests ++ Dependencies.elastic 
   )
 
 lazy val `annette-security` = (project in file("annette-security"))
