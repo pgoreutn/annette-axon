@@ -33,7 +33,8 @@ lazy val root = (project in file("."))
     `knowledge-repository-api`,
     `knowledge-repository-impl`,
     `authorization-api`,
-    `authorization-impl`
+    `authorization-impl`,
+    `person-repository-api`
   )
   
 
