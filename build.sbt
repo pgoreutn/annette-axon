@@ -11,7 +11,7 @@ organization in ThisBuild := "biz.lobachev"
 version in ThisBuild := "0.1.0-SNAPSHOT"
 maintainer in ThisBuild := "valery@lobachev.biz"
 
-scalaVersion in ThisBuild := "2.12.6"
+scalaVersion in ThisBuild := "2.12.9"
 
 def commonSettings: Seq[Setting[_]] = Seq(
   unmanagedClasspath in Runtime += baseDirectory.value / "conf",
@@ -172,6 +172,15 @@ lazy val `knowledge-repository-impl` = (project in file("knowledge-repository-im
   .settings(commonSettings: _*)
   .settings(copyrightSettings: _*)
   .dependsOn(`knowledge-repository-api`)
+
+lazy val `person-repository-api` = (project in file("person-repository-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslApi
+    )
+  )
+  .settings(copyrightSettings: _*)
+  .dependsOn(`annette-shared`, `annette-security`)
 
 lagomCassandraCleanOnStart in ThisBuild := false
 
