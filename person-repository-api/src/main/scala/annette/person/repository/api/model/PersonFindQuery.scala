@@ -20,6 +20,27 @@ import annette.person.repository.api.model.PersonSortBy.PersonSortBy
 import annette.person.repository.api.model.PersonType.PersonType
 import play.api.libs.json.{Format, Json}
 
+
+object PersonSortBy extends Enumeration {
+  type PersonSortBy = Value
+
+  val Lastname = Value("lastname") // Sort by last name, first name, middle name
+  val Firstname = Value("firstname") // sort by first name, last name
+  val Phone = Value("phone") // sort by phone
+  val Email = Value("email") //sort by email
+
+  implicit val format = Json.formatEnum(this)
+}
+
+object PersonType extends Enumeration {
+  type PersonType = Value
+
+  val User = Value("user")
+  val Contact = Value("contact")
+
+  implicit val format = Json.formatEnum(this)
+}
+
 case class PersonFindQuery(
     offset: Int,
     size: Int,
@@ -37,15 +58,4 @@ case class PersonFindQuery(
 
 object PersonFindQuery {
   implicit val format: Format[PersonFindQuery] = Json.format
-}
-
-object PersonSortBy extends Enumeration {
-  type PersonSortBy = Value
-
-  val Lastname = Value("lastname") // Sort by last name, first name, middle name
-  val Firstname = Value("firstname") // sort by first name, last name
-  val Phone = Value("phone") // sort by phone
-  val Email = Value("email") //sort by email
-
-  implicit val format = Json.formatEnum(this)
 }
