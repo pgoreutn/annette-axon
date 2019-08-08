@@ -29,29 +29,9 @@ object PersonNotFound {
   )
 }
 
-object PersonWithUserIdNotFound {
-  val ErrorCode = TransportErrorCode.NotFound
-  val MessageCode = "personRepository.person.withUserIdNotFound"
-
-  def apply(id: String) = new AnnetteTransportException(
-    ErrorCode,
-    new AnnetteException(MessageCode, Map("id" -> id))
-  )
-}
-
 object PersonAlreadyExist {
   val ErrorCode = TransportErrorCode.BadRequest
   val MessageCode = "personRepository.person.alreadyExist"
-
-  def apply(id: String) = new AnnetteTransportException(
-    ErrorCode,
-    new AnnetteException(MessageCode, Map("id" -> id))
-  )
-}
-
-object UserIdAlreadyExist {
-  val ErrorCode = TransportErrorCode.BadRequest
-  val MessageCode = "personRepository.person.userIdAlreadyExist"
 
   def apply(id: String) = new AnnetteTransportException(
     ErrorCode,

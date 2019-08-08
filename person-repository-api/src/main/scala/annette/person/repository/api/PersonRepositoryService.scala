@@ -31,7 +31,6 @@ trait PersonRepositoryService extends Service {
     * Import person from external source. Some business rules are ignored.
     * Method performs the following steps:
     *  1. Create or update existing person, activate if person deactivated.
-    *  2. If user id already exists and assigned to another person, it clear user id in another person
     *  3. If personType is contact and has user id, user id is cleared
     *  4. If personType is user and user id is not set, returns 400 User Id is required
     *
@@ -43,7 +42,6 @@ trait PersonRepositoryService extends Service {
     * Creates person.
     * The following business rules are applied:
     *  * If person already exists and active it returns exception 400 Person already exist.
-    *  * If person has user id that already exists it return 400 User Id already exist.
     *  * If personType is contact and has user id, user id is cleared
     *  * If personType is user and user id is not set, returns 400 User Id is required
     *
@@ -55,7 +53,6 @@ trait PersonRepositoryService extends Service {
     * Updates person.
     * The following business rules are applied:
     *  * If person don't exist, it returns exception 404 Person not found.
-    *  * If person has user id that already exists and not assigned to the same person id, it return 400 User Id already exist.
     *  * If personType is contact and has user id, user id is cleared
     *  * If personType is user and user id is not set, returns 400 User Id is required
     *
@@ -76,9 +73,8 @@ trait PersonRepositoryService extends Service {
   /**
     * Activates the person deactivated earlier.
     * The following business rules are applied:
-    *  * If person is a user user id index validated and updated.The following business rules are applied:
+    *  * The following business rules are applied:
     *  * If person don't exist, it returns exception 404 Person not found.
-    *  * If person has user id that already exists in user id index, it returns 400 User Id already exist.
     *
     * @param id
     * @return
@@ -88,7 +84,7 @@ trait PersonRepositoryService extends Service {
   /**
     * Returns person by person id. By default it return entity from read side that could be updated with some delay.
     * Parameter readSide should be se to false to get more consistent data from persistent entity. If person don't
-    * exist, it returns exception 404 Person with user id {userId} not found.
+    * exist, it returns exception 404 Person not found.
     *
     * @param id
     * @param readSide
@@ -97,31 +93,12 @@ trait PersonRepositoryService extends Service {
   def getPersonById(id: PersonId, readSide: Boolean = true): ServiceCall[NotUsed, Person]
 
   /**
-    * Returns person by user id.
-    * If person don't exist, it returns exception 404 Person with user id {userId} not found.
-    *
-    * @param id
-    * @param readSide
-    * @return
-    */
-  def getPersonByUserId(id: UserId, readSide: Boolean = true): ServiceCall[NotUsed, Person]
-
-  /**
     * Returns persons by person ids.
     *
     * @param readSide
     * @return
     */
   def getPersonsByIds(readSide: Boolean = true): ServiceCall[Set[PersonId], Set[Person]]
-
-  /**
-    * Returns persons by user ids.
-    *
-    * @param readSide
-    * @return
-    */
-  def getPersonsByUserIds(readSide: Boolean = true): ServiceCall[Set[UserId], Set[Person]]
-
 
   /**
     * Search person using particular query.
@@ -141,8 +118,6 @@ trait PersonRepositoryService extends Service {
         restCall(Method.DELETE, "/api/v1/person/repository/person/:id",                     deactivatePerson _),
         restCall(Method.GET,    "/api/v1/person/repository/person/:id/:readSide",           getPersonById _),
         restCall(Method.POST,   "/api/v1/person/repository/persons/:readSide",              getPersonsByIds _),
-        restCall(Method.GET,    "/api/v1/person/repository/personByUserId/:id/:readSide",   getPersonByUserId _),
-        restCall(Method.POST,   "/api/v1/person/repository/personsByUserIds/:readSide",     getPersonsByUserIds _),
         restCall(Method.POST,   "/api/v1/person/repository/findPersons",                    findPersons)
       )
       .withExceptionSerializer(new AnnetteExceptionSerializer())
