@@ -39,12 +39,3 @@ object PersonAlreadyExist {
   )
 }
 
-object PersonUserIdRequired {
-  val ErrorCode = TransportErrorCode.BadRequest
-  val MessageCode = "personRepository.person.userIdRequired"
-
-  def apply() = new AnnetteTransportException(
-    ErrorCode,
-    new AnnetteException(MessageCode)
-  )
-}

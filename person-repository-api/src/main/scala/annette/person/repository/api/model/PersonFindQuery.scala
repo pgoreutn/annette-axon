@@ -42,17 +42,17 @@ object PersonType extends Enumeration {
 }
 
 case class PersonFindQuery(
-    offset: Int,
+    offset: Int = 0,
     size: Int,
-    filter: Option[String], //search by filter in person's names, email and phone
-    lastname: Option[String], //search in last name of the person
-    firstname: Option[String], //search in first name
-    middlename: Option[String], //search in middle name
-    personType: Option[PersonType], //search in type of person: user or contact
-    phone: Option[String], //search in phone
-    email: Option[String], //search in email
-    activeOnly: Boolean, //search active persons only (by default)
-    sortBy: Option[PersonSortBy], //sort results by field provided
+    filter: Option[String] = None, //search by filter in person's names, email and phone
+    lastname: Option[String] = None, //search in last name of the person
+    firstname: Option[String] = None, //search in first name
+    middlename: Option[String] = None, //search in middle name
+    personType: Option[PersonType] = None, //search in type of person: user or contact
+    phone: Option[String] = None, //search in phone
+    email: Option[String] = None, //search in email
+    activeOnly: Boolean = true, //search active persons only (by default)
+    sortBy: Option[PersonSortBy] = Some(PersonSortBy.Lastname), //sort results by field provided
     ascending: Boolean = true
 )
 
