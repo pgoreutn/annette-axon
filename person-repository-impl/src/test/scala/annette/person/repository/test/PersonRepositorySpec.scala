@@ -54,13 +54,17 @@ class PersonRepositorySpec extends AsyncWordSpec with Matchers with BeforeAndAft
   "person repository service" should {
 
     "create person" in {
-      val userPerson = TestData.userPerson()
+      val userPerson = TestData.userPerson(middlename = None, phone = None, email = None)
       val contactPerson = TestData.contactPerson()
       for {
         createdUserPerson <- client.createPerson.invoke(userPerson)
+        _ = println(createdUserPerson)
         foundUserPerson <- client.getPersonById(userPerson.id, false).invoke()
+        _ = println(foundUserPerson)
         createdContactPerson <- client.createPerson.invoke(contactPerson)
+        _ = println(createdContactPerson)
         foundContactPerson <- client.getPersonById(contactPerson.id, false).invoke()
+        _ = println(foundContactPerson)
       } yield {
         createdUserPerson shouldBe userPerson.copy(updatedAt = createdUserPerson.updatedAt)
         foundUserPerson shouldBe userPerson.copy(updatedAt = createdUserPerson.updatedAt)
@@ -208,7 +212,7 @@ class PersonRepositorySpec extends AsyncWordSpec with Matchers with BeforeAndAft
     }
 
     "get person by id using readside" in {
-      val userPerson = TestData.userPerson()
+      val userPerson = TestData.userPerson(middlename = None, phone = None, email = None)
       (for {
         createdUserPerson <- client.createPerson.invoke(userPerson)
       } yield {
