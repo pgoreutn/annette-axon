@@ -24,7 +24,7 @@ object Dependencies {
     val groovy = "2.5.5"
     val pgDriver = "42.2.5"
     
-    val elastic4sVersion = "6.5.1"
+    val elastic4s = "7.1.0"
     val playJsonExt = "0.40.2"
   }
 
@@ -57,17 +57,11 @@ object Dependencies {
   )
 
   val elastic: Seq[sbt.ModuleID] = Seq(
-    "com.sksamuel.elastic4s" %% "elastic4s-core" % Version.elastic4sVersion,
-    // for the http client
-    "com.sksamuel.elastic4s" %% "elastic4s-http" % Version.elastic4sVersion,
-    // if you want to use reactive streams
-    "com.sksamuel.elastic4s" %% "elastic4s-http-streams" % Version.elastic4sVersion,
-    "com.sksamuel.elastic4s" %% "elastic4s-play-json" % Version.elastic4sVersion,
-    // "com.typesafe.play" %% "play-json" % "2.7.2",
-
-    // testing
-    "com.sksamuel.elastic4s" %% "elastic4s-testkit" % Version.elastic4sVersion % Test,
-    "com.sksamuel.elastic4s" %% "elastic4s-embedded" % Version.elastic4sVersion % Test
+    "com.sksamuel.elastic4s" %% "elastic4s-core" % Version.elastic4s,
+    "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % Version.elastic4s,
+    "com.sksamuel.elastic4s" %% "elastic4s-json-play" % Version.elastic4s,
+    "com.sksamuel.elastic4s" %% "elastic4s-testkit" % Version.elastic4s % "test"
+    // "com.sksamuel.elastic4s" %% "elastic4s-embedded" % Version.elastic4s % "test"
   )
 
   val playJsonExt: sbt.ModuleID   = "ai.x" %% "play-json-extensions" % Version.playJsonExt
