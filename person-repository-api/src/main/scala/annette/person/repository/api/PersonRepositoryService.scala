@@ -18,12 +18,9 @@ package annette.person.repository.api
 
 import akka.{Done, NotUsed}
 import annette.person.repository.api.model.{Person, PersonFindQuery, PersonFindResult, PersonId}
-import annette.security.auth.UserId
 import annette.shared.exceptions.AnnetteExceptionSerializer
 import com.lightbend.lagom.scaladsl.api.transport.Method
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
-
-import scala.collection._
 
 trait PersonRepositoryService extends Service {
 
@@ -112,7 +109,8 @@ trait PersonRepositoryService extends Service {
         restCall(Method.DELETE, "/api/v1/person/repository/person/:id",                     deactivatePerson _),
         restCall(Method.GET,    "/api/v1/person/repository/person/:id/:readSide",           getPersonById _),
         restCall(Method.POST,   "/api/v1/person/repository/persons/:readSide",              getPersonsByIds _),
-        restCall(Method.POST,   "/api/v1/person/repository/findPersons",                    findPersons)
+        restCall(Method.POST,   "/api/v1/person/repository/findPersons",                    findPersons),
+        restCall(Method.POST,   "/api/v1/person/repository/importPerson",                   importPerson)
       )
       .withExceptionSerializer(new AnnetteExceptionSerializer())
       .withAutoAcl(true)

@@ -17,23 +17,15 @@
 package annette.person.repository.impl
 
 import akka.{Done, NotUsed}
-import akka.actor.ActorSystem
-import akka.stream.Materializer
 import annette.person.repository.api.PersonRepositoryService
 import annette.person.repository.api.model.{Person, PersonFindQuery, PersonFindResult, PersonId}
+import annette.person.repository.impl.person.PersonService
 import com.lightbend.lagom.scaladsl.api.ServiceCall
-import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
-import play.api.libs.json.{JsArray, JsNull, JsObject}
-
-import scala.collection.immutable
-import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Implementation of the PersonService.
   */
-class PersonRepositoryServiceImpl(registry: PersistentEntityRegistry, system: ActorSystem/*, dataSchemaRepository: DataSchemaRepository*/)(
-    implicit ec: ExecutionContext,
-    mat: Materializer)
+class PersonRepositoryServiceImpl(personService: PersonService)
     extends PersonRepositoryService {
   /**
     * Import person from external source. Some business rules are ignored.
@@ -42,7 +34,9 @@ class PersonRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Ac
     *
     * @return
     */
-  override def importPerson: ServiceCall[Person, Person] = ???
+  override def importPerson: ServiceCall[Person, Person] = ServiceCall { person =>
+    personService.importPerson(person)
+  }
 
   /**
     * Creates person.
@@ -51,7 +45,9 @@ class PersonRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Ac
     *
     * @return
     */
-  override def createPerson: ServiceCall[Person, Person] = ???
+  override def createPerson: ServiceCall[Person, Person] = ServiceCall { person =>
+    personService.createPerson(person)
+  }
 
   /**
     * Updates person.
@@ -60,7 +56,9 @@ class PersonRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Ac
     *
     * @return
     */
-  override def updatePerson: ServiceCall[Person, Person] = ???
+  override def updatePerson: ServiceCall[Person, Person] = ServiceCall { person =>
+    personService.updatePerson(person)
+  }
 
   /**
     * Deactivates person (mark it as deleted), but person's data is still can be requested by person id and remains searchable. User id is removed from UserId index. The following business rules are applied:
@@ -69,7 +67,9 @@ class PersonRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Ac
     * @param id
     * @return
     */
-  override def deactivatePerson(id: PersonId): ServiceCall[NotUsed, Done] = ???
+  override def deactivatePerson(id: PersonId): ServiceCall[NotUsed, Done] = ServiceCall { _ =>
+    personService.deactivatePerson(id)
+  }
 
   /**
     * Activates the person deactivated earlier.
@@ -80,7 +80,9 @@ class PersonRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Ac
     * @param id
     * @return
     */
-  override def activatePerson(id: PersonId): ServiceCall[NotUsed, Person] = ???
+  override def activatePerson(id: PersonId): ServiceCall[NotUsed, Person] = ServiceCall { _ =>
+    personService.activatePerson(id)
+  }
 
   /**
     * Returns person by person id. By default it return entity from read side that could be updated with some delay.
@@ -91,7 +93,9 @@ class PersonRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Ac
     * @param readSide
     * @return
     */
-  override def getPersonById(id: PersonId, readSide: Boolean): ServiceCall[NotUsed, Person] = ???
+  override def getPersonById(id: PersonId, readSide: Boolean): ServiceCall[NotUsed, Person] = ServiceCall { _ =>
+    personService.getPersonById(id, readSide)
+  }
 
   /**
     * Returns persons by person ids.
@@ -99,12 +103,16 @@ class PersonRepositoryServiceImpl(registry: PersistentEntityRegistry, system: Ac
     * @param readSide
     * @return
     */
-  override def getPersonsByIds(readSide: Boolean): ServiceCall[collection.Set[PersonId], collection.Set[Person]] = ???
+  override def getPersonsByIds(readSide: Boolean): ServiceCall[Set[PersonId], Set[Person]] = ServiceCall { ids =>
+    personService.getPersonsByIds(ids, readSide)
+  }
 
   /**
     * Search person using particular query.
     *
     * @return
     */
-  override def findPersons: ServiceCall[PersonFindQuery, PersonFindResult] = ???
+  override def findPersons: ServiceCall[PersonFindQuery, PersonFindResult] = ServiceCall { query =>
+    personService.findPersons(query)
+  }
 }

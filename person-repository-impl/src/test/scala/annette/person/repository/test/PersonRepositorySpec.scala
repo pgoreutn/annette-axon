@@ -40,7 +40,12 @@ class PersonRepositorySpec extends AsyncWordSpec with Matchers with BeforeAndAft
         super.additionalConfiguration ++ Configuration.from(
           Map(
             "cassandra-query-journal.eventual-consistency-delay" -> "0",
-            "lagom.circuit-breaker.default.enabled" -> "off"
+            "lagom.circuit-breaker.default.enabled" -> "off",
+            "elastic.url" -> "https://localhost:9200",
+            "elastic.prefix" -> "test",
+            "elastic.username" -> "admin",
+            "elastic.password" -> "admin",
+            "elastic.allowInsecure" -> "true"
           )
         )
       }
@@ -48,13 +53,22 @@ class PersonRepositorySpec extends AsyncWordSpec with Matchers with BeforeAndAft
   }
 
   val client = server.serviceClient.implement[PersonRepositoryService]
+  val elastic = server.application.elasticClient
 
-  override protected def afterAll() = server.stop()
+  def clearElastic = {
+    import com.sksamuel.elastic4s.ElasticDsl._
+    elastic.execute(deleteIndex("test-person_service-person"))
+  }
+
+  override protected def afterAll() = {
+    clearElastic
+    server.stop()
+  }
 
   "person repository service" should {
 
     "create person" in {
-      val userPerson = TestData.userPerson()
+      val userPerson = TestData.userPerson(middlename = None, phone = None, email = None)
       val contactPerson = TestData.contactPerson()
       for {
         createdUserPerson <- client.createPerson.invoke(userPerson)
@@ -208,7 +222,7 @@ class PersonRepositorySpec extends AsyncWordSpec with Matchers with BeforeAndAft
     }
 
     "get person by id using readside" in {
-      val userPerson = TestData.userPerson()
+      val userPerson = TestData.userPerson(middlename = None, phone = None, email = None)
       (for {
         createdUserPerson <- client.createPerson.invoke(userPerson)
       } yield {
@@ -248,7 +262,7 @@ class PersonRepositorySpec extends AsyncWordSpec with Matchers with BeforeAndAft
       }).flatMap(identity)
     }
 
-    "find person by filter" in {
+    "find person by filter: lastname" in {
       val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
       val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
       val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
@@ -262,24 +276,116 @@ class PersonRepositorySpec extends AsyncWordSpec with Matchers with BeforeAndAft
         awaitSuccess() {
           for {
             foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
-            foundByLastname <- client.findPersons.invoke(PersonFindQuery(size = 10, filter = Some(toFindByLastname.lastname.take(7))))
-            foundByFirstname <- client.findPersons.invoke(PersonFindQuery(size = 10, filter = Some(toFindByFirstname.firstname.take(4))))
-            foundByMiddlename <- client.findPersons.invoke(PersonFindQuery(size = 10, filter = toFindByMiddlename.middlename.map(_.take(7))))
-            foundByPhone <- client.findPersons.invoke(PersonFindQuery(size = 10, filter = toFindByPhone.phone))
-            foundByEmail <- client.findPersons.invoke(PersonFindQuery(size = 10, filter = toFindByEmail.email.map(_.take(7))))
+            foundByLastname <- client.findPersons
+              .invoke(PersonFindQuery(size = 1000, filter = Some(toFindByLastname.lastname.toUpperCase.take(7))))
           } yield {
             foundPersons should contain theSameElementsAs createdPersons
-            foundByEmail.hits.map(_.id) should contain (toFindByEmail.id)
-            foundByPhone.hits.map(_.id) should contain (toFindByPhone.id)
-            foundByFirstname.hits.map(_.id) should contain (toFindByFirstname.id)
-            foundByLastname.hits.map(_.id) should contain (toFindByLastname.id)
-            foundByMiddlename.hits.map(_.id) should contain (toFindByMiddlename.id)
+            foundByLastname.hits.map(_.id) should contain(toFindByLastname.id)
           }
         }
       }).flatMap(identity)
     }
 
-    "find person by first name, last name, middle name, email, phone" in {
+    "find person by filter: firstname" in {
+      val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
+      val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
+      val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
+      val toFindByPhone = TestData.userPerson(phone = Some("+7-999-888-7766"))
+      val toFindByEmail = TestData.userPerson(email = Some("fmd@greatwriter.com"))
+      val persons = (1 to 10).map(_ => TestData.userPerson()) ++
+        Seq(toFindByLastname, toFindByEmail, toFindByFirstname, toFindByMiddlename, toFindByPhone)
+      (for {
+
+        createdPersons <- Future.sequence(persons.map(person => client.createPerson.invoke(person)))
+      } yield {
+        awaitSuccess() {
+          for {
+            foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
+            foundByFirstname <- client.findPersons
+              .invoke(PersonFindQuery(size = 1000, filter = Some(toFindByFirstname.firstname.take(4))))
+          } yield {
+            foundPersons should contain theSameElementsAs createdPersons
+            foundByFirstname.hits.map(_.id) should contain(toFindByFirstname.id)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "find person by filter: middlename" in {
+      val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
+      val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
+      val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
+      val toFindByPhone = TestData.userPerson(phone = Some("+7-999-888-7766"))
+      val toFindByEmail = TestData.userPerson(email = Some("fmd@greatwriter.com"))
+      val persons = (1 to 10).map(_ => TestData.userPerson()) ++
+        Seq(toFindByLastname, toFindByEmail, toFindByFirstname, toFindByMiddlename, toFindByPhone)
+      (for {
+
+        createdPersons <- Future.sequence(persons.map(person => client.createPerson.invoke(person)))
+      } yield {
+        awaitSuccess() {
+          for {
+            foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
+            foundByMiddlename <- client.findPersons
+              .invoke(PersonFindQuery(size = 1000, filter = toFindByMiddlename.middlename.map(_.take(7))))
+          } yield {
+            foundPersons should contain theSameElementsAs createdPersons
+            foundByMiddlename.hits.map(_.id) should contain(toFindByMiddlename.id)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "find person by filter: phone" in {
+      val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
+      val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
+      val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
+      val toFindByPhone = TestData.userPerson(phone = Some("+7-999-888-7766"))
+      val toFindByEmail = TestData.userPerson(email = Some("fmd@greatwriter.com"))
+      val persons = (1 to 10).map(_ => TestData.userPerson()) ++
+        Seq(toFindByLastname, toFindByEmail, toFindByFirstname, toFindByMiddlename, toFindByPhone)
+      (for {
+
+        createdPersons <- Future.sequence(persons.map(person => client.createPerson.invoke(person)))
+      } yield {
+        awaitSuccess() {
+          for {
+            foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
+            foundByPhone <- client.findPersons.invoke(PersonFindQuery(size = 1000, filter = toFindByPhone.phone))
+          } yield {
+            foundPersons should contain theSameElementsAs createdPersons
+            foundByPhone.hits.map(_.id) should contain(toFindByPhone.id)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "find person by filter: email" in {
+      val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
+      val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
+      val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
+      val toFindByPhone = TestData.userPerson(phone = Some("+7-999-888-7766"))
+      val toFindByEmail = TestData.userPerson(email = Some("fmd@greatwriter.com"))
+      val persons = (1 to 10).map(_ => TestData.userPerson()) ++
+        Seq(toFindByLastname, toFindByEmail, toFindByFirstname, toFindByMiddlename, toFindByPhone)
+      (for {
+
+        createdPersons <- Future.sequence(persons.map(person => client.createPerson.invoke(person)))
+      } yield {
+        awaitSuccess() {
+          for {
+            foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
+            foundByEmail <- client.findPersons
+              .invoke(PersonFindQuery(size = 1000, filter = toFindByEmail.email.map(_.take(7))))
+          } yield {
+            foundPersons should contain theSameElementsAs createdPersons
+            foundByEmail.hits.map(_.id) should contain(toFindByEmail.id)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "find person by first name" in {
       val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
       val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
       val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
@@ -293,18 +399,109 @@ class PersonRepositorySpec extends AsyncWordSpec with Matchers with BeforeAndAft
         awaitSuccess() {
           for {
             foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
-            foundByLastname <- client.findPersons.invoke(PersonFindQuery(size = 10, lastname = Some(toFindByLastname.lastname.take(7))))
-            foundByFirstname <- client.findPersons.invoke(PersonFindQuery(size = 10, firstname = Some(toFindByFirstname.firstname.take(4))))
-            foundByMiddlename <- client.findPersons.invoke(PersonFindQuery(size = 10, middlename = toFindByMiddlename.middlename.map(_.take(7))))
-            foundByPhone <- client.findPersons.invoke(PersonFindQuery(size = 10, phone = toFindByPhone.phone))
-            foundByEmail <- client.findPersons.invoke(PersonFindQuery(size = 10, email = toFindByEmail.email.map(_.take(7))))
+            foundByFirstname <- client.findPersons
+              .invoke(PersonFindQuery(size = 1000, firstname = Some(toFindByFirstname.firstname.take(4))))
           } yield {
             foundPersons should contain theSameElementsAs createdPersons
-            foundByEmail.hits.map(_.id) should contain (toFindByEmail.id)
-            foundByPhone.hits.map(_.id) should contain (toFindByPhone.id)
-            foundByFirstname.hits.map(_.id) should contain (toFindByFirstname.id)
-            foundByLastname.hits.map(_.id) should contain (toFindByLastname.id)
-            foundByMiddlename.hits.map(_.id) should contain (toFindByMiddlename.id)
+            foundByFirstname.hits.map(_.id) should contain(toFindByFirstname.id)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "find person by last name" in {
+      val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
+      val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
+      val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
+      val toFindByPhone = TestData.userPerson(phone = Some("+7-999-888-7766"))
+      val toFindByEmail = TestData.userPerson(email = Some("fmd@greatwriter.com"))
+      val persons = (1 to 10).map(_ => TestData.userPerson()) ++
+        Seq(toFindByLastname, toFindByEmail, toFindByFirstname, toFindByMiddlename, toFindByPhone)
+      (for {
+
+        createdPersons <- Future.sequence(persons.map(person => client.createPerson.invoke(person)))
+      } yield {
+        awaitSuccess() {
+          for {
+            foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
+            foundByLastname <- client.findPersons
+              .invoke(PersonFindQuery(size = 1000, lastname = Some(toFindByLastname.lastname.take(7))))
+          } yield {
+            foundPersons should contain theSameElementsAs createdPersons
+            foundByLastname.hits.map(_.id) should contain(toFindByLastname.id)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "find person by middle name" in {
+      val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
+      val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
+      val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
+      val toFindByPhone = TestData.userPerson(phone = Some("+7-999-888-7766"))
+      val toFindByEmail = TestData.userPerson(email = Some("fmd@greatwriter.com"))
+      val persons = (1 to 10).map(_ => TestData.userPerson()) ++
+        Seq(toFindByLastname, toFindByEmail, toFindByFirstname, toFindByMiddlename, toFindByPhone)
+      (for {
+
+        createdPersons <- Future.sequence(persons.map(person => client.createPerson.invoke(person)))
+      } yield {
+        awaitSuccess() {
+          for {
+            foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
+            foundByMiddlename <- client.findPersons
+              .invoke(PersonFindQuery(size = 1000, middlename = toFindByMiddlename.middlename.map(_.take(7))))
+          } yield {
+            foundPersons should contain theSameElementsAs createdPersons
+            foundByMiddlename.hits.map(_.id) should contain(toFindByMiddlename.id)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "find person by email" in {
+      val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
+      val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
+      val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
+      val toFindByPhone = TestData.userPerson(phone = Some("+7-999-888-7766"))
+      val toFindByEmail = TestData.userPerson(email = Some("fmd@greatwriter.com"))
+      val persons = (1 to 10).map(_ => TestData.userPerson()) ++
+        Seq(toFindByLastname, toFindByEmail, toFindByFirstname, toFindByMiddlename, toFindByPhone)
+      (for {
+
+        createdPersons <- Future.sequence(persons.map(person => client.createPerson.invoke(person)))
+      } yield {
+        awaitSuccess() {
+          for {
+            foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
+            foundByPhone <- client.findPersons.invoke(PersonFindQuery(size = 1000, phone = toFindByPhone.phone))
+          } yield {
+            foundPersons should contain theSameElementsAs createdPersons
+            foundByPhone.hits.map(_.id) should contain(toFindByPhone.id)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "find person by phone" in {
+      val toFindByLastname = TestData.userPerson(lastname = "Dostoevsky")
+      val toFindByFirstname = TestData.userPerson(firstname = "Fedor")
+      val toFindByMiddlename = TestData.userPerson(middlename = Some("Mikhailovich"))
+      val toFindByPhone = TestData.userPerson(phone = Some("+7-999-888-7766"))
+      val toFindByEmail = TestData.userPerson(email = Some("fmd@greatwriter.com"))
+      val persons = (1 to 10).map(_ => TestData.userPerson()) ++
+        Seq(toFindByLastname, toFindByEmail, toFindByFirstname, toFindByMiddlename, toFindByPhone)
+      (for {
+
+        createdPersons <- Future.sequence(persons.map(person => client.createPerson.invoke(person)))
+      } yield {
+        awaitSuccess() {
+          for {
+            foundPersons <- client.getPersonsByIds().invoke(createdPersons.map(_.id).toSet)
+            foundByPhone <- client.findPersons.invoke(PersonFindQuery(size = 1000, phone = toFindByPhone.phone))
+          } yield {
+            foundPersons should contain theSameElementsAs createdPersons
+            foundByPhone.hits.map(_.id) should contain(toFindByPhone.id)
           }
         }
       }).flatMap(identity)

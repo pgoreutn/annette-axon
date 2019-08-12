@@ -16,14 +16,56 @@
 
 package annette.shared.elastic
 
+import java.security.cert.X509Certificate
+
+import com.sksamuel.elastic4s.http.{JavaClient, _}
+import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties}
+import org.apache.http.auth.{AuthScope, UsernamePasswordCredentials}
+import org.apache.http.impl.client.BasicCredentialsProvider
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
+import org.apache.http.ssl.{SSLContexts, TrustStrategy}
+import org.elasticsearch.client.RestClientBuilder.HttpClientConfigCallback
 import play.api.Configuration
-import com.sksamuel.elastic4s.http.{ElasticClient, ElasticProperties}
 
 object ElasticProvider {
 
   def create(configuration: Configuration): ElasticClient = {
-    val elacticUrl = configuration.getOptional[String]("elastic.url").getOrElse("http://localhost:9200")
-    ElasticClient(ElasticProperties(elacticUrl))
+    val url = configuration.getOptional[String]("elastic.url").getOrElse("http://localhost:9200")
+    val maybeUsername = configuration.getOptional[String]("elastic.username")
+    val password = configuration.getOptional[String]("elastic.password").getOrElse("")
+    val allowInsecure = configuration.getOptional[Boolean]("elastic.allowInsecure").getOrElse(false)
 
+    val maybeProvider = maybeUsername.map { username =>
+      val provider = new BasicCredentialsProvider
+      val credentials = new UsernamePasswordCredentials(username, password)
+      provider.setCredentials(AuthScope.ANY, credentials)
+      provider
+    }
+
+    val mayBeSslContext = if (allowInsecure) {
+      Some(
+        SSLContexts
+          .custom()
+          .loadTrustMaterial(new TrustStrategy() {
+            def isTrusted(chain: Array[X509Certificate], authType: String): Boolean = true
+          })
+          .build
+      )
+    } else None
+
+    ElasticClient(
+      JavaClient(
+        ElasticProperties(url),
+        NoOpRequestConfigCallback,
+        new HttpClientConfigCallback {
+          override def customizeHttpClient(httpClientBuilder: HttpAsyncClientBuilder) = {
+            var res = httpClientBuilder
+            res = maybeProvider.map(provider => res.setDefaultCredentialsProvider(provider)).getOrElse(res)
+            res = mayBeSslContext.map(sslContext => res.setSSLContext(sslContext)).getOrElse(res)
+            res
+          }
+        }
+      )
+    )
   }
 }
