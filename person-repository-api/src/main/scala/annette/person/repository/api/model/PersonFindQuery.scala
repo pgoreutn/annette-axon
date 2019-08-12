@@ -20,7 +20,6 @@ import annette.person.repository.api.model.PersonSortBy.PersonSortBy
 import annette.person.repository.api.model.PersonType.PersonType
 import play.api.libs.json.{Format, Json}
 
-
 object PersonSortBy extends Enumeration {
   type PersonSortBy = Value
 
@@ -52,7 +51,7 @@ case class PersonFindQuery(
     phone: Option[String] = None, //search in phone
     email: Option[String] = None, //search in email
     activeOnly: Boolean = true, //search active persons only (by default)
-    sortBy: Option[PersonSortBy] = Some(PersonSortBy.Lastname), //sort results by field provided
+    sortBy: Option[PersonSortBy] = None, //sort results by field provided
     ascending: Boolean = true
 )
 

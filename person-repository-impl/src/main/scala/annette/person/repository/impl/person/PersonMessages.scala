@@ -55,7 +55,7 @@ sealed trait PersonEvent extends AggregateEvent[PersonEvent] {
 }
 
 object PersonEvent {
-  val NumShards = 1
+  val NumShards = 32
   val Tag = AggregateEventTag.sharded[PersonEvent](NumShards)
 }
 

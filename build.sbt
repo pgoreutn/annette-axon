@@ -191,8 +191,7 @@ lazy val `person-repository-impl` = (project in file("person-repository-impl"))
       lagomScaladslPersistenceCassandra,
       lagomScaladslTestKit,
       Dependencies.macwire
-    ) ++ Dependencies.tests,
-
+    ) ++ Dependencies.tests /*++ Dependencies.elastic*/ ,
   )
   .settings(lagomForkedTestSettings: _*)
   .settings(commonSettings: _*)

@@ -17,7 +17,8 @@
 package annette.person.repository.impl
 
 import annette.person.repository.api.PersonRepositoryService
-import annette.person.repository.impl.person.{PersonEntity, PersonEventProcessor, PersonRepository, PersonSerializerRegistry, PersonService}
+import annette.person.repository.impl.person.{PersonElastic, PersonEntity, PersonEventProcessor, PersonRepository, PersonSerializerRegistry, PersonService}
+import annette.shared.elastic.ElasticProvider
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
@@ -49,9 +50,12 @@ abstract class PersonRepositoryApplication(context: LagomApplicationContext)
 
   override lazy val lagomServer = serverFor[PersonRepositoryService](wire[PersonRepositoryServiceImpl])
 
+  lazy val jsonSerializerRegistry = PersonRepositorySerializerRegistry
+
+  lazy val elasticClient = wireWith(ElasticProvider.create _)
+  lazy val personElastic = wire[PersonElastic]
   lazy val personService = wire[PersonService]
   lazy val personRepository = wire[PersonRepository]
-  lazy val jsonSerializerRegistry = PersonRepositorySerializerRegistry
 
   persistentEntityRegistry.register(wire[PersonEntity])
   readSide.register(wire[PersonEventProcessor])

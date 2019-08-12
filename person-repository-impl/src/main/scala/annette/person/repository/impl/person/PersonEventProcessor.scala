@@ -17,14 +17,14 @@
 package annette.person.repository.impl.person
 
 import akka.Done
-import annette.person.repository.api.model.{ContactPerson, Person, UserPerson}
+import annette.person.repository.api.model.{ContactPerson, Person, PersonType, UserPerson}
 import com.datastax.driver.core.PreparedStatement
 import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor
 import com.lightbend.lagom.scaladsl.persistence.cassandra.{CassandraReadSide, CassandraSession}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-private[impl] class PersonEventProcessor(session: CassandraSession, readSide: CassandraReadSide)(implicit ec: ExecutionContext)
+private[impl] class PersonEventProcessor(session: CassandraSession, readSide: CassandraReadSide, elastic: PersonElastic)(implicit ec: ExecutionContext)
     extends ReadSideProcessor[PersonEvent] {
   private var insertPersonStatement: PreparedStatement = null
   private var updatePersonStatement: PreparedStatement = null
@@ -47,8 +47,8 @@ private[impl] class PersonEventProcessor(session: CassandraSession, readSide: Ca
 
   private def createTables() = {
     for {
-      _ <- session.executeCreateTable(
-        """
+      _ <- elastic.createPersonIndex
+      _ <- session.executeCreateTable("""
           |CREATE TABLE IF NOT EXISTS persons (
           |          id text PRIMARY KEY,
           |          lastname text,
@@ -92,27 +92,28 @@ private[impl] class PersonEventProcessor(session: CassandraSession, readSide: Ca
 
   private def updatePerson(person: Person) = {
     val (personType, userId) = person match {
-      case _: ContactPerson => ("contact", null)
-      case user: UserPerson => ("user", user.userId)
+      case _: ContactPerson => (PersonType.Contact.toString, null)
+      case user: UserPerson => (PersonType.User.toString, user.userId)
     }
-    Future.successful(
+    for {
+      _ <- elastic.indexPerson(person)
+    } yield {
       List(
         updatePersonStatement
           .bind()
           .setString("id", person.id)
           .setString("lastname", person.lastname)
           .setString("firstname", person.firstname)
-          .setString("middlename", person.middlename.getOrElse(null))
-          .setString("source", person.source.getOrElse(null))
+          .setString("middlename", person.middlename.orNull)
+          .setString("source", person.source.orNull)
           .setString("person_type", personType)
           .setString("user_id", userId)
-          .setString("phone", person.phone.getOrElse(null))
-          .setString("email", person.email.getOrElse(null))
+          .setString("phone", person.phone.orNull)
+          .setString("email", person.email.orNull)
           .setString("updated_at", person.updatedAt.toString)
           .setBool("active", person.active)
-      ))
+      )
+    }
   }
-
-
 
 }

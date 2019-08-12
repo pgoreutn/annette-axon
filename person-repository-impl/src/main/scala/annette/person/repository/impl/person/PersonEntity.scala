@@ -34,13 +34,6 @@ class PersonEntity extends PersistentEntity {
       Actions()
         .onReadOnlyCommand[GetPersonById, Option[Person]] {
           case (GetPersonById(id), ctx, state) =>
-            println
-            println
-            println
-            println(s"GetPersonById: $id, $state")
-            println
-            println
-            println
             ctx.reply(state)
         }
         .onReadOnlyCommand[CreatePerson, Person] {
@@ -82,13 +75,6 @@ class PersonEntity extends PersistentEntity {
       Actions()
         .onCommand[CreatePerson, Person] {
           case (CreatePerson(person), ctx, _) =>
-            println
-            println
-            println
-            println(s"Create Person: $person")
-            println
-            println
-            println
             val createdPerson = updatePerson(person)
             ctx.thenPersist(PersonCreated(createdPerson))(_ => ctx.reply(createdPerson))
         }
@@ -108,13 +94,6 @@ class PersonEntity extends PersistentEntity {
         }
         .onReadOnlyCommand[GetPersonById, Option[Person]] {
           case (GetPersonById(id), ctx, state) =>
-            println
-            println
-            println
-            println(s"GetPersonById: $id, $state")
-            println
-            println
-            println
             ctx.reply(None)
         }
         .onEvent {

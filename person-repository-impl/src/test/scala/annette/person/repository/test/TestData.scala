@@ -22,7 +22,7 @@ import annette.person.repository.api.model.{ContactPerson, UserPerson}
 
 object TestData {
   def userPerson(
-      id: String = s"id-${Random.nextInt(9999).toString}",
+      id: String = s"id-${Random.nextInt(999999).toString}",
       lastname: String = s"lastname-${Random.nextInt(9999).toString}",
       firstname: String = s"firstname-${Random.nextInt(9999).toString}",
       middlename: Option[String] = Some(s"middlename-${Random.nextInt(9999).toString}"),
@@ -32,12 +32,12 @@ object TestData {
   ): UserPerson = UserPerson(id, lastname, firstname, middlename, source = Some("keycloak"), userId, phone, email, updatedAt = OffsetDateTime.now)
 
   def contactPerson(
-                     id: String = s"id-${Random.nextInt(9999).toString}",
-                     lastname: String = s"lastname-${Random.nextInt(9999).toString}",
-                     firstname: String = s"firstname-${Random.nextInt(9999).toString}",
-                     middlename: Option[String] = Some(s"middlename-${Random.nextInt(9999).toString}"),
-                     phone: Option[String] = Some(s"+${Random.nextInt(9999).toString}${Random.nextInt(9999999).toString}"),
-                     email: Option[String] = Some(s"email${Random.nextInt(99).toString}@site-${Random.nextInt(99).toString}.com")
+      id: String = s"id-${Random.nextInt(9999).toString}",
+      lastname: String = s"lastname-${Random.nextInt(9999).toString}",
+      firstname: String = s"firstname-${Random.nextInt(9999).toString}",
+      middlename: Option[String] = Some(s"middlename-${Random.nextInt(9999).toString}"),
+      phone: Option[String] = Some(s"+${Random.nextInt(9999).toString}${Random.nextInt(9999999).toString}"),
+      email: Option[String] = Some(s"email${Random.nextInt(99).toString}@site-${Random.nextInt(99).toString}.com")
   ): ContactPerson = ContactPerson(id, lastname, firstname, middlename, source = Some("keycloak"), phone, email, updatedAt = OffsetDateTime.now)
 
 }

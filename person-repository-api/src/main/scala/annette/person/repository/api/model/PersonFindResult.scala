@@ -21,7 +21,7 @@ import java.time.OffsetDateTime
 import play.api.libs.json.{Format, Json}
 
 case class PersonFindResult(
-    total: Int, // total items in query
+    total: Long, // total items in query
     hits: Seq[PersonHitResult] // results of search
 )
 

@@ -26,7 +26,7 @@ import scala.collection.JavaConverters._
 import scala.collection.immutable
 import scala.concurrent.{ExecutionContext, Future}
 
-private[impl] class PersonRepository(session: CassandraSession)(implicit ec: ExecutionContext) {
+private[impl] class PersonRepository(session: CassandraSession, elastic: PersonElastic)(implicit ec: ExecutionContext) {
   def getPersonById(id: PersonId): Future[Option[Person]] = {
     for {
       stmt <- session.prepare("SELECT * FROM persons WHERE id = ?")
@@ -41,7 +41,9 @@ private[impl] class PersonRepository(session: CassandraSession)(implicit ec: Exe
     } yield result.to[Set]
   }
 
-  def findPersons(query: PersonFindQuery): Future[PersonFindResult] = ???
+  def findPersons(query: PersonFindQuery): Future[PersonFindResult] = {
+    elastic.findPerson(query)
+  }
 
   private def convertPerson(row: Row): Person = {
     row.getString("person_type") match {
