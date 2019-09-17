@@ -16,7 +16,7 @@
 
 package annette.security.auth.authorization
 
-import annette.authorization.api.RoleId
+import annette.authorization.api.model.RoleId
 import annette.security.auth.SessionData
 import play.api.mvc.Request
 

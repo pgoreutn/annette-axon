@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package annette.authorization.impl
+package annette.authorization.impl.role
 
 import akka.Done
-import annette.authorization.api.{Role, RoleId}
+import annette.authorization.api.model.{Role, RoleId}
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag}
 import play.api.libs.json.{Format, Json}

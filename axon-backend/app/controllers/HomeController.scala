@@ -15,7 +15,7 @@
  */
 
 package controllers
-import annette.authorization.api.Permission
+import annette.authorization.api.model.Permission
 import annette.security.auth.authentication.AuthenticatedAction
 import annette.security.auth.authorization.{AuthorizedActionFactory, CheckAny}
 import annette.security.user.{UserQuery, UserService}

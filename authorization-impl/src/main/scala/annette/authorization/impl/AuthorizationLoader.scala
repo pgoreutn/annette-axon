@@ -17,6 +17,10 @@
 package annette.authorization.impl
 
 import annette.authorization.api._
+import annette.authorization.api.model.{CheckPermissions, FindPermissions, Permission, Role}
+import annette.authorization.impl.assignment.UserRoleAssignmentRepository
+import annette.authorization.impl.role.{CreateRole, DeleteRole, RoleCreated, RoleDeleted, RoleElastic, RoleEntity, RoleEventProcessor, RolePermissionDeleted, RoleRepository, RoleService, RoleUpdated, UpdateRole}
+import annette.shared.elastic.ElasticProvider
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
@@ -48,7 +52,10 @@ abstract class AuthorizationApplication(context: LagomApplicationContext)
 
   override lazy val lagomServer = serverFor[AuthorizationService](wire[AuthorizationServiceImpl])
 
+  lazy val elasticClient = wireWith(ElasticProvider.create _)
   lazy val roleRepository = wire[RoleRepository]
+  lazy val roleElastic = wire[RoleElastic]
+  lazy val roleService = wire[RoleService]
   lazy val userRoleAssignmentRepository = wire[UserRoleAssignmentRepository]
   lazy val jsonSerializerRegistry = AuthorizationSerializerRegistry
 

@@ -3,7 +3,8 @@ package annette.authorization.impl
 import akka.Done
 import akka.actor.ActorSystem
 import akka.testkit.TestKit
-import annette.authorization.api.{Permission, Role}
+import annette.authorization.api.model.{Permission, Role}
+import annette.authorization.impl.role.{CreateRole, DeleteRole, FindRoleById, RoleCommand, RoleCreated, RoleDeleted, RoleEntity, RoleEvent, RoleUpdated, UpdateRole}
 import annette.shared.exceptions.AnnetteTransportException
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
 import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver

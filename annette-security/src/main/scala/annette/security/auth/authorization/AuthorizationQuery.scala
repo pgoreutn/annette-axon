@@ -16,7 +16,7 @@
 
 package annette.security.auth.authorization
 
-import annette.authorization.api.{Permission, PermissionId}
+import annette.authorization.api.model.{Permission, PermissionId}
 
 case class AuthorizationQuery(
     checkRule: CheckRule = DontCheck,

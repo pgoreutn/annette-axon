@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package annette.authorization
+package annette.authorization.api.model
 
-package object api {
+import play.api.libs.json.{Format, Json}
 
-  type PermissionId = String
-  type RoleId = String
-  type UserId = String
+import scala.collection.immutable
 
+case class CheckPermissions(
+    roles: immutable.Set[RoleId],
+    permissions: immutable.Set[Permission]
+)
+
+object CheckPermissions {
+  implicit val format: Format[CheckPermissions] = Json.format
 }

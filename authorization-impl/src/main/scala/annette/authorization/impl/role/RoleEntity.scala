@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package annette.authorization.impl
+package annette.authorization.impl.role
 
 import akka.Done
-import annette.authorization.api.{Role, RoleAlreadyExist, RoleNotFound}
+import annette.authorization.api.{RoleAlreadyExist, RoleNotFound}
+import annette.authorization.api.model._
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
 
 class RoleEntity extends PersistentEntity {

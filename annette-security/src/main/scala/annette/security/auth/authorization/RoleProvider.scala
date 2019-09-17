@@ -15,7 +15,7 @@
  */
 
 package annette.security.auth.authorization
-import annette.authorization.api.RoleId
+import annette.authorization.api.model.RoleId
 import annette.security.auth.UserId
 
 import scala.collection._

@@ -16,7 +16,7 @@
 
 package axon.rest.bpm.permission
 
-import annette.authorization.api.Permission
+import annette.authorization.api.model.Permission
 
 object BpmPermissions {
 

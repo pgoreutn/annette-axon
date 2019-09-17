@@ -2,6 +2,7 @@ package annette.authorization.impl
 
 import akka.Done
 import annette.authorization.api._
+import annette.authorization.api.model.{CheckPermissions, FindPermissions, Permission, Role, RoleFilter, RoleId, UserId}
 import annette.shared.exceptions.AnnetteException
 import com.lightbend.lagom.scaladsl.api.AdditionalConfiguration
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
@@ -23,7 +24,13 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       override def additionalConfiguration: AdditionalConfiguration = {
         super.additionalConfiguration ++ Configuration.from(
           Map(
-            "cassandra-query-journal.eventual-consistency-delay" -> "0"
+            "cassandra-query-journal.eventual-consistency-delay" -> "2s",
+            "lagom.circuit-breaker.default.enabled" -> "off",
+            "elastic.url" -> "https://localhost:9200",
+            "elastic.prefix" -> "test",
+            "elastic.username" -> "admin",
+            "elastic.password" -> "admin",
+            "elastic.allowInsecure" -> "true"
           ))
       }
     }
@@ -154,9 +161,9 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         s"id-${Random.nextInt()}"
       )
       val names = Seq(
-        s"name-${Random.nextInt()}",
-        s"name-${Random.nextInt()}",
-        s"name-${Random.nextInt()}"
+        s"наименование-${Random.nextInt()}",
+        s"наименование-${Random.nextInt()}",
+        s"наименование-${Random.nextInt()}"
       )
       val descriptions = Seq(
         s"description-${Random.nextInt()}",
@@ -173,32 +180,19 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       } yield {
         awaitSuccess() {
           for {
-            found0 <- client.findRoles.invoke("")
-            found1 <- client.findRoles.invoke(ids(0))
-            found2 <- client.findRoles.invoke(names(1))
-            found3 <- client.findRoles.invoke(descriptions(2))
-            found4 <- client.findRoles.invoke(Random.nextInt().toString)
+            found0 <- client.findRoles.invoke(RoleFilter(0, 1000, Some("")))
+            found2 <- client.findRoles.invoke(RoleFilter(0, 1000, Some(names(1))))
+            found4 <- client.findRoles.invoke(RoleFilter(0, 1000, Some(Random.nextInt().toString)))
           } yield {
 
-            found0.size shouldBe >=(ids.length)
+            (found0.total >= ids.length) shouldBe true
 
-            found1.size shouldBe 1
-            found1.head.id shouldBe ids(0)
-            found1.head.name shouldBe names(0)
-            found1.head.description shouldBe Some(descriptions(0))
+            found2.total shouldBe 1
+            found2.hits.head.id shouldBe ids(1)
+            found2.hits.head.data.get.name shouldBe names(1)
+            found2.hits.head.data.get.description shouldBe Some(descriptions(1))
 
-            found2.size shouldBe 1
-            found2.head.id shouldBe ids(1)
-            found2.head.name shouldBe names(1)
-            found2.head.description shouldBe Some(descriptions(1))
-
-            found3.size shouldBe 1
-            found3.head.id shouldBe ids(2)
-            found3.head.name shouldBe names(2)
-            found3.head.description shouldBe Some(descriptions(2))
-
-            found4.size shouldBe 0
-
+            found4.total shouldBe 0
           }
         }
       }).flatMap(identity)
@@ -515,7 +509,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
     }
   }
 
-  def awaitSuccess[T](maxDuration: FiniteDuration = 10.seconds, checkEvery: FiniteDuration = 100.milliseconds)(block: => Future[T]): Future[T] = {
+  def awaitSuccess[T](maxDuration: FiniteDuration = 15.seconds, checkEvery: FiniteDuration = 500.milliseconds)(block: => Future[T]): Future[T] = {
     val checkUntil = System.currentTimeMillis() + maxDuration.toMillis
 
     def doCheck(): Future[T] = {

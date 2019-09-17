@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package annette.authorization.impl
+package annette.authorization.impl.assignment
 
 import akka.Done
-import annette.authorization.api._
-import com.datastax.driver.core.{PreparedStatement, Row}
+import annette.authorization.api.model._
+import com.datastax.driver.core.PreparedStatement
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraSession
 
 import scala.collection.immutable

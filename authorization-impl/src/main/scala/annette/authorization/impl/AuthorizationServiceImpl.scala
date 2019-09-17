@@ -20,75 +20,51 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.{Done, NotUsed}
 import annette.authorization.api._
+import annette.authorization.api.model.{CheckPermissions, _}
+import annette.authorization.impl.assignment.UserRoleAssignmentRepository
+import annette.authorization.impl.role._
 import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
 
 import scala.collection._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-/**
-  * Implementation of the BpmService.
-  */
 class AuthorizationServiceImpl(
-    registry: PersistentEntityRegistry,
-    system: ActorSystem,
-    roleRepository: RoleRepository,
-    userRoleAssignmentRepository: UserRoleAssignmentRepository)(implicit ec: ExecutionContext, mat: Materializer)
-    extends AuthorizationService {
-
-  private def refFor(id: RoleId) = registry.refFor[RoleEntity](id)
+                                registry: PersistentEntityRegistry,
+                                system: ActorSystem,
+                                roleService: RoleService,
+                                userRoleAssignmentRepository: UserRoleAssignmentRepository
+                              )(implicit ec: ExecutionContext, mat: Materializer)
+  extends AuthorizationService {
 
   override def createRole: ServiceCall[Role, Role] = ServiceCall { role =>
-    refFor(role.id)
-      .ask(CreateRole(role))
+    roleService.createRole(role)
   }
   override def updateRole: ServiceCall[Role, Role] = ServiceCall { role =>
-    refFor(role.id)
-      .ask(UpdateRole(role))
+    roleService.updateRole(role)
   }
   override def deleteRole(id: RoleId): ServiceCall[NotUsed, Done] = ServiceCall { _ =>
-    refFor(id)
-      .ask(DeleteRole(id))
+    roleService.deleteRole(id)
   }
 
   override def findRoleById(id: RoleId): ServiceCall[NotUsed, Role] = ServiceCall { _ =>
-    refFor(id).ask(FindRoleById(id)).map {
-      case Some(role) => role
-      case None       => throw RoleNotFound(id)
-    }
+    roleService.findRoleById(id)
   }
 
-  override def findRoles: ServiceCall[String, immutable.Set[RoleSummary]] = ServiceCall { filter =>
-    // TODO: temporary solution, should be implemented using ElasticSearch
-    roleRepository.findRoles(filter.trim)
+  override def findRoles: ServiceCall[RoleFilter, RoleFindResult] = ServiceCall { filter =>
+    roleService.findRoles(filter)
   }
 
-  override def checkAllPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall {
-    case CheckPermissions(roles, permissions) =>
-      if (roles.isEmpty || permissions.isEmpty) {
-        Future.successful(false)
-      } else {
-        roleRepository.checkAllPermissions(roles, permissions)
-      }
-
+  override def checkAllPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall { checkPermissions =>
+    roleService.checkAllPermissions(checkPermissions)
   }
 
-  override def checkAnyPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall {
-    case CheckPermissions(roles, permissions) =>
-      if (roles.isEmpty || permissions.isEmpty) {
-        Future.successful(false)
-      } else {
-        roleRepository.checkAnyPermissions(roles, permissions)
-      }
+  override def checkAnyPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall { checkPermissions =>
+    roleService.checkAnyPermissions(checkPermissions)
   }
 
-  override def findPermissions: ServiceCall[FindPermissions, immutable.Set[Permission]] = ServiceCall {
-    case FindPermissions(roles, permissionIds) =>
-      if (roles.isEmpty || permissionIds.isEmpty) {
-        Future.successful(immutable.Set.empty)
-      } else {
-        roleRepository.findPermissions(roles, permissionIds)
-      }
+  override def findPermissions: ServiceCall[FindPermissions, immutable.Set[Permission]] = ServiceCall { findPermissions =>
+    roleService.findPermissions(findPermissions)
   }
 
   override def assignUserToRoles(userId: UserId): ServiceCall[immutable.Set[RoleId], Done] = ServiceCall { set =>

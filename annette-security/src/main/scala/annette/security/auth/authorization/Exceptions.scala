@@ -16,7 +16,7 @@
 
 package annette.security.auth.authorization
 
-import annette.authorization.api.Permission
+import annette.authorization.api.model.Permission
 import annette.shared.exceptions.AnnetteException
 
 class AuthorizationFailedException() extends AnnetteException("core.authorization.failed")

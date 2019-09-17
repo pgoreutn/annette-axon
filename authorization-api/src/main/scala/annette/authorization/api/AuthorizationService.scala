@@ -17,9 +17,11 @@
 package annette.authorization.api;
 
 import akka.{Done, NotUsed}
+import annette.authorization.api.model.{CheckPermissions, FindPermissions, Permission, Role, RoleFilter, RoleFindResult, RoleId, UserId}
 import annette.shared.exceptions.AnnetteExceptionSerializer
 import com.lightbend.lagom.scaladsl.api.transport.Method
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
+
 import scala.collection._
 
 trait AuthorizationService extends Service {
@@ -28,7 +30,7 @@ trait AuthorizationService extends Service {
   def updateRole: ServiceCall[Role, Role]
   def deleteRole(id: RoleId): ServiceCall[NotUsed, Done]
   def findRoleById(id: RoleId): ServiceCall[NotUsed, Role]
-  def findRoles: ServiceCall[String, immutable.Set[RoleSummary]]
+  def findRoles: ServiceCall[RoleFilter, RoleFindResult]
 
   def checkAllPermissions: ServiceCall[CheckPermissions, Boolean]
   def checkAnyPermissions: ServiceCall[CheckPermissions, Boolean]

@@ -16,7 +16,8 @@
 
 package annette.security.auth.authorization
 
-import annette.authorization.api._
+import annette.authorization.api.AuthorizationService
+import annette.authorization.api.model.{CheckPermissions, FindPermissions, Permission, RoleId}
 import annette.security.auth.SessionData
 import javax.inject._
 import play.api.mvc.Request
