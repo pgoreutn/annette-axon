@@ -21,6 +21,7 @@ import java.security.cert.X509Certificate
 import com.sksamuel.elastic4s.http.{JavaClient, _}
 import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties}
 import org.apache.http.auth.{AuthScope, UsernamePasswordCredentials}
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.apache.http.ssl.{SSLContexts, TrustStrategy}
@@ -61,7 +62,11 @@ object ElasticProvider {
           override def customizeHttpClient(httpClientBuilder: HttpAsyncClientBuilder) = {
             var res = httpClientBuilder
             res = maybeProvider.map(provider => res.setDefaultCredentialsProvider(provider)).getOrElse(res)
-            res = mayBeSslContext.map(sslContext => res.setSSLContext(sslContext)).getOrElse(res)
+            res = mayBeSslContext.map { sslContext =>
+              res
+                .setSSLContext(sslContext)
+                .setSSLHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER)
+            }.getOrElse(res)
             res
           }
         }
