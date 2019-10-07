@@ -20,8 +20,19 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.{Done, NotUsed}
 import annette.authorization.api._
-import annette.authorization.api.model.{CheckPermissions, _}
-import annette.authorization.impl.assignment.UserRoleAssignmentRepository
+import annette.authorization.api.model.{
+  AuthorizationPrincipal,
+  CheckPermissions,
+  FindPermissions,
+  Permission,
+  PrincipalAssignment,
+  PrincipalId,
+  Role,
+  RoleFilter,
+  RoleFindResult,
+  RoleId
+}
+import annette.authorization.impl.assignment.AssignmentService
 import annette.authorization.impl.role._
 import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
@@ -30,12 +41,12 @@ import scala.collection._
 import scala.concurrent.ExecutionContext
 
 class AuthorizationServiceImpl(
-                                registry: PersistentEntityRegistry,
-                                system: ActorSystem,
-                                roleService: RoleService,
-                                userRoleAssignmentRepository: UserRoleAssignmentRepository
-                              )(implicit ec: ExecutionContext, mat: Materializer)
-  extends AuthorizationService {
+    registry: PersistentEntityRegistry,
+    system: ActorSystem,
+    roleService: RoleService,
+    assignmentService: AssignmentService
+)(implicit ec: ExecutionContext, mat: Materializer)
+    extends AuthorizationService {
 
   override def createRole: ServiceCall[Role, Role] = ServiceCall { role =>
     roleService.createRole(role)
@@ -56,31 +67,39 @@ class AuthorizationServiceImpl(
   }
 
   override def checkAllPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall { checkPermissions =>
-    roleService.checkAllPermissions(checkPermissions)
+    for {
+      roles <- assignmentService.findRolesAssignedToPrincipals(checkPermissions.principals)
+      result <- roleService.checkAllPermissions(roles, checkPermissions.permissions)
+    } yield result
   }
 
   override def checkAnyPermissions: ServiceCall[CheckPermissions, Boolean] = ServiceCall { checkPermissions =>
-    roleService.checkAnyPermissions(checkPermissions)
+    for {
+      roles <- assignmentService.findRolesAssignedToPrincipals(checkPermissions.principals)
+      result <- roleService.checkAnyPermissions(roles, checkPermissions.permissions)
+    } yield result
   }
 
   override def findPermissions: ServiceCall[FindPermissions, immutable.Set[Permission]] = ServiceCall { findPermissions =>
-    roleService.findPermissions(findPermissions)
+    for {
+      roles <- assignmentService.findRolesAssignedToPrincipals(findPermissions.principals)
+      result <- roleService.findPermissions(roles, findPermissions.permissionIds)
+    } yield result
   }
 
-  override def assignUserToRoles(userId: UserId): ServiceCall[immutable.Set[RoleId], Done] = ServiceCall { set =>
-    // TODO: validate if all roles are exist
-    userRoleAssignmentRepository.assignUserToRoles(userId, set)
+  override def assignPrincipal: ServiceCall[PrincipalAssignment, Done] = ServiceCall { assignment =>
+    assignmentService.assignPrincipal(assignment)
   }
 
-  override def unassignUserFromRoles(userId: UserId): ServiceCall[immutable.Set[RoleId], Done] = ServiceCall { set =>
-    userRoleAssignmentRepository.unassignUserFromRoles(userId, set)
+  override def unassignPrincipal: ServiceCall[PrincipalAssignment, Done] = ServiceCall { assignment =>
+    assignmentService.unassignPrincipal(assignment)
   }
 
-  override def findRolesAssignedToUser(userId: UserId): ServiceCall[NotUsed, immutable.Set[RoleId]] = ServiceCall { _ =>
-    userRoleAssignmentRepository.findRolesAssignedToUser(userId)
+  override def findRolesAssignedToPrincipal: ServiceCall[AuthorizationPrincipal, immutable.Set[RoleId]] = ServiceCall { principal =>
+    assignmentService.findRolesAssignedToPrincipal(principal)
   }
 
-  override def findUsersAssignedToRole(roleId: RoleId): ServiceCall[NotUsed, immutable.Set[UserId]] = ServiceCall { _ =>
-    userRoleAssignmentRepository.findUsersAssignedToRole(roleId)
+  override def findPrincipalsAssignedToRole(roleId: RoleId): ServiceCall[NotUsed, immutable.Set[AuthorizationPrincipal]] = ServiceCall { _ =>
+    assignmentService.findPrincipalsAssignedToRole(roleId)
   }
 }

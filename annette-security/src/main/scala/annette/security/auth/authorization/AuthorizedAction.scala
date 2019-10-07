@@ -24,7 +24,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorizedAction(
     authenticator: Authenticator,
-    roleProvider: RoleProvider,
     authorizer: Authorizer,
     authorizationQuery: AuthorizationQuery,
     override val parser: BodyParsers.Default,
@@ -35,9 +34,9 @@ class AuthorizedAction(
     for {
       authenticatedSessionData <- authenticator.authenticate(request)
 //      _ = println(s"authenticatedSessionData: $authenticatedSessionData")
-      roles <- roleProvider.get(authenticatedSessionData.principal.userId)
+ //     roles <- roleProvider.get(authenticatedSessionData.principal.userId)
 //      _ = println(s"roles: $roles")
-      authorizedSessionData <- authorizer.authorize(request, authenticatedSessionData, roles, authorizationQuery)
+      authorizedSessionData <- authorizer.authorize(request, authenticatedSessionData, authorizationQuery)
 //      _ = println(s"authorizedSessionData: $authorizedSessionData")
     } yield authorizedSessionData
   }

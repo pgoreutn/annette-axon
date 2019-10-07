@@ -72,31 +72,28 @@ class RoleService(
     Future.traverse(ids)(id => refFor(id).ask(FindRoleById(id))).map(_.flatten)
   }
 
-  def checkAllPermissions: PartialFunction[CheckPermissions, Future[Boolean]] = {
-    case CheckPermissions(roles, permissions) =>
-      if (roles.isEmpty || permissions.isEmpty) {
-        Future.successful(false)
-      } else {
-        roleRepository.checkAllPermissions(roles, permissions)
-      }
+  def checkAllPermissions(roles: immutable.Set[RoleId], permissions: immutable.Set[Permission]): Future[Boolean] = {
+    if (roles.isEmpty || permissions.isEmpty) {
+      Future.successful(false)
+    } else {
+      roleRepository.checkAllPermissions(roles, permissions)
+    }
   }
 
-  def checkAnyPermissions: PartialFunction[CheckPermissions, Future[Boolean]] = {
-    case CheckPermissions(roles, permissions) =>
-      if (roles.isEmpty || permissions.isEmpty) {
-        Future.successful(false)
-      } else {
-        roleRepository.checkAnyPermissions(roles, permissions)
-      }
+  def checkAnyPermissions(roles: immutable.Set[RoleId], permissions: immutable.Set[Permission]): Future[Boolean] = {
+    if (roles.isEmpty || permissions.isEmpty) {
+      Future.successful(false)
+    } else {
+      roleRepository.checkAnyPermissions(roles, permissions)
+    }
   }
 
-  def findPermissions: PartialFunction[FindPermissions, Future[immutable.Set[Permission]]] = {
-    case FindPermissions(roles, permissionIds) =>
-      if (roles.isEmpty || permissionIds.isEmpty) {
-        Future.successful(immutable.Set.empty)
-      } else {
-        roleRepository.findPermissions(roles, permissionIds)
-      }
+  def findPermissions(roles: immutable.Set[RoleId], permissionIds: immutable.Set[PermissionId]): Future[immutable.Set[Permission]] = {
+    if (roles.isEmpty || permissionIds.isEmpty) {
+      Future.successful(immutable.Set.empty)
+    } else {
+      roleRepository.findPermissions(roles, permissionIds)
+    }
   }
 
 }

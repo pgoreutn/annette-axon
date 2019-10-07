@@ -21,7 +21,7 @@ import play.api.libs.json.{Format, Json}
 import scala.collection.immutable
 
 case class FindPermissions(
-    roles: immutable.Set[RoleId],
+    principals: immutable.Set[AuthorizationPrincipal],
     permissionIds: immutable.Set[PermissionId]
 )
 

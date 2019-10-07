@@ -20,6 +20,8 @@ package object model {
 
   type PermissionId = String
   type RoleId = String
-  type UserId = String
+
+  type PrincipalType = String
+  type PrincipalId = String
 
 }
