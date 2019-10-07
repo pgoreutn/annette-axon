@@ -21,7 +21,7 @@ import play.api.libs.json.{Format, Json}
 import scala.collection.immutable
 
 case class CheckPermissions(
-    roles: immutable.Set[RoleId],
+    principals: immutable.Set[AuthorizationPrincipal],
     permissions: immutable.Set[Permission]
 )
 

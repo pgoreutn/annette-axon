@@ -26,7 +26,7 @@ case class Permission(
     arg2: String = "",
     arg3: String = ""
 ) {
-  override def toString: UserId = {
+  override def toString: String = {
     val argSeq = Seq(arg1, arg2, arg3).filter(!_.isEmpty)
     val args = if (argSeq.isEmpty) "" else argSeq.mkString("[", ", ", "]")
     s"$id$args"

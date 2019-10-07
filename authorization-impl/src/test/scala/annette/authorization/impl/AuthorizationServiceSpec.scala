@@ -2,7 +2,7 @@ package annette.authorization.impl
 
 import akka.Done
 import annette.authorization.api._
-import annette.authorization.api.model.{CheckPermissions, FindPermissions, Permission, Role, RoleFilter, RoleId, UserId}
+import annette.authorization.api.model.{AuthorizationPrincipal, CheckPermissions, FindPermissions, Permission, PrincipalAssignment, Role, RoleFilter, RoleId}
 import annette.shared.exceptions.AnnetteException
 import com.lightbend.lagom.scaladsl.api.AdditionalConfiguration
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
@@ -170,7 +170,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         s"description-${Random.nextInt()}",
         s"description-${Random.nextInt()}"
       )
-      val roles = for (i <- 0 until ids.length)
+      val roles = for (i <- ids.indices)
         yield Role(ids(i), names(i), Some(descriptions(i)), Set(Permission("p1"), Permission("p2"), Permission("p3")))
 
       val createFuture = Future.traverse(roles)(role => client.createRole.invoke(role))
@@ -198,36 +198,148 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       }).flatMap(identity)
     }
 
+    "assign principal" in {
+
+      val role1 = s"role-${Random.nextInt(99999)}"
+      val role2 = s"role-${Random.nextInt(99999)}"
+
+      val user1 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+
+      (for {
+        assignment1 <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role1))
+        assignment2 <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role2))
+      } yield {
+        awaitSuccess() {
+          for {
+            principals1 <- client.findPrincipalsAssignedToRole(role1).invoke()
+            principals2 <- client.findPrincipalsAssignedToRole(role2).invoke()
+            roles <- client.findRolesAssignedToPrincipal.invoke(user1)
+          } yield {
+            assignment1 shouldBe Done
+            assignment2 shouldBe Done
+            principals1 should have size 1
+            principals2 should have size 1
+            principals1 should contain(user1)
+            principals2 should contain(user1)
+            roles should have size 2
+            roles should contain (role1)
+            roles should contain (role2)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "unassign principal" in {
+
+      val role1 = s"role-${Random.nextInt(99999)}"
+      val role2 = s"role-${Random.nextInt(99999)}"
+
+      val user1 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+
+      (for {
+        assignment1 <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role1))
+        assignment2 <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role2))
+        assignment3 <- client.unassignPrincipal.invoke(PrincipalAssignment(user1, role1))
+      } yield {
+        awaitSuccess() {
+          for {
+            principals1 <- client.findPrincipalsAssignedToRole(role1).invoke()
+            principals2 <- client.findPrincipalsAssignedToRole(role2).invoke()
+            roles <- client.findRolesAssignedToPrincipal.invoke(user1)
+          } yield {
+            assignment1 shouldBe Done
+            assignment2 shouldBe Done
+            assignment3 shouldBe Done
+            principals1 should have size 0
+            principals2 should have size 1
+            principals1 shouldNot contain(user1)
+            principals2 should contain(user1)
+            roles should have size 1
+            roles shouldNot contain (role1)
+            roles should contain (role2)
+          }
+        }
+      }).flatMap(identity)
+    }
+
+    "findRolesAssignedToPrincipal & findPrincipalsAssignedToRole" in {
+      val role1 = s"roleA-1-${Random.nextInt(99999)}"
+      val role2 = s"roleA-1-${Random.nextInt(99999)}"
+      val role3 = s"roleA-1-${Random.nextInt(99999)}"
+
+      val user1 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+      val user2 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+      val user3 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+
+      (for {
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role1))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role2))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role3))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user2, role1))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user2, role2))
+      } yield {
+        awaitSuccess() {
+          for {
+            roles1 <- client.findRolesAssignedToPrincipal.invoke(user1)
+            roles2 <- client.findRolesAssignedToPrincipal.invoke(user2)
+            roles3 <- client.findRolesAssignedToPrincipal.invoke(user3)
+            principals1 <- client.findPrincipalsAssignedToRole(role1).invoke()
+            principals2 <- client.findPrincipalsAssignedToRole(role2).invoke()
+            principals3 <- client.findPrincipalsAssignedToRole(role3).invoke()
+          } yield {
+            roles1 should have size 3
+            roles1 should contain allOf (role1, role2, role3)
+            roles2 should have size 2
+            roles2 should contain allOf (role1, role2)
+            roles3 should have size 0
+            principals1 should have size 2
+            principals1 should contain allOf (user1, user2)
+            principals2 should have size 2
+            principals2 should contain allOf (user1, user2)
+            principals3 should have size 1
+            principals3 should contain (user1)
+          }
+        }
+      }).flatMap(identity)
+    }
     "checkAllPermissions" in {
       val P = Vector(
-        Permission("Permission-A", "a", "b", "c"),
-        Permission("Permission-A", "a", "b", ""),
-        Permission("Permission-A", "a", "", ""),
-        Permission("Permission-B", "a", "b", "c"),
-        Permission("Permission-B", "a", "", ""),
-        Permission("Permission-B", "", "b", "c")
+        Permission(s"Permission-A-${Random.nextInt(99999)}", "a", "b", "c"),
+        Permission(s"Permission-A-${Random.nextInt(99999)}", "a", "b", ""),
+        Permission(s"Permission-A-${Random.nextInt(99999)}", "a", "", ""),
+        Permission(s"Permission-B-${Random.nextInt(99999)}", "a", "b", "c"),
+        Permission(s"Permission-B-${Random.nextInt(99999)}", "a", "", ""),
+        Permission(s"Permission-B-${Random.nextInt(99999)}", "", "b", "c")
       )
-      val role1 = Role("roleA-1", "name", None, Set(P(0), P(1)))
-      val role2 = Role("roleA-2", "name", None, Set(P(2), P(3)))
-      val role3 = Role("roleA-3", "name", None, Set(P(4), P(5)))
+      val role1 = Role(s"roleA-1-${Random.nextInt(99999)}", "name", None, Set(P(0), P(1)))
+      val role2 = Role(s"roleA-2-${Random.nextInt(99999)}", "name", None, Set(P(2), P(3)))
+      val role3 = Role(s"roleA-3-${Random.nextInt(99999)}", "name", None, Set(P(4), P(5)))
+
+      val user1 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+      val user2 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+      val user3 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
 
       (for {
         created1 <- client.createRole.invoke(role1)
         created2 <- client.createRole.invoke(role2)
         created3 <- client.createRole.invoke(role3)
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role1.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role2.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role3.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user2, role1.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user2, role2.id))
       } yield {
         awaitSuccess() {
-
           for {
             check1 <- client.checkAllPermissions.invoke(
               CheckPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set(P(0), P(1), P(2), P(3), P(4), P(5))
               )
             )
             check2 <- client.checkAllPermissions.invoke(
               CheckPermissions(
-                Set(role1.id, role2.id),
+                Set(user2),
                 Set(P(0), P(1), P(2), P(3), P(4), P(5))
               )
             )
@@ -239,17 +351,22 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
             )
             check4 <- client.checkAllPermissions.invoke(
               CheckPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set()
               )
             )
             check5 <- client.checkAllPermissions.invoke(
               CheckPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set(P(0), Permission("not-existent"))
               )
             )
           } yield {
+            println(s"check1 = $check1")
+            println(s"check2 = $check2")
+            println(s"check3 = $check3")
+            println(s"check4 = $check4")
+            println(s"check5 = $check5")
 
             created1 shouldBe role1
             created2 shouldBe role2
@@ -267,34 +384,43 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
 
     "checkAnyPermissions" in {
       val P = Vector(
-        Permission("Permission-C", "a", "b", "c"),
-        Permission("Permission-C", "a", "b", ""),
-        Permission("Permission-C", "a", "", ""),
-        Permission("Permission-D", "a", "b", "c"),
-        Permission("Permission-D", "a", "", ""),
-        Permission("Permission-D", "", "b", "c")
+        Permission(s"Permission-A-${Random.nextInt(99999)}", "a", "b", "c"),
+        Permission(s"Permission-A-${Random.nextInt(99999)}", "a", "b", ""),
+        Permission(s"Permission-A-${Random.nextInt(99999)}", "a", "", ""),
+        Permission(s"Permission-B-${Random.nextInt(99999)}", "a", "b", "c"),
+        Permission(s"Permission-B-${Random.nextInt(99999)}", "a", "", ""),
+        Permission(s"Permission-B-${Random.nextInt(99999)}", "", "b", "c")
       )
-      val role1 = Role("roleB-1", "name", None, Set(P(0), P(1)))
-      val role2 = Role("roleB-2", "name", None, Set(P(2), P(3)))
-      val role3 = Role("roleB-3", "name", None, Set(P(4), P(5)))
+      val role1 = Role(s"roleA-1-${Random.nextInt(99999)}", "name", None, Set(P(0), P(1)))
+      val role2 = Role(s"roleA-2-${Random.nextInt(99999)}", "name", None, Set(P(2), P(3)))
+      val role3 = Role(s"roleA-3-${Random.nextInt(99999)}", "name", None, Set(P(4), P(5)))
+
+      val user1 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+      val user2 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+      val user3 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
 
       (for {
         created1 <- client.createRole.invoke(role1)
         created2 <- client.createRole.invoke(role2)
         created3 <- client.createRole.invoke(role3)
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role1.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role2.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role3.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user2, role1.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user2, role2.id))
       } yield {
         awaitSuccess() {
 
           for {
             check1 <- client.checkAnyPermissions.invoke(
               CheckPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set(P(0), Permission("not-existent"), Permission("not-existent2"))
               )
             )
             check2 <- client.checkAnyPermissions.invoke(
               CheckPermissions(
-                Set(role1.id, role2.id),
+                Set(user2),
                 Set(P(5), Permission("not-existent"), Permission("not-existent2"))
               )
             )
@@ -306,13 +432,13 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
             )
             check4 <- client.checkAnyPermissions.invoke(
               CheckPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set()
               )
             )
             check5 <- client.checkAnyPermissions.invoke(
               CheckPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user2),
                 Set(Permission("not-existent"), Permission("not-existent2"), Permission("not-existent2"))
               )
             )
@@ -341,45 +467,54 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         Permission("Permission-F", "a", "", ""),
         Permission("Permission-F", "", "b", "c")
       )
-      val role1 = Role("roleC-1", "name", None, Set(P(0), P(1)))
-      val role2 = Role("roleC-2", "name", None, Set(P(2), P(3)))
-      val role3 = Role("roleC-3", "name", None, Set(P(4), P(5)))
+      val role1 = Role(s"roleA-1-${Random.nextInt(99999)}", "name", None, Set(P(0), P(1)))
+      val role2 = Role(s"roleA-2-${Random.nextInt(99999)}", "name", None, Set(P(2), P(3)))
+      val role3 = Role(s"roleA-3-${Random.nextInt(99999)}", "name", None, Set(P(4), P(5)))
+
+      val user1 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+      val user2 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
+      val user3 = AuthorizationPrincipal("user", s"user-${Random.nextInt(99999)}")
 
       (for {
         created1 <- client.createRole.invoke(role1)
         created2 <- client.createRole.invoke(role2)
         created3 <- client.createRole.invoke(role3)
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role1.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role2.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user1, role3.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user2, role2.id))
+        _ <- client.assignPrincipal.invoke(PrincipalAssignment(user2, role3.id))
       } yield {
         awaitSuccess() {
 
           for {
             check1 <- client.findPermissions.invoke(
               FindPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set(P(0).id)
               )
             )
             check2 <- client.findPermissions.invoke(
               FindPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set(P(0).id, P(5).id)
               )
             )
             check3 <- client.findPermissions.invoke(
               FindPermissions(
-                Set(role2.id, role3.id),
+                Set(user2),
                 Set(P(0).id)
               )
             )
             check4 <- client.findPermissions.invoke(
               FindPermissions(
-                Set(role2.id, role3.id),
+                Set(user2),
                 Set(P(0).id, P(5).id)
               )
             )
             check5 <- client.findPermissions.invoke(
               FindPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set("non-existent1", P(5).id)
               )
             )
@@ -391,7 +526,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
             )
             check7 <- client.findPermissions.invoke(
               FindPermissions(
-                Set(role1.id, role2.id, role3.id),
+                Set(user1),
                 Set()
               )
             )
@@ -437,8 +572,7 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
         }
       }).flatMap(identity)
     }
-
-    "user to role assignment/unassignment" in {
+   /* "user to role assignment/unassignment" in {
       val assignments = Set(
         "user1" -> "role1",
         "user1" -> "role2",
@@ -507,8 +641,9 @@ class AuthorizationServiceSpec extends AsyncWordSpec with Matchers with BeforeAn
       }
 
     }
-  }
 
+    */
+  }
   def awaitSuccess[T](maxDuration: FiniteDuration = 15.seconds, checkEvery: FiniteDuration = 500.milliseconds)(block: => Future[T]): Future[T] = {
     val checkUntil = System.currentTimeMillis() + maxDuration.toMillis
 

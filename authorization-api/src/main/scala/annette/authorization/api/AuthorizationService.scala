@@ -17,7 +17,7 @@
 package annette.authorization.api;
 
 import akka.{Done, NotUsed}
-import annette.authorization.api.model.{CheckPermissions, FindPermissions, Permission, Role, RoleFilter, RoleFindResult, RoleId, UserId}
+import annette.authorization.api.model.{AuthorizationPrincipal, CheckPermissions, FindPermissions, Permission, PrincipalAssignment, Role, RoleFilter, RoleFindResult, RoleId}
 import annette.shared.exceptions.AnnetteExceptionSerializer
 import com.lightbend.lagom.scaladsl.api.transport.Method
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
@@ -36,10 +36,12 @@ trait AuthorizationService extends Service {
   def checkAnyPermissions: ServiceCall[CheckPermissions, Boolean]
   def findPermissions: ServiceCall[FindPermissions, immutable.Set[Permission]]
 
-  def assignUserToRoles(userId: UserId): ServiceCall[immutable.Set[RoleId], Done]
-  def unassignUserFromRoles(userId: UserId): ServiceCall[immutable.Set[RoleId], Done]
-  def findRolesAssignedToUser(userId: UserId): ServiceCall[NotUsed, immutable.Set[RoleId]]
-  def findUsersAssignedToRole(roleId: RoleId): ServiceCall[NotUsed, immutable.Set[UserId]]
+  def assignPrincipal: ServiceCall[PrincipalAssignment, Done]
+  def unassignPrincipal: ServiceCall[PrincipalAssignment, Done]
+  def findRolesAssignedToPrincipal: ServiceCall[AuthorizationPrincipal, immutable.Set[RoleId]]
+  def findPrincipalsAssignedToRole(roleId: RoleId): ServiceCall[NotUsed, immutable.Set[AuthorizationPrincipal]]
+
+
 
   final override def descriptor = {
     import Service._
@@ -56,10 +58,10 @@ trait AuthorizationService extends Service {
         restCall(Method.POST, "/api/authorization/permissions/checkAny", checkAnyPermissions),
         restCall(Method.POST, "/api/authorization/permissions/find", findPermissions),
 
-        restCall(Method.POST, "/api/authorization/user/assign/:userId", assignUserToRoles _),
-        restCall(Method.POST, "/api/authorization/user/unassign/:userId", unassignUserFromRoles _),
-        restCall(Method.GET, "/api/authorization/user/findRoles/:userId", findRolesAssignedToUser _),
-        restCall(Method.GET, "/api/authorization/user/findUsers/:roleIdId", findUsersAssignedToRole _),
+        restCall(Method.POST, "/api/authorization/principal/assign", assignPrincipal _),
+        restCall(Method.DELETE, "/api/authorization/principal/assign", unassignPrincipal _),
+        restCall(Method.GET, "/api/authorization/principal/findRoles", findRolesAssignedToPrincipal _),
+        restCall(Method.GET, "/api/authorization/principal/findPrincipals/:roleId", findPrincipalsAssignedToRole _),
 
       )
       .withExceptionSerializer(new AnnetteExceptionSerializer())

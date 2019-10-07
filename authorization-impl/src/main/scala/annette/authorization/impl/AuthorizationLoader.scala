@@ -17,9 +17,14 @@
 package annette.authorization.impl
 
 import annette.authorization.api._
-import annette.authorization.api.model.{CheckPermissions, FindPermissions, Permission, Role}
-import annette.authorization.impl.assignment.UserRoleAssignmentRepository
-import annette.authorization.impl.role.{CreateRole, DeleteRole, RoleCreated, RoleDeleted, RoleElastic, RoleEntity, RoleEventProcessor, RolePermissionDeleted, RoleRepository, RoleService, RoleUpdated, UpdateRole}
+import annette.authorization.impl.assignment.{
+  AssignmentEntity,
+  AssignmentEventProcessor,
+  AssignmentRepository,
+  AssignmentSerializerRegistry,
+  AssignmentService
+}
+import annette.authorization.impl.role.{RoleElastic, RoleEntity, RoleEventProcessor, RoleRepository, RoleSerializerRegistry, RoleService}
 import annette.shared.elastic.ElasticProvider
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
@@ -56,26 +61,19 @@ abstract class AuthorizationApplication(context: LagomApplicationContext)
   lazy val roleRepository = wire[RoleRepository]
   lazy val roleElastic = wire[RoleElastic]
   lazy val roleService = wire[RoleService]
-  lazy val userRoleAssignmentRepository = wire[UserRoleAssignmentRepository]
-  lazy val jsonSerializerRegistry = AuthorizationSerializerRegistry
 
   persistentEntityRegistry.register(wire[RoleEntity])
   readSide.register(wire[RoleEventProcessor])
 
+  lazy val assignmentRepository = wire[AssignmentRepository]
+  lazy val assignmentService = wire[AssignmentService]
+
+  persistentEntityRegistry.register(wire[AssignmentEntity])
+  readSide.register(wire[AssignmentEventProcessor])
+
+  lazy val jsonSerializerRegistry = AuthorizationSerializerRegistry
 }
 
 object AuthorizationSerializerRegistry extends JsonSerializerRegistry {
-  override def serializers: immutable.Seq[JsonSerializer[_]] = List(
-    JsonSerializer[Permission],
-    JsonSerializer[Role],
-    JsonSerializer[CheckPermissions],
-    JsonSerializer[FindPermissions],
-    JsonSerializer[CreateRole],
-    JsonSerializer[UpdateRole],
-    JsonSerializer[DeleteRole],
-    JsonSerializer[RoleCreated],
-    JsonSerializer[RoleUpdated],
-    JsonSerializer[RoleDeleted],
-    JsonSerializer[RolePermissionDeleted]
-  )
+  override def serializers: immutable.Seq[JsonSerializer[_]] = RoleSerializerRegistry.serializers ++ AssignmentSerializerRegistry.serializers
 }

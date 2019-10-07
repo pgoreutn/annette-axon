@@ -18,7 +18,7 @@ package loader
 
 import annette.authorization.api.AuthorizationService
 import annette.security.auth.authentication.{AuthenticatedAction, KeycloackAuthenticator}
-import annette.security.auth.authorization.{AuthorizedActionFactory, DefaultAuthorizer, DefaultRoleProvider}
+import annette.security.auth.authorization.{AuthorizedActionFactory, DefaultAuthorizer}
 import annette.security.user.UserService
 import axon.bpm.engine.api.BpmEngineService
 import axon.bpm.repository.api.BpmRepositoryService
@@ -79,7 +79,6 @@ abstract class WebGateway(context: Context)
 
   lazy val authValidator = wire[KeycloackAuthenticator]
   lazy val auth = wire[AuthenticatedAction]
-  lazy val roleProvider = wire[DefaultRoleProvider]
   lazy val authorizer = wire[DefaultAuthorizer]
   lazy val authz = wire[AuthorizedActionFactory]
   lazy val parser = wire[BodyParsers.Default]

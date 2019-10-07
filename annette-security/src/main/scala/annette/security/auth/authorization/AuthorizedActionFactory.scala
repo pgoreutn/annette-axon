@@ -24,12 +24,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthorizedActionFactory @Inject()(
     authenticator: Authenticator,
-    roleProvider: RoleProvider,
     authorizer: Authorizer,
     parser: BodyParsers.Default,
     executionContext: ExecutionContext
 ) {
 
   def apply(newAuthorizationQuery: AuthorizationQuery) =
-    new AuthorizedAction(authenticator, roleProvider, authorizer, newAuthorizationQuery, parser, executionContext)
+    new AuthorizedAction(authenticator,  authorizer, newAuthorizationQuery, parser, executionContext)
 }

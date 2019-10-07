@@ -17,7 +17,7 @@
 package annette.security.auth.authorization
 
 import annette.authorization.api.AuthorizationService
-import annette.authorization.api.model.{CheckPermissions, FindPermissions, Permission, RoleId}
+import annette.authorization.api.model.{AuthorizationPrincipal, CheckPermissions, FindPermissions, Permission, RoleId}
 import annette.security.auth.SessionData
 import javax.inject._
 import play.api.mvc.Request
@@ -27,45 +27,46 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DefaultAuthorizer @Inject()(authorizationService: AuthorizationService) extends Authorizer {
 
-  override def authorize[A](request: Request[A], sessionData: SessionData, roles: Set[RoleId], authorizationQuery: AuthorizationQuery)(
+  override def authorize[A](request: Request[A], sessionData: SessionData, authorizationQuery: AuthorizationQuery)(
       implicit ec: ExecutionContext): Future[SessionData] = {
     println(s"DefaultAuthorizer.authorize: $authorizationQuery")
+    val principals = Set(AuthorizationPrincipal("user", sessionData.principal.userId))
     authorizationQuery match {
       case AuthorizationQuery(DontCheck, _, DontFind) =>
         println("throw AuthorizationFailedException")
         throw new AuthorizationFailedException()
       case AuthorizationQuery(_, OR, _) =>
-        processOr(sessionData, roles, authorizationQuery)
+        processOr(sessionData, principals, authorizationQuery)
       case AuthorizationQuery(_, AND, _) =>
-        processAnd(sessionData, roles, authorizationQuery)
+        processAnd(sessionData, principals, authorizationQuery)
     }
   }
 
-  def processOr(sessionData: SessionData, roles: Set[RoleId], authorizationQuery: AuthorizationQuery)(
+  def processOr(sessionData: SessionData, principals: Set[AuthorizationPrincipal], authorizationQuery: AuthorizationQuery)(
       implicit ec: ExecutionContext): Future[SessionData] = {
     for {
-      sessionDataAfterCheck <- checkPermissions(sessionData, roles, authorizationQuery)
+      sessionDataAfterCheck <- checkPermissions(sessionData, principals, authorizationQuery)
       _ = if (!sessionDataAfterCheck.authorizationResult.checked &&
               authorizationQuery.findRule == DontFind &&
               !sessionDataAfterCheck.principal.superUser) {
         authorizationFailed(authorizationQuery)
       }
-      resultSessionData <- findPermissions(sessionDataAfterCheck, roles, authorizationQuery)
+      resultSessionData <- findPermissions(sessionDataAfterCheck, principals, authorizationQuery)
     } yield resultSessionData
   }
 
-  def processAnd(sessionData: SessionData, roles: Set[RoleId], authorizationQuery: AuthorizationQuery)(
+  def processAnd(sessionData: SessionData, principals: Set[AuthorizationPrincipal], authorizationQuery: AuthorizationQuery)(
       implicit ec: ExecutionContext): Future[SessionData] = {
     for {
-      sessionDataAfterCheck <- checkPermissions(sessionData, roles, authorizationQuery)
+      sessionDataAfterCheck <- checkPermissions(sessionData, principals, authorizationQuery)
       _ = if (!sessionDataAfterCheck.authorizationResult.checked) {
         authorizationFailed(authorizationQuery)
       }
-      resultSessionData <- findPermissions(sessionDataAfterCheck, roles, authorizationQuery)
+      resultSessionData <- findPermissions(sessionDataAfterCheck, principals, authorizationQuery)
     } yield resultSessionData
   }
 
-  def checkPermissions(sessionData: SessionData, roles: Set[RoleId], authorizationQuery: AuthorizationQuery)(
+  def checkPermissions(sessionData: SessionData, principals: Set[AuthorizationPrincipal], authorizationQuery: AuthorizationQuery)(
       implicit ec: ExecutionContext): Future[SessionData] = {
     for {
       checked <- if (sessionData.principal.superUser) {
@@ -75,9 +76,9 @@ class DefaultAuthorizer @Inject()(authorizationService: AuthorizationService) ex
           case DontCheck =>
             Future.successful(false)
           case CheckAllRule(permissions) =>
-            authorizationService.checkAllPermissions.invoke(CheckPermissions(roles, permissions))
+            authorizationService.checkAllPermissions.invoke(CheckPermissions(principals, permissions))
           case CheckAnyRule(permissions) =>
-            authorizationService.checkAnyPermissions.invoke(CheckPermissions(roles, permissions))
+            authorizationService.checkAnyPermissions.invoke(CheckPermissions(principals, permissions))
         }
       }
     } yield {
@@ -89,14 +90,14 @@ class DefaultAuthorizer @Inject()(authorizationService: AuthorizationService) ex
     }
   }
 
-  def findPermissions(sessionData: SessionData, roles: Set[RoleId], authorizationQuery: AuthorizationQuery)(
+  def findPermissions(sessionData: SessionData, principals: Set[AuthorizationPrincipal], authorizationQuery: AuthorizationQuery)(
       implicit ec: ExecutionContext): Future[SessionData] = {
     for {
       found <- authorizationQuery.findRule match {
         case DontFind =>
           Future.successful(Set.empty[Permission])
         case FindPermissionsRule(permissionIds) =>
-          authorizationService.findPermissions.invoke(FindPermissions(roles, permissionIds))
+          authorizationService.findPermissions.invoke(FindPermissions(principals, permissionIds))
       }
     } yield {
       val authResult = sessionData.authorizationResult.copy(

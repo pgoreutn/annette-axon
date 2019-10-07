@@ -18,7 +18,7 @@ package annette.authorization.impl.role
 
 import akka.Done
 import annette.authorization.api.model.Role
-import annette.authorization.impl.assignment.UserRoleAssignmentRepository
+import annette.authorization.impl.assignment.AssignmentRepository
 import com.datastax.driver.core.PreparedStatement
 import com.lightbend.lagom.scaladsl.persistence.ReadSideProcessor
 import com.lightbend.lagom.scaladsl.persistence.cassandra.{CassandraReadSide, CassandraSession}
@@ -29,11 +29,11 @@ import play.api.Configuration
 import scala.concurrent.{ExecutionContext, Future}
 
 private[impl] class RoleEventProcessor(
-    session: CassandraSession,
-    readSide: CassandraReadSide,
-    userRoleAssignmentRepository: UserRoleAssignmentRepository,
-    elastic: RoleElastic,
-    val configuration: Configuration,
+                                        session: CassandraSession,
+                                        readSide: CassandraReadSide,
+                                        userRoleAssignmentRepository: AssignmentRepository,
+                                        elastic: RoleElastic,
+                                        val configuration: Configuration,
 )(implicit val ec: ExecutionContext)
     extends ReadSideProcessor[RoleEvent] {
   private val log = LoggerFactory.getLogger(classOf[RoleEventProcessor])
