@@ -16,18 +16,16 @@ object Dependencies {
     val akkaPersistenceInmemoryVersion = "2.5.15.2"
     val commonsIO = "2.6"
 
-
     val jwtPlayJson = "1.1.0"
 
     val camunda = "7.10.0"
     val camundaSpin = "1.6.4"
     val groovy = "2.5.5"
     val pgDriver = "42.2.5"
-    
-    val elastic4s = "7.1.0"
+
+    val elastic4s = "7.3.1"
     val playJsonExt = "0.40.2"
   }
-
 
   val macwire = "com.softwaremill.macwire" %% "macros" % Version.macwire % "provided"
 
@@ -60,11 +58,10 @@ object Dependencies {
     "com.sksamuel.elastic4s" %% "elastic4s-core" % Version.elastic4s,
     "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % Version.elastic4s,
     "com.sksamuel.elastic4s" %% "elastic4s-json-play" % Version.elastic4s,
-    "com.sksamuel.elastic4s" %% "elastic4s-testkit" % Version.elastic4s % "test"
-    // "com.sksamuel.elastic4s" %% "elastic4s-embedded" % Version.elastic4s % "test"
+    "com.sksamuel.elastic4s" %% "elastic4s-testkit" % Version.elastic4s % Test
   )
 
-  val playJsonExt: sbt.ModuleID   = "ai.x" %% "play-json-extensions" % Version.playJsonExt
+  val playJsonExt: sbt.ModuleID = "ai.x" %% "play-json-extensions" % Version.playJsonExt
 
   val core = persistence ++ tests :+ guice :+ ws :+ jwt
 }

@@ -109,3 +109,6 @@ typings/
 
 
 .scannerwork/
+
+.DS_Store
+

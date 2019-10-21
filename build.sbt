@@ -35,7 +35,9 @@ lazy val root = (project in file("."))
     `authorization-api`,
     `authorization-impl`,
     `person-repository-api`,
-    `person-repository-impl`
+    `person-repository-impl`,
+    `org-structure-api`,
+    `org-structure-impl`
   )
   
 
@@ -197,6 +199,30 @@ lazy val `person-repository-impl` = (project in file("person-repository-impl"))
   .settings(commonSettings: _*)
   .settings(copyrightSettings: _*)
   .dependsOn(`person-repository-api`)
+
+
+  lazy val `org-structure-api` = (project in file("org-structure-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslApi
+    )
+  )
+  .settings(copyrightSettings: _*)
+  .dependsOn(`annette-shared`, `annette-security`)
+
+lazy val `org-structure-impl` = (project in file("org-structure-impl"))
+  .enablePlugins(LagomScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslTestKit,
+      Dependencies.macwire
+    ) ++ Dependencies.tests /*++ Dependencies.elastic*/ ,
+  )
+  .settings(lagomForkedTestSettings: _*)
+  .settings(commonSettings: _*)
+  .settings(copyrightSettings: _*)
+  .dependsOn(`org-structure-api`)
 
 lagomCassandraCleanOnStart in ThisBuild := false
 
